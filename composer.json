@@ -1,0 +1,24 @@
+{
+    "name": "dhl/module-ui",
+    "description": "Module providing the UI integration for the DHL global webservices components",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "Paul Siedler",
+            "email": "paul.siedler@netresearch.de"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Dhl\\Ui\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    },
+    "require": {
+        "dhl/module-shipping-core": "@dev",
+        "magento/module-ui": "^101.1.0"
+    }
+}
