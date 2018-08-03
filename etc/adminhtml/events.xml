@@ -1,6 +1,14 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <!--
+    /**
+     * See LICENSE.md for license details.
+     */
+    -->
     <event name="view_block_abstract_to_html_after">
         <observer name="dhl_recipient_street_display" instance="Dhl\Ui\Observer\AddRecipientStreetInfoBlock"/>
+    </event>
+    <event name="adminhtml_block_html_before">
+        <observer name="dhl_packaging_template" instance="Dhl\Ui\Observer\ChangePackagingTemplateObserver"/>
     </event>
 </config>

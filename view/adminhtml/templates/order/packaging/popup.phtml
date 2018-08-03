@@ -1,0 +1,25 @@
+<?php
+/**
+ * See LICENSE.md for license details.
+ */
+declare(strict_types=1);
+
+/** @var $block Magento\Shipping\Block\Adminhtml\Order\Packaging */
+?>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Dhl_Ui/js/packaging": {
+                "target": "#packaging-window",
+                "options": {
+                    "title": "Packaging popup",
+                    "type": "slide",
+                    "buttons": []
+                }
+            }
+        }
+    }
+</script>
+<div id="packaging-window">
+    <?= $block->getChildHtml(); ?>
+</div>

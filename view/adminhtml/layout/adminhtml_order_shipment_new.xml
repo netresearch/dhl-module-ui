@@ -5,11 +5,21 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="order_info">
-            <block name="dhl_recipient_street"  class="Magento\Backend\Block\Template" template="Dhl_Ui::order/view/info/recipient-street.phtml">
+            <block name="dhl_recipient_street" class="Magento\Backend\Block\Template" template="Dhl_Ui::order/view/info/recipient-street.phtml">
                 <arguments>
                     <argument name="viewModel" xsi:type="object">Dhl\Ui\ViewModel\Order\Info\RecipientStreet</argument>
                 </arguments>
             </block>
         </referenceBlock>
+
+        <referenceContainer name="content">
+            <referenceBlock name="sales_shipment_create">
+                <referenceBlock name="form">
+                    <block class="Magento\Shipping\Block\Adminhtml\Order\Packaging" name="shipment_packaging" template="Magento_Shipping::order/packaging/popup.phtml">
+                        <uiComponent name="dhl_packaging_popup"/>
+                    </block>
+                </referenceBlock>
+            </referenceBlock>
+        </referenceContainer>
     </body>
 </page>
