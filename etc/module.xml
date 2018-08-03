@@ -3,6 +3,7 @@
     <module name="Dhl_Ui" setup_version="0.1.0">
         <sequence>
             <module name="Magento_Ui"/>
+            <module name="Magento_Checkout"/>
             <module name="Dhl_ShippingCore"/>
         </sequence>
     </module>
