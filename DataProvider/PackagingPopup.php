@@ -26,6 +26,11 @@ class PackagingPopup extends AbstractDataProvider
     private $registy;
 
     /**
+     * @var Order\Shipment\Item[]
+     */
+    private $items;
+
+    /**
      * PackagingPopup constructor.
      *
      * @param string $name
@@ -48,82 +53,146 @@ class PackagingPopup extends AbstractDataProvider
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
 
+    /**
+     * @return mixed[][]
+     */
     public function getData(): array
     {
-        return [
+        $result = [
             'service' => $this->getServiceInputs(),
             'package' => array_merge($this->getPackageInputs(), $this->getExportPackageInputs()),
             'items' => array_merge($this->getItemInputs(), $this->getExportItemInputs()),
+            'item_properties' => $this->getItemPropertyGroups(),
         ];
+
+        return $result;
     }
 
+    /**
+     * @return mixed[]
+     */
     private function getServiceInputs(): array
     {
         /** @TODO: use provider classes for input retrieval */
         return [];
     }
 
+    /**
+     * @return mixed[]
+     */
     private function getPackageInputs(): array
     {
         /** @TODO provide default package inputs */
-        return [
-            [
-                'component' => 'Magento_Ui/js/form/element/abstract',
-                'template' => 'ui/form/field',
-                'label' => 'myTest',
-            ],
-            [
-                'component' => 'Magento_Ui/js/form/element/abstract',
-                'template' => 'ui/form/field',
-                'label' => 'my second test',
-            ],
-        ];
+        return [];
     }
 
+    /**
+     * @return mixed[]
+     */
     private function getExportPackageInputs(): array
     {
         /** @TODO: use provider classes for input retrieval */
         return [];
     }
 
+    /**
+     * @return mixed[]
+     */
     private function getItemInputs(): array
     {
-        /** @var Order\Shipment $shipment */
-        $shipment = $this->registy->registry('current_shipment');
-
         $options = [];
         $values = [];
         /** @var Order\Shipment\Item $item */
-        foreach ($shipment->getAllItems() as $item) {
+        foreach ($this->getItems() as $item) {
             $values[] = $item->getSku();
             $options[] = [
                 'value' => $item->getSku(),
                 'label' => $item->getName() . ' ' . $item->getSku(),
             ];
-
-            $values[] = $item->getSku() . '2';
-            $options[] = [
-                'value' => $item->getSku() . '2',
-                'label' => $item->getName() . ' ' . $item->getSku(),
-            ];
         }
-        $result = [
-            [
-                'component' => 'Magento_Ui/js/form/element/checkbox-set',
-                'label' => 'Order Items',
-                'provider' => 'dhl_packaging_popup.dhl_packaging_popup_data_source',
-                'options' => $options,
-                'default' => $values,
-                'multiple' => true,
-            ]
+        $result['components'][] = [
+            'component' => 'Magento_Ui/js/form/element/checkbox-set',
+            'label' => 'Order Items',
+            'provider' => 'dhl_packaging_popup.dhl_packaging_popup_data_source',
+            'options' => $options,
+            'default' => $values,
+            'multiple' => true,
         ];
 
         return $result;
     }
 
+    /**
+     * @return mixed[]
+     */
+    private function getItemPropertyGroups(): array
+    {
+        $result = [];
+        foreach ($this->getItems() as $item) {
+            $result['components'][] = [
+                'component' => 'Dhl_Ui/js/service-fieldset',
+                'label' => $item->getName(),
+                'name' => 'dhl_item_properties_container_' . $item->getOrderItemId(),
+                'provider' => 'dhl_packaging_popup.dhl_packaging_popup_data_source',
+                'components' => $this->getItemPropertyInputs($item)
+            ];
+        }
+        return $result;
+    }
+
+    /**
+     * @param Order\Shipment\Item $item
+     * @return mixed[]
+     */
+    private function getItemPropertyInputs(Order\Shipment\Item $item): array
+    {
+        $result = [];
+        $result[] = [
+            'component' => 'Magento_Ui/js/form/element/abstract',
+            'template' => 'ui/form/field',
+            'label' => 'Weight',
+            'value' => $item->getWeight(),
+            'disabled' => true,
+        ];
+        $result[] = [
+            'component' => 'Magento_Ui/js/form/element/abstract',
+            'template' => 'ui/form/field',
+            'label' => 'Qty ordered',
+            'value' => $item->getQty(),
+            'disabled' => true,
+        ];
+        $result[] = [
+            'component' => 'Magento_Ui/js/form/element/abstract',
+            'template' => 'ui/form/field',
+            'elementTmpl' => 'ui/form/element/textarea',
+            'cols' => 5,
+            'rows' => 60,
+            'label' => 'Description',
+            'value' => $item->getDescription(),
+        ];
+
+        return $result;
+    }
+
+    /**
+     * @return mixed[]
+     */
     private function getExportItemInputs(): array
     {
         /** @TODO: use provider classes for input retrieval */
         return [];
+    }
+
+    /**
+     * @return Order\Shipment\Item[]
+     */
+    private function getItems(): array
+    {
+        if ($this->items === null) {
+            $shipment = $this->registy->registry('current_shipment');
+            $this->items = $shipment->getAllItems();
+        }
+
+        return $this->items;
     }
 }

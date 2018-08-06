@@ -5,6 +5,8 @@
             <item name="provider" xsi:type="string">dhl_packaging_popup.dhl_packaging_popup_data_source</item>
             <item name="deps" xsi:type="string">dhl_packaging_popup.dhl_packaging_popup_data_source</item>
         </item>
+        <item name="label" xsi:type="string" translate="true">Sample Form</item>
+        <item name="spinner" xsi:type="string">dhl_packaging_popup_spinner</item>
     </argument>
 
     <dataSource name="dhl_packaging_popup_data_source">
@@ -34,6 +36,19 @@
         </settings>
     </fieldset>
 
+    <fieldset name="item_properties" component="Dhl_Ui/js/service-fieldset">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string" translate="true">Item properties</item>
+            </item>
+        </argument>
+        <settings>
+            <dataScope>data.item_properties</dataScope>
+            <collapsible>true</collapsible>
+            <opened>true</opened>
+        </settings>
+    </fieldset>
+
     <fieldset name="package" component="Dhl_Ui/js/service-fieldset">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
@@ -46,15 +61,42 @@
             <opened>true</opened>
         </settings>
 
-        <!-- This field has data type 'text' and standard 'input' form element and looks like input -->
-        <field name="title">
+        <field name="type">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
-                    <item name="label" xsi:type="string">Some text for Packages</item>
+                    <item name="label" xsi:type="string">Type</item>
+                    <item name="visible" xsi:type="boolean">true</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">select</item>
+                    <item name="source" xsi:type="string">package</item>
+                </item>
+            </argument>
+        </field>
+        <field name="total_weight">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string">Total Weight</item>
                     <item name="visible" xsi:type="boolean">true</item>
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="formElement" xsi:type="string">input</item>
                     <item name="source" xsi:type="string">package</item>
+                </item>
+            </argument>
+        </field>
+        <field name="total_weight_unit">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string">Weight Unit</item>
+                    <item name="visible" xsi:type="boolean">true</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">select</item>
+                    <item name="source" xsi:type="string">package</item>
+                    <item name="initialOptions" xsi:type="array">
+                        <item name="data" xsi:type="array">
+                            <item name="label" xsi:type="string">Testlabel</item>
+                            <item name="value" xsi:type="string">Testvalue</item>
+                        </item>
+                    </item>
                 </item>
             </argument>
         </field>
