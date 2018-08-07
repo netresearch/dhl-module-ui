@@ -60,29 +60,6 @@
             <collapsible>true</collapsible>
             <opened>true</opened>
         </settings>
-
-        <field name="type">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="label" xsi:type="string">Type</item>
-                    <item name="visible" xsi:type="boolean">true</item>
-                    <item name="dataType" xsi:type="string">text</item>
-                    <item name="formElement" xsi:type="string">select</item>
-                    <item name="source" xsi:type="string">package</item>
-                </item>
-            </argument>
-        </field>
-        <field name="total_weight">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="label" xsi:type="string">Total Weight</item>
-                    <item name="visible" xsi:type="boolean">true</item>
-                    <item name="dataType" xsi:type="string">text</item>
-                    <item name="formElement" xsi:type="string">input</item>
-                    <item name="source" xsi:type="string">package</item>
-                </item>
-            </argument>
-        </field>
         <field name="total_weight_unit">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
@@ -90,11 +67,36 @@
                     <item name="visible" xsi:type="boolean">true</item>
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="formElement" xsi:type="string">select</item>
-                    <item name="source" xsi:type="string">package</item>
-                    <item name="initialOptions" xsi:type="array">
-                        <item name="data" xsi:type="array">
-                            <item name="label" xsi:type="string">Testlabel</item>
-                            <item name="value" xsi:type="string">Testvalue</item>
+                    <item name="default" xsi:type="string">KG</item>
+                    <item name="options" xsi:type="array">
+                        <item name="kg" xsi:type="array">
+                            <item name="label" xsi:type="string" translate="true">Kilogram</item>
+                            <item name="value" xsi:type="string">KILOGRAM</item>
+                        </item>
+                        <item name="lb" xsi:type="array">
+                            <item name="label" xsi:type="string" translate="true">Pounds</item>
+                            <item name="value" xsi:type="string">POUND</item>
+                        </item>
+                    </item>
+                </item>
+            </argument>
+        </field>
+        <field name="dimensions_unit">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string">Dimensions Unit</item>
+                    <item name="visible" xsi:type="boolean">true</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">select</item>
+                    <item name="default" xsi:type="string">CENTIMETER</item>
+                    <item name="options" xsi:type="array">
+                        <item name="kg" xsi:type="array">
+                            <item name="label" xsi:type="string" translate="true">Centimeters</item>
+                            <item name="value" xsi:type="string">CENTIMETER</item>
+                        </item>
+                        <item name="lb" xsi:type="array">
+                            <item name="label" xsi:type="string" translate="true">Inches</item>
+                            <item name="value" xsi:type="string">INCH</item>
                         </item>
                     </item>
                 </item>

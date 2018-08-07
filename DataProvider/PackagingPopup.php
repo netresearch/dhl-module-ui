@@ -59,10 +59,10 @@ class PackagingPopup extends AbstractDataProvider
     public function getData(): array
     {
         $result = [
-            'service' => $this->getServiceInputs(),
-            'package' => array_merge($this->getPackageInputs(), $this->getExportPackageInputs()),
             'items' => array_merge($this->getItemInputs(), $this->getExportItemInputs()),
             'item_properties' => $this->getItemPropertyGroups(),
+            'package' => array_merge($this->getPackageInputs(), $this->getExportPackageInputs()),
+            'service' => $this->getServiceInputs(),
         ];
 
         return $result;
@@ -82,8 +82,41 @@ class PackagingPopup extends AbstractDataProvider
      */
     private function getPackageInputs(): array
     {
-        /** @TODO provide default package inputs */
-        return [];
+        $result = [];
+        $totalWeight = array_reduce($this->getItems(), function (?float $carry, Order\Shipment\Item $item) {
+            return $carry + $item->getWeight();
+        });
+        $result['components'][] = [
+            'component' => 'Magento_Ui/js/form/element/abstract',
+            'template' => 'ui/form/field',
+            'elementTmpl' => 'ui/form/element/select',
+            'label' => 'Type',
+            'options' => $this->getPackageTypes(),
+            'caption' => 'none',
+        ];
+        $result['components'][] = [
+            'component' => 'Magento_Ui/js/form/element/abstract',
+            'template' => 'ui/form/field',
+            'label' => 'Total Weight',
+            'value' => $totalWeight,
+        ];
+        $result['components'][] = [
+            'component' => 'Magento_Ui/js/form/element/abstract',
+            'template' => 'ui/form/field',
+            'label' => 'Width',
+        ];
+        $result['components'][] = [
+            'component' => 'Magento_Ui/js/form/element/abstract',
+            'template' => 'ui/form/field',
+            'label' => 'Height',
+        ];
+        $result['components'][] = [
+            'component' => 'Magento_Ui/js/form/element/abstract',
+            'template' => 'ui/form/field',
+            'label' => 'Depth',
+        ];
+
+        return $result;
     }
 
     /**
@@ -194,5 +227,22 @@ class PackagingPopup extends AbstractDataProvider
         }
 
         return $this->items;
+    }
+
+    /**
+     * @return mixed[]
+     */
+    private function getPackageTypes(): array
+    {
+        return [
+            [
+                'label' => 'type 1',
+                'value' => 'type 1',
+            ],
+            [
+                'label' => 'type 2',
+                'value' => 'type 2',
+            ],
+        ];
     }
 }
