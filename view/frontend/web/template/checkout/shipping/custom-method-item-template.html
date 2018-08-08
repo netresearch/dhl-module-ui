@@ -29,8 +29,13 @@
         </div>
     </td>
     <td class="col col-carrier"
-        attr="'id': 'label_carrier_' + method.method_code + '_' + method.carrier_code"
-        text="method.carrier_title"/>
+        attr="'id': 'label_carrier_' + method.method_code + '_' + method.carrier_code">
+        <p ifnot="method.extension_attributes && method.extension_attributes.additional_info.carrier_logo_url"
+           text="method.carrier_title"></p>
+
+        <img if="method.extension_attributes && method.extension_attributes.additional_info.carrier_logo_url"
+            data-bind="attr: {src : method.extension_attributes.additional_info.carrier_logo_url , alt : method.carrier_title , title : method.carrier_title }" />
+    </td>
 </tr>
 <tr class="row row-error"
     if="method.error_message">
