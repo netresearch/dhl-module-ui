@@ -59,10 +59,27 @@ class PackagingPopup extends AbstractDataProvider
     public function getData(): array
     {
         $result = [
-            'items' => array_merge($this->getItemInputs(), $this->getExportItemInputs()),
-            'item_properties' => $this->getItemPropertyGroups(),
-            'package' => array_merge($this->getPackageInputs(), $this->getExportPackageInputs()),
-            'service' => $this->getServiceInputs(),
+            'items' => array_merge_recursive(
+                $this->getItemInputs(),
+                $this->getNextButton()
+            ),
+            'item_properties' => array_merge_recursive(
+                $this->getItemPropertyGroups(),
+                $this->getNextButton()
+            ),
+            'package' => array_merge_recursive(
+                $this->getPackageInputs(),
+                $this->getExportPackageInputs(),
+                $this->getNextButton()
+            ),
+            'service' => array_merge_recursive(
+                $this->getServiceInputs(),
+                $this->getNextButton()
+            ),
+            'summary' => array_merge_recursive(
+                $this->getNewPackageButton(),
+                $this->getSubmitButton()
+            ),
         ];
 
         return $result;
@@ -97,8 +114,18 @@ class PackagingPopup extends AbstractDataProvider
         $result['components'][] = [
             'component' => 'Magento_Ui/js/form/element/abstract',
             'template' => 'ui/form/field',
+            'name' => 'total_weight',
             'label' => 'Total Weight',
             'value' => $totalWeight,
+        ];
+        $result['components'][] = [
+            'component' => 'Magento_Ui/js/form/element/abstract',
+            'template' => 'ui/form/field',
+            'elementTmpl' => 'ui/form/element/select',
+            'label' => 'Weight Unit',
+            'options' => $this->getWeightUnits(),
+            'caption' => 'Please select',
+            'value' => $this->getWeightUnits()[0]['value']
         ];
         $result['components'][] = [
             'component' => 'Magento_Ui/js/form/element/abstract',
@@ -114,6 +141,15 @@ class PackagingPopup extends AbstractDataProvider
             'component' => 'Magento_Ui/js/form/element/abstract',
             'template' => 'ui/form/field',
             'label' => 'Depth',
+        ];
+        $result['components'][] = [
+            'component' => 'Magento_Ui/js/form/element/abstract',
+            'template' => 'ui/form/field',
+            'elementTmpl' => 'ui/form/element/select',
+            'label' => 'Dimension Unit',
+            'options' => $this->getDimensionUnits(),
+            'caption' => 'Please select',
+            'value' => $this->getDimensionUnits()[0]['value']
         ];
 
         return $result;
@@ -137,14 +173,15 @@ class PackagingPopup extends AbstractDataProvider
         $values = [];
         /** @var Order\Shipment\Item $item */
         foreach ($this->getItems() as $item) {
-            $values[] = $item->getSku();
+            $values[] = $item->getOrderItemId();
             $options[] = [
-                'value' => $item->getSku(),
-                'label' => $item->getName() . ' ' . $item->getSku(),
+                'value' => $item->getOrderItemId(),
+                'label' => $item->getName() . ' (Qty: ' . $item->getQty() . ')',
             ];
         }
         $result['components'][] = [
             'component' => 'Magento_Ui/js/form/element/checkbox-set',
+            'name' => 'dhl_order_items',
             'label' => 'Order Items',
             'provider' => 'dhl_packaging_popup.dhl_packaging_popup_data_source',
             'options' => $options,
@@ -163,11 +200,12 @@ class PackagingPopup extends AbstractDataProvider
         $result = [];
         foreach ($this->getItems() as $item) {
             $result['components'][] = [
-                'component' => 'Dhl_Ui/js/service-fieldset',
+                'component' => 'Dhl_Ui/js/packaging/view/fieldset',
                 'label' => $item->getName(),
-                'name' => 'dhl_item_properties_container_' . $item->getOrderItemId(),
+                'dhlType' => 'dhl_item_properties_container',
+                'orderItemId' => (string)$item->getOrderItemId(),
                 'provider' => 'dhl_packaging_popup.dhl_packaging_popup_data_source',
-                'components' => $this->getItemPropertyInputs($item)
+                'components' => array_merge($this->getItemPropertyInputs($item), $this->getExportItemInputs())
             ];
         }
         return $result;
@@ -184,6 +222,7 @@ class PackagingPopup extends AbstractDataProvider
             'component' => 'Magento_Ui/js/form/element/abstract',
             'template' => 'ui/form/field',
             'label' => 'Weight',
+            'dhlType' => 'dhl_item_weight',
             'value' => $item->getWeight(),
             'disabled' => true,
         ];
@@ -244,5 +283,80 @@ class PackagingPopup extends AbstractDataProvider
                 'value' => 'type 2',
             ],
         ];
+    }
+
+    /**
+     * @return string[][]
+     */
+    private function getWeightUnits(): array
+    {
+        return [
+            [
+                'label' => 'kg',
+                'value' => 'KILOGRAM',
+            ],
+            [
+                'label' => 'lb',
+                'value' => 'POUND',
+            ],
+        ];
+    }
+
+    /**
+     * @return string[][]
+     */
+    private function getDimensionUnits(): array
+    {
+        return [
+            [
+                'label' => 'cm',
+                'value' => 'CENTIMETER',
+            ],
+            [
+                'label' => 'in',
+                'value' => 'INCH',
+            ],
+        ];
+    }
+
+    /**
+     * @return mixed[][]
+     */
+    private function getNextButton(): array
+    {
+        $result['components'][] = [
+            'component' => 'Dhl_Ui/js/packaging/view/button-next',
+            'title' => 'Next',
+            'buttonClasses' => 'primary',
+        ];
+
+        return $result;
+    }
+
+    /**
+     * @return mixed[][]
+     */
+    private function getSubmitButton(): array
+    {
+        $result['components'][] = [
+            'component' => 'Dhl_Ui/js/packaging/view/button-submit',
+            'title' => 'Create Shipment & Label',
+            'buttonClasses' => 'primary',
+        ];
+
+        return $result;
+    }
+
+    /**
+     * @return mixed[][]
+     */
+    private function getNewPackageButton(): array
+    {
+        $result['components'][] = [
+            'component' => 'Magento_Ui/js/form/components/button',
+            'title' => 'Configure another package',
+        ];
+
+        return $result;
     }
 }

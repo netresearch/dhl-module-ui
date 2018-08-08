@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd" component="Dhl_Ui/js/packaging-controller">
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd" component="Dhl_Ui/js/packaging/controller">
     <argument name="data" xsi:type="array">
         <item name="js_config" xsi:type="array">
             <item name="provider" xsi:type="string">dhl_packaging_popup.dhl_packaging_popup_data_source</item>
@@ -23,10 +23,11 @@
         </argument>
     </dataSource>
 
-    <fieldset name="items" component="Dhl_Ui/js/service-fieldset">
+    <fieldset name="dhl_fieldset_items" component="Dhl_Ui/js/packaging/view/fieldset">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">Packing Items</item>
+                <item name="dhlType" xsi:type="string" translate="true">dhl_fieldset</item>
             </item>
         </argument>
         <settings>
@@ -36,97 +37,58 @@
         </settings>
     </fieldset>
 
-    <fieldset name="item_properties" component="Dhl_Ui/js/service-fieldset">
+    <fieldset name="dhl_fieldset_item_properties" component="Dhl_Ui/js/packaging/view/fieldset">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">Item properties</item>
+                <item name="dhlType" xsi:type="string" translate="true">dhl_fieldset</item>
             </item>
         </argument>
         <settings>
             <dataScope>data.item_properties</dataScope>
             <collapsible>true</collapsible>
-            <opened>true</opened>
+            <opened>false</opened>
         </settings>
     </fieldset>
 
-    <fieldset name="package" component="Dhl_Ui/js/service-fieldset">
+    <fieldset name="dhl_fieldset_package" component="Dhl_Ui/js/packaging/view/fieldset">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">Package</item>
+                <item name="dhlType" xsi:type="string" translate="true">dhl_fieldset</item>
             </item>
         </argument>
         <settings>
             <dataScope>data.package</dataScope>
             <collapsible>true</collapsible>
-            <opened>true</opened>
+            <opened>false</opened>
         </settings>
-        <field name="total_weight_unit">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="label" xsi:type="string">Weight Unit</item>
-                    <item name="visible" xsi:type="boolean">true</item>
-                    <item name="dataType" xsi:type="string">text</item>
-                    <item name="formElement" xsi:type="string">select</item>
-                    <item name="default" xsi:type="string">KG</item>
-                    <item name="options" xsi:type="array">
-                        <item name="kg" xsi:type="array">
-                            <item name="label" xsi:type="string" translate="true">Kilogram</item>
-                            <item name="value" xsi:type="string">KILOGRAM</item>
-                        </item>
-                        <item name="lb" xsi:type="array">
-                            <item name="label" xsi:type="string" translate="true">Pounds</item>
-                            <item name="value" xsi:type="string">POUND</item>
-                        </item>
-                    </item>
-                </item>
-            </argument>
-        </field>
-        <field name="dimensions_unit">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="label" xsi:type="string">Dimensions Unit</item>
-                    <item name="visible" xsi:type="boolean">true</item>
-                    <item name="dataType" xsi:type="string">text</item>
-                    <item name="formElement" xsi:type="string">select</item>
-                    <item name="default" xsi:type="string">CENTIMETER</item>
-                    <item name="options" xsi:type="array">
-                        <item name="kg" xsi:type="array">
-                            <item name="label" xsi:type="string" translate="true">Centimeters</item>
-                            <item name="value" xsi:type="string">CENTIMETER</item>
-                        </item>
-                        <item name="lb" xsi:type="array">
-                            <item name="label" xsi:type="string" translate="true">Inches</item>
-                            <item name="value" xsi:type="string">INCH</item>
-                        </item>
-                    </item>
-                </item>
-            </argument>
-        </field>
     </fieldset>
 
-    <fieldset name="service" component="Dhl_Ui/js/service-fieldset">
+    <fieldset name="dhl_fieldset_services" component="Dhl_Ui/js/packaging/view/fieldset">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
-                <item name="label" xsi:type="string" translate="true">Services</item>
+                <item name="label" xsi:type="string" translate="true">Value-Added Features</item>
+                <item name="dhlType" xsi:type="string" translate="true">dhl_fieldset</item>
             </item>
         </argument>
         <settings>
             <dataScope>data.service</dataScope>
             <collapsible>true</collapsible>
-            <opened>true</opened>
+            <opened>false</opened>
         </settings>
-
-        <!-- This field has data type 'text' and standard 'input' form element and looks like input -->
-        <field name="title">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="label" xsi:type="string">Some text for Services</item>
-                    <item name="visible" xsi:type="boolean">true</item>
-                    <item name="dataType" xsi:type="string">text</item>
-                    <item name="formElement" xsi:type="string">input</item>
-                    <item name="source" xsi:type="string">service</item>
-                </item>
-            </argument>
-        </field>
+    </fieldset>
+    <fieldset name="dhl_fieldset_summary" component="Dhl_Ui/js/packaging/view/fieldset">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string" translate="true">Package Summary</item>
+                <item name="dhlType" xsi:type="string" translate="true">dhl_fieldset</item>
+            </item>
+        </argument>
+        <settings>
+            <dataScope>data.summary</dataScope>
+            <collapsible>true</collapsible>
+            <opened>false</opened>
+        </settings>
     </fieldset>
 </listing>

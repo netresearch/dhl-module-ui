@@ -1,14 +1,26 @@
 define([
         "Magento_Ui/js/form/components/fieldset",
         "uiLayout",
-    ], function (Component, layout) {
+        'Dhl_Ui/js/packaging/model/active-fieldset'
+    ], function (Component, layout, activeFieldset) {
         return Component.extend({
             initialize: function () {
                 this._super();
                 this.initChildComponents();
+
+                activeFieldset.get().subscribe(function (fieldset) {
+                    if (this.index === fieldset) {
+                        this.opened(true)
+                    } else {
+                        this.opened(false)
+                    }
+                }.bind(this))
             },
 
             /**
+             * Automatically create child components from a configuration json.
+             * Uses the "components" property of itself (useful for nested components) or its data source.
+             *
              * @private
              */
             initChildComponents: function () {
