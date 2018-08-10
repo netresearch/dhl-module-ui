@@ -6,8 +6,16 @@ define([
         'uiRegistry',
         'Dhl_Ui/js/packaging/model/active-fieldset',
         'Dhl_Ui/js/packaging/model/selected-items',
-    ], function (ko, _, Component, loader, registry, activeFieldset, selectedItems) {
+        'Dhl_Ui/js/packaging/model/shipment-data',
+    ], function (ko, _, Component, loader, registry, activeFieldset, selectedItems, shipmentData) {
         return Component.extend({
+            defaults: {
+                /**
+                 * Total amount of order items to be included in this shipment.
+                 */
+                orderItemAmount: 0,
+            },
+
             /**
              * @constructor
              * @TODO: handle form flow, provide save callback etc.
@@ -15,8 +23,25 @@ define([
             initialize: function () {
                 this._super();
                 this.loadOrderItemSelection();
+
+                this.orderItemAmount = this.source.get('data.itemAmount');
+
                 selectedItems.get().subscribe(this.toggleItemPropertiesVisibility);
+
+                selectedItems.get().subscribe(this.toggleReadyState.bind(this));
+
                 selectedItems.get().subscribe(this.calculatePackageWeight);
+
+                shipmentData.isReadyForSubmit().subscribe(function (isReady) {
+                    registry.get({index: 'buttonSubmit'}, function (button) {
+                        button.disabled(!isReady);
+                    });
+                });
+                shipmentData.isReadyForReset().subscribe(function (isReady) {
+                    registry.get({index: 'buttonReset'}, function (button) {
+                        button.disabled(!isReady);
+                    });
+                });
             },
 
             /**
@@ -74,6 +99,26 @@ define([
             },
 
             /**
+             * Set or unset shipmentData.readyForSubmit depending on wheter all orderItems are selected.
+             *
+             * @private
+             * @param {string[]} selection Array of currently selected itemOrderIds
+             */
+            toggleReadyState: function(selection)
+            {
+                shipmentData.setReadyForSubmit(selection.length > 0 && selection.length === this.orderItemAmount);
+                shipmentData.setReadyForReset(selection.length > 0 && !shipmentData.isReadyForSubmit()());
+            },
+
+            /**
+             * @public
+             * @param {string} fieldset
+             */
+            setActiveFieldset: function (fieldset) {
+                activeFieldset.set(fieldset);
+            },
+
+            /**
              * Hide loader.
              *
              * Overriden to get around obtuse spinner naming problem with the parent class.
@@ -89,11 +134,18 @@ define([
             },
 
             /**
-             * @public
-             * @param {string} fieldset
+             * Remove all previously selected order items from the form before resetting
+             *
+             * @protected
              */
-            setActiveFieldset: function (fieldset) {
-                activeFieldset.set(fieldset);
+            reset: function () {
+                registry.get({index: 'dhl_order_items'}, function (component) {
+                    let newOptions = component.options().filter(function (option) {
+                        return (selectedItems.get()().indexOf(option.value) === -1)
+                    });
+                    component.options(newOptions);
+                });
+                this._super();
             }
         });
     }

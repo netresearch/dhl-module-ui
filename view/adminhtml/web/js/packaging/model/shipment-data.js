@@ -11,7 +11,11 @@ define([
     /**
      * @type {Observable}
      */
-    let readyForSubmit = ko.observable(false);
+    let readyForReset = ko.observable(false);
+    /**
+     * @type {Observable}
+     */
+    let readyForSubmit = ko.observable(true);
 
     /**
      * Manage the currently selected packaging popup package item order ids
@@ -34,12 +38,26 @@ define([
         /**
          * @return {Observable}
          */
+        isReadyForReset: function () {
+            return readyForReset;
+        },
+
+        /**
+         * @param {boolean} value
+         */
+        setReadyForReset: function (value) {
+            readyForReset(value);
+        },
+
+        /**
+         * @return {Observable}
+         */
         isReadyForSubmit: function () {
             return readyForSubmit;
         },
 
         /**
-         * @param {bool} value
+         * @param {boolean} value
          */
         setReadyForSubmit: function (value) {
             readyForSubmit(value);

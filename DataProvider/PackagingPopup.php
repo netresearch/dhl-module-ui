@@ -80,6 +80,7 @@ class PackagingPopup extends AbstractDataProvider
                 $this->getNewPackageButton(),
                 $this->getSubmitButton()
             ),
+            'itemAmount' => count($this->getItems()),
         ];
 
         return $result;
@@ -180,7 +181,7 @@ class PackagingPopup extends AbstractDataProvider
             ];
         }
         $result['components'][] = [
-            'component' => 'Magento_Ui/js/form/element/checkbox-set',
+            'component' => 'Dhl_Ui/js/packaging/view/checkbox-set',
             'name' => 'dhl_order_items',
             'label' => 'Order Items',
             'provider' => 'dhl_packaging_popup.dhl_packaging_popup_data_source',
@@ -348,6 +349,7 @@ class PackagingPopup extends AbstractDataProvider
     {
         $result['components'][] = [
             'component' => 'Magento_Ui/js/form/components/button',
+            'name' => 'buttonSubmit',
             'title' => 'Create Shipment & Label',
             'buttonClasses' => 'primary',
             'actions' => [
@@ -368,7 +370,9 @@ class PackagingPopup extends AbstractDataProvider
     {
         $result['components'][] = [
             'component' => 'Magento_Ui/js/form/components/button',
+            'name' => 'buttonReset',
             'title' => 'Configure another package',
+            'disabled' => true,
             'actions' => [
                 [
                     'targetName' => 'dhl_packaging_popup.dhl_packaging_popup',
