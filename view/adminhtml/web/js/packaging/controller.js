@@ -17,7 +17,6 @@ define([
                 this.loadOrderItemSelection();
                 selectedItems.get().subscribe(this.toggleItemPropertiesVisibility);
                 selectedItems.get().subscribe(this.calculatePackageWeight);
-
             },
 
             /**
@@ -88,6 +87,14 @@ define([
 
                 return this;
             },
+
+            /**
+             * @public
+             * @param {string} fieldset
+             */
+            setActiveFieldset: function (fieldset) {
+                activeFieldset.set(fieldset);
+            }
         });
     }
 );

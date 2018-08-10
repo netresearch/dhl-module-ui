@@ -61,20 +61,20 @@ class PackagingPopup extends AbstractDataProvider
         $result = [
             'items' => array_merge_recursive(
                 $this->getItemInputs(),
-                $this->getNextButton()
+                $this->getNextButton('dhl_fieldset_item_properties')
             ),
             'item_properties' => array_merge_recursive(
                 $this->getItemPropertyGroups(),
-                $this->getNextButton()
+                $this->getNextButton('dhl_fieldset_package')
             ),
             'package' => array_merge_recursive(
                 $this->getPackageInputs(),
                 $this->getExportPackageInputs(),
-                $this->getNextButton()
+                $this->getNextButton('dhl_fieldset_services')
             ),
             'service' => array_merge_recursive(
                 $this->getServiceInputs(),
-                $this->getNextButton()
+                $this->getNextButton('dhl_fieldset_summary')
             ),
             'summary' => array_merge_recursive(
                 $this->getNewPackageButton(),
@@ -320,14 +320,22 @@ class PackagingPopup extends AbstractDataProvider
     }
 
     /**
+     * @param string $nextFieldsetName
      * @return mixed[][]
      */
-    private function getNextButton(): array
+    private function getNextButton(string $nextFieldsetName): array
     {
         $result['components'][] = [
-            'component' => 'Dhl_Ui/js/packaging/view/button-next',
+            'component' => 'Magento_Ui/js/form/components/button',
             'title' => 'Next',
             'buttonClasses' => 'primary',
+            'actions' => [
+                [
+                    'targetName' => 'dhl_packaging_popup.dhl_packaging_popup',
+                    'actionName' => 'setActiveFieldset',
+                    'params' => [$nextFieldsetName]
+                ]
+            ]
         ];
 
         return $result;
@@ -339,9 +347,15 @@ class PackagingPopup extends AbstractDataProvider
     private function getSubmitButton(): array
     {
         $result['components'][] = [
-            'component' => 'Dhl_Ui/js/packaging/view/button-submit',
+            'component' => 'Magento_Ui/js/form/components/button',
             'title' => 'Create Shipment & Label',
             'buttonClasses' => 'primary',
+            'actions' => [
+                [
+                    'targetName' => 'dhl_packaging_popup.dhl_packaging_popup',
+                    'actionName' => 'submit',
+                ]
+            ]
         ];
 
         return $result;
@@ -355,6 +369,17 @@ class PackagingPopup extends AbstractDataProvider
         $result['components'][] = [
             'component' => 'Magento_Ui/js/form/components/button',
             'title' => 'Configure another package',
+            'actions' => [
+                [
+                    'targetName' => 'dhl_packaging_popup.dhl_packaging_popup',
+                    'actionName' => 'setActiveFieldset',
+                    'params'     => ['dhl_fieldset_items'],
+                ],
+                [
+                    'targetName' => 'dhl_packaging_popup.dhl_packaging_popup',
+                    'actionName' => 'reset',
+                ]
+            ]
         ];
 
         return $result;
