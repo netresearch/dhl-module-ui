@@ -4,16 +4,19 @@ define([
         "Magento_Ui/js/form/form",
         'Magento_Ui/js/lib/spinner',
         'uiRegistry',
-        'Dhl_Ui/js/packaging/model/active-fieldset',
-        'Dhl_Ui/js/packaging/model/selected-items',
+        'Dhl_Ui/js/packaging/model/available-items',
         'Dhl_Ui/js/packaging/model/shipment-data',
-    ], function (ko, _, Component, loader, registry, activeFieldset, selectedItems, shipmentData) {
+    ], function (ko, _, Component, loader, registry, availableItems, shipmentData) {
         return Component.extend({
             defaults: {
-                /**
-                 * Total amount of order items to be included in this shipment.
-                 */
-                orderItemAmount: 0,
+                activeFieldset: '',
+                links: {
+                    selectedItems: '${ $.provider }:data.selected_items',
+                    activeFieldset: '${ $.provider }:data.active_fieldset',
+                },
+                listens: {
+                    selectedItems: 'handleItemSelectChange',
+                },
             },
 
             /**
@@ -22,15 +25,8 @@ define([
              **/
             initialize: function () {
                 this._super();
-                this.loadOrderItemSelection();
 
-                this.orderItemAmount = this.source.get('data.itemAmount');
-
-                selectedItems.get().subscribe(this.toggleItemPropertiesVisibility);
-
-                selectedItems.get().subscribe(this.toggleReadyState.bind(this));
-
-                selectedItems.get().subscribe(this.calculatePackageWeight);
+                availableItems.set(this.source.get('data.selected_items'));
 
                 shipmentData.isReadyForSubmit().subscribe(function (isReady) {
                     registry.get({index: 'buttonSubmit'}, function (button) {
@@ -44,36 +40,16 @@ define([
                 });
             },
 
-            /**
-             * Sync selectedItems model with checkbox set component value
-             *
-             * @private
-             */
-            loadOrderItemSelection: function () {
-                registry.get({index: 'dhl_order_items'}, function (component) {
-                    component.value.subscribe(function (items) {
-                        selectedItems.set(items);
-                    });
-                }.bind(this));
+            /** @inheritdoc */
+            initObservable: function () {
+                this._super().observe(['activeFieldset']);
+
+                return this;
             },
 
-            /**
-             * Go through all item property containers and
-             * hide the ones whose item is not selected.
-             *
-             * @private
-             * @param {string[]} selection Array of currently selected itemOrderIds
-             */
-            toggleItemPropertiesVisibility: function(selection) {
-                let components = registry.filter({dhlType: 'dhl_item_properties_container'});
-
-                components.forEach(function (component) {
-                    if (selection.indexOf(component.orderItemId) === -1) {
-                        component.visible(false);
-                    } else {
-                        component.visible(true);
-                    }
-                });
+            handleItemSelectChange: function(items) {
+                this.toggleReadyState(items);
+                this.calculatePackageWeight();
             },
 
             /**
@@ -83,19 +59,20 @@ define([
              * @private
              */
             calculatePackageWeight: function() {
-                let totalWeightComponent = registry.get({index: 'total_weight'});
-                let weightComponents = registry.filter({dhlType: 'dhl_item_weight'});
-                let newWeight = 0.0;
-                weightComponents.forEach(function (component) {
-                    let parent = registry.get({name: component.parent});
-                    if (parent.visible()) {
-                        let itemWeight = parseFloat(component.value.peek());
-                        if (itemWeight) {
-                            newWeight += itemWeight;
+                registry.get({index: 'total_weight'}, function (totalWeightComponent) {
+                    let weightComponents = registry.filter({dhlType: 'dhl_item_weight'});
+                    let newWeight = 0.0;
+                    weightComponents.forEach(function (component) {
+                        let parent = registry.get({name: component.parent});
+                        if (parent.visible()) {
+                            let itemWeight = parseFloat(component.value.peek());
+                            if (itemWeight) {
+                                newWeight += itemWeight;
+                            }
                         }
-                    }
+                    });
+                    totalWeightComponent.value(newWeight);
                 });
-                totalWeightComponent.value(newWeight);
             },
 
             /**
@@ -106,16 +83,19 @@ define([
              */
             toggleReadyState: function(selection)
             {
-                shipmentData.setReadyForSubmit(selection.length > 0 && selection.length === this.orderItemAmount);
-                shipmentData.setReadyForReset(selection.length > 0 && !shipmentData.isReadyForSubmit()());
+                let remainingItems = availableItems.get()().length;
+                shipmentData.setReadyForSubmit(selection.length > 0 && selection.length === remainingItems);
+                shipmentData.setReadyForReset(selection.length > 0 && selection.length < remainingItems);
             },
 
             /**
+             * Action target of "Next" buttons
+             *
              * @public
              * @param {string} fieldset
              */
             setActiveFieldset: function (fieldset) {
-                activeFieldset.set(fieldset);
+                this.activeFieldset(fieldset);
             },
 
             /**
@@ -139,12 +119,11 @@ define([
              * @protected
              */
             reset: function () {
-                registry.get({index: 'dhl_order_items'}, function (component) {
-                    let newOptions = component.options().filter(function (option) {
-                        return (selectedItems.get()().indexOf(option.value) === -1)
-                    });
-                    component.options(newOptions);
+                let remainingItems = availableItems.get()().filter(function(item) {
+                    return this.selectedItems.indexOf(item.value) === -1;
                 });
+                availableItems.set(remainingItems);
+
                 this._super();
             }
         });

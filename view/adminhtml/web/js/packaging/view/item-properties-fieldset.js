@@ -4,16 +4,16 @@ define([
     ], function (Component, layout) {
         return Component.extend({
             defaults: {
+                selectedOrderItems: [],
                 childComponents: [],
-                activeFieldset: '',
                 imports: {
                     childComponents: '${ $.provider }:${ $.dataScope }.components',
                 },
                 links: {
-                    activeFieldset: '${ $.provider }:data.active_fieldset',
+                    selectedOrderItems: '${ $.provider }:${ $.dataScopeSelectedItems }',
                 },
                 listens: {
-                    activeFieldset: 'handleActiveFieldsetChange',
+                    selectedOrderItems: 'handleChangedItemSelection',
                 }
             },
 
@@ -23,10 +23,8 @@ define([
              */
             initialize: function () {
                 return this._super()
-                           .initChildComponents();
+                .initChildComponents();
             },
-
-
 
             /**
              * Automatically create child components from a configuration json.
@@ -44,10 +42,17 @@ define([
                 }
             },
 
-            handleActiveFieldsetChange: function (activeFieldset) {
-                this.opened(activeFieldset === this.index);
+            /**
+             * Helper function to toggle visibility when selected order items change.
+             * Is triggered depending on external component config.
+             *
+             * @param {string[]} items
+             */
+            handleChangedItemSelection: function (items) {
+                if (this.orderItemId) {
+                    this.visible(items.includes(this.orderItemId));
+                }
             }
-
         });
     }
 );

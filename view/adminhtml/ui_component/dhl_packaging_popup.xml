@@ -42,6 +42,9 @@
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">Item properties</item>
                 <item name="dhlType" xsi:type="string" translate="true">dhl_fieldset</item>
+                <item name="js_config" xsi:type="array">
+                    <item name="visible" xsi:type="boolean">false</item>
+                </item>
             </item>
         </argument>
         <settings>

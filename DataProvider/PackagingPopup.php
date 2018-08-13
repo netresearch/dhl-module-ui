@@ -65,6 +65,7 @@ class PackagingPopup extends AbstractDataProvider
             ),
             'item_properties' => array_merge_recursive(
                 $this->getItemPropertyGroups(),
+                $this->getItemPropertyGroupDataSources(),
                 $this->getNextButton('dhl_fieldset_package')
             ),
             'package' => array_merge_recursive(
@@ -80,7 +81,21 @@ class PackagingPopup extends AbstractDataProvider
                 $this->getNewPackageButton(),
                 $this->getSubmitButton()
             ),
-            'itemAmount' => count($this->getItems()),
+            'available_items' => array_map(
+                function ($item) {
+                    /** @var Order\Shipment\Item $item */
+                    return $item->getOrderItemId();
+                },
+                $this->getItems()
+            ),
+            'selected_items' => array_map(
+                function ($item) {
+                    /** @var Order\Shipment\Item $item */
+                    return $item->getOrderItemId();
+                },
+                $this->getItems()
+            ),
+            'active_fieldset' => 'dhl_fieldset_items'
         ];
 
         return $result;
@@ -171,23 +186,23 @@ class PackagingPopup extends AbstractDataProvider
     private function getItemInputs(): array
     {
         $options = [];
-        $values = [];
         /** @var Order\Shipment\Item $item */
         foreach ($this->getItems() as $item) {
-            $values[] = $item->getOrderItemId();
             $options[] = [
                 'value' => $item->getOrderItemId(),
                 'label' => $item->getName() . ' (Qty: ' . $item->getQty() . ')',
             ];
         }
         $result['components'][] = [
-            'component' => 'Dhl_Ui/js/packaging/view/checkbox-set',
+            'component' => 'Magento_Ui/js/form/element/checkbox-set',
             'name' => 'dhl_order_items',
             'label' => 'Order Items',
             'provider' => 'dhl_packaging_popup.dhl_packaging_popup_data_source',
             'options' => $options,
-            'default' => $values,
             'multiple' => true,
+            'links' => [
+                'value' => '${ $.provider }:data.selected_items'
+            ]
         ];
 
         return $result;
@@ -201,14 +216,31 @@ class PackagingPopup extends AbstractDataProvider
         $result = [];
         foreach ($this->getItems() as $item) {
             $result['components'][] = [
-                'component' => 'Dhl_Ui/js/packaging/view/fieldset',
+                'component' => 'Dhl_Ui/js/packaging/view/item-properties-fieldset',
                 'label' => $item->getName(),
                 'dhlType' => 'dhl_item_properties_container',
                 'orderItemId' => (string)$item->getOrderItemId(),
                 'provider' => 'dhl_packaging_popup.dhl_packaging_popup_data_source',
-                'components' => array_merge($this->getItemPropertyInputs($item), $this->getExportItemInputs())
+                'dataScope' => 'item' . $item->getOrderItemId(),
+                'dataScopeSelectedItems' => 'data.selected_items',
             ];
         }
+        return $result;
+    }
+
+    /**
+     * @return mixed[]
+     */
+    private function getItemPropertyGroupDataSources(): array
+    {
+        $result = [];
+        foreach ($this->getItems() as $item) {
+            $result['item' . $item->getOrderItemId()]['components'] = array_merge(
+                $this->getItemPropertyInputs($item),
+                $this->getExportItemInputs($item)
+            );
+        }
+
         return $result;
     }
 
@@ -248,9 +280,10 @@ class PackagingPopup extends AbstractDataProvider
     }
 
     /**
+     * @param Order\Shipment\Item $item
      * @return mixed[]
      */
-    private function getExportItemInputs(): array
+    private function getExportItemInputs(Order\Shipment\Item $item): array
     {
         /** @TODO: use provider classes for input retrieval */
         return [];
