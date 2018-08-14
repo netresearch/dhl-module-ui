@@ -95,7 +95,8 @@ class PackagingPopup extends AbstractDataProvider
                 },
                 $this->getItems()
             ),
-            'active_fieldset' => 'dhl_fieldset_items'
+            'active_fieldset' => 'dhl_fieldset_items',
+            'item_names' => $this->getItemNames(),
         ];
 
         return $result;
@@ -198,11 +199,15 @@ class PackagingPopup extends AbstractDataProvider
             'name' => 'dhl_order_items',
             'label' => 'Order Items',
             'provider' => 'dhl_packaging_popup.dhl_packaging_popup_data_source',
-            'options' => $options,
             'multiple' => true,
             'links' => [
                 'value' => '${ $.provider }:data.selected_items'
-            ]
+            ],
+            'isTemplate' => true,
+        ];
+        $result['components'][] = [
+            'nodeTemplate' => 'dhl_packaging_popup.dhl_packaging_popup.dhl_fieldset_items.dhl_order_items',
+            'options' => $options,
         ];
 
         return $result;
@@ -277,6 +282,19 @@ class PackagingPopup extends AbstractDataProvider
         ];
 
         return $result;
+    }
+
+    /**
+     * @return mixed[]
+     */
+    private function getItemNames(): array
+    {
+        $items = [];
+        foreach ($this->getItems() as $item) {
+            $items[$item->getOrderItemId()] = $item->getName() . ' (Qty: ' . $item->getQty() . ')';
+        }
+
+        return $items;
     }
 
     /**
@@ -361,15 +379,25 @@ class PackagingPopup extends AbstractDataProvider
     {
         $result['components'][] = [
             'component' => 'Magento_Ui/js/form/components/button',
+            'name' => 'buttonNext',
             'title' => 'Next',
             'buttonClasses' => 'primary',
             'actions' => [
                 [
                     'targetName' => 'dhl_packaging_popup.dhl_packaging_popup',
                     'actionName' => 'setActiveFieldset',
+                    'params' => ['dhl_fieldset_item_properties']
+                ]
+            ],
+            'isTemplate' => true,
+        ];
+        $result['components'][] = [
+            'nodeTemplate' => 'dhl_packaging_popup.dhl_packaging_popup.dhl_fieldset_items.buttonNext',
+            'actions' => [
+                [
                     'params' => [$nextFieldsetName]
                 ]
-            ]
+            ],
         ];
 
         return $result;

@@ -4,29 +4,35 @@ define([
         "Magento_Ui/js/form/form",
         'Magento_Ui/js/lib/spinner',
         'uiRegistry',
-        'Dhl_Ui/js/packaging/model/available-items',
         'Dhl_Ui/js/packaging/model/shipment-data',
-    ], function (ko, _, Component, loader, registry, availableItems, shipmentData) {
+        'Dhl_Ui/js/packaging/action/rebuild-packing-items',
+    ], function (ko, _, Component, loader, registry, shipmentData, rebuildPackingItemsAction) {
         return Component.extend({
+            /**
+             * This controller Component collects data from the PackagingPopup Data Provider and handles changes to the
+             * data. It also uses built-in form functionality to submit the final shipment request to Magento.
+             */
             defaults: {
-                activeFieldset: '',
+                itemNames: {},
+                imports: {
+                    itemNames: '${ $.provider }:data.item_names'
+                },
                 links: {
+                    availableItems: '${ $.provider }:data.available_items',
                     selectedItems: '${ $.provider }:data.selected_items',
                     activeFieldset: '${ $.provider }:data.active_fieldset',
                 },
                 listens: {
                     selectedItems: 'handleItemSelectChange',
+                    availableItems: 'handleAvailableItemsChange'
                 },
             },
 
             /**
              * @constructor
-             * @TODO: handle form flow, provide save callback etc.
              **/
             initialize: function () {
                 this._super();
-
-                availableItems.set(this.source.get('data.selected_items'));
 
                 shipmentData.isReadyForSubmit().subscribe(function (isReady) {
                     registry.get({index: 'buttonSubmit'}, function (button) {
@@ -42,23 +48,28 @@ define([
 
             /** @inheritdoc */
             initObservable: function () {
-                this._super().observe(['activeFieldset']);
+                this._super().observe(['activeFieldset', 'availableItems', 'selectedItems']);
 
                 return this;
             },
 
-            handleItemSelectChange: function(items) {
+            /**
+             * Whenever the selected Packing Items change, check which actions are available and calculate the current
+             * total shipment weight.
+             *
+             * @param {int[]} items
+             */
+            handleItemSelectChange: function (items) {
                 this.toggleReadyState(items);
                 this.calculatePackageWeight();
             },
 
             /**
-             * Update the package total weight input value
-             * with data from the selected shipment items.
+             * Update the package total weight input value with data from the selected shipment items.
              *
              * @private
              */
-            calculatePackageWeight: function() {
+            calculatePackageWeight: function () {
                 registry.get({index: 'total_weight'}, function (totalWeightComponent) {
                     let weightComponents = registry.filter({dhlType: 'dhl_item_weight'});
                     let newWeight = 0.0;
@@ -76,20 +87,20 @@ define([
             },
 
             /**
-             * Set or unset shipmentData.readyForSubmit depending on wheter all orderItems are selected.
+             * Set or unset shipmentData.readyForSubmit and readyForReset depending on wheter all or no orderItems are
+             * selected.
              *
              * @private
              * @param {string[]} selection Array of currently selected itemOrderIds
              */
-            toggleReadyState: function(selection)
-            {
-                let remainingItems = availableItems.get()().length;
+            toggleReadyState: function (selection) {
+                let remainingItems = this.availableItems().length;
                 shipmentData.setReadyForSubmit(selection.length > 0 && selection.length === remainingItems);
                 shipmentData.setReadyForReset(selection.length > 0 && selection.length < remainingItems);
             },
 
             /**
-             * Action target of "Next" buttons
+             * Action target of "Next" buttons.
              *
              * @public
              * @param {string} fieldset
@@ -102,7 +113,6 @@ define([
              * Hide loader.
              *
              * Overriden to get around obtuse spinner naming problem with the parent class.
-             * @TODO: Figure out how this Component needs to be configured to work automatically.
              *
              * @protected
              * @returns {Object}
@@ -114,17 +124,30 @@ define([
             },
 
             /**
-             * Remove all previously selected order items from the form before resetting
+             * Recalculate the available Packing Items, select all remaining items on reset.
              *
              * @protected
              */
             reset: function () {
-                let remainingItems = availableItems.get()().filter(function(item) {
-                    return this.selectedItems.indexOf(item.value) === -1;
-                });
-                availableItems.set(remainingItems);
-
+                let remainingItems = _.difference(this.availableItems(), this.selectedItems());
+                this.availableItems(remainingItems);
+                this.selectedItems(remainingItems);
                 this._super();
+            },
+
+            /**
+             * The available Packing items have changed.
+             *
+             * @param {int[]} availableItems
+             */
+            handleAvailableItemsChange: function (availableItems) {
+                if (!_.isEmpty(this.itemNames)) {
+                    rebuildPackingItemsAction(
+                        availableItems,
+                        this.name + '.dhl_fieldset_items',
+                        this.itemNames
+                    );
+                }
             }
         });
     }
