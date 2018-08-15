@@ -5,7 +5,6 @@
             <item name="provider" xsi:type="string">dhl_packaging_popup.dhl_packaging_popup_data_source</item>
             <item name="deps" xsi:type="string">dhl_packaging_popup.dhl_packaging_popup_data_source</item>
         </item>
-        <item name="label" xsi:type="string" translate="true">Sample Form</item>
         <item name="spinner" xsi:type="string">dhl_packaging_popup_spinner</item>
     </argument>
 
@@ -39,7 +38,7 @@
     <fieldset name="dhl_fieldset_item_properties" component="Dhl_Ui/js/packaging/view/fieldset">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
-                <item name="label" xsi:type="string" translate="true">Item properties</item>
+                <item name="label" xsi:type="string" translate="true">Item Properties</item>
                 <item name="js_config" xsi:type="array">
                     <item name="visible" xsi:type="boolean">false</item>
                 </item>

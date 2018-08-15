@@ -114,7 +114,7 @@ define([
             /**
              * Hide loader.
              *
-             * Overriden to get around obtuse spinner naming problem with the parent class.
+             * Overridden to get around obtuse spinner naming problem with the parent class.
              *
              * @protected
              * @returns {Object}
@@ -126,7 +126,7 @@ define([
             },
 
             /**
-             * Recalculate the available Packing Items, select all remaining items on reset.
+             * On reset, recalculate the available Packing Items and select all remaining items.
              *
              * @protected
              */
@@ -134,6 +134,7 @@ define([
                 let remainingItems = _.difference(this.availableItems(), this.selectedItems());
                 this.availableItems(remainingItems);
                 this.selectedItems(remainingItems);
+
                 this._super();
             },
 

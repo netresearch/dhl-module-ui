@@ -55,10 +55,11 @@ class PackagingPopup extends AbstractDataProvider
         CoreConfigInterface $shippingCoreConfig,
         array $meta = [],
         array $data = []
-    ) {
+    )
+    {
         $this->registy = $registry;
         $this->shippingCoreConfig = $shippingCoreConfig;
-        
+
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
 
@@ -79,7 +80,6 @@ class PackagingPopup extends AbstractDataProvider
             ),
             'package' => array_merge_recursive(
                 $this->getPackageInputs(),
-                $this->getExportPackageInputs(),
                 $this->getNextButton('dhl_fieldset_services')
             ),
             'service' => array_merge_recursive(
@@ -133,53 +133,49 @@ class PackagingPopup extends AbstractDataProvider
         $result['components'][] = [
             'component' => 'Magento_Ui/js/form/element/abstract',
             'template' => 'ui/form/field',
-            'elementTmpl' => 'ui/form/element/select',
-            'label' => 'Type',
-            'options' => $this->getPackageTypes(),
-            'caption' => 'none',
-        ];
-        $result['components'][] = [
-            'component' => 'Magento_Ui/js/form/element/abstract',
-            'template' => 'ui/form/field',
             'name' => 'total_weight',
-            'label' => "Total Weight ($weightUnit)",
+            'label' => __('Total Weight') . " ($weightUnit)",
+            'notice' => __(
+                'Note that this is an estimation only. If the weight of your physical package differs, different rates may apply.'
+            ),
             'value' => $totalWeight,
         ];
         $result['components'][] = [
             'component' => 'Magento_Ui/js/form/element/abstract',
             'template' => 'ui/form/field',
-            'label' => 'Width',
+            'elementTmpl' => 'ui/form/element/select',
+            'label' => __('Type'),
+            'options' => $this->getPackageTypes(),
+            'tooltip' => [
+                'description' => __('You can manage your package types in the shipping method configuration section.')],
+            'caption' => __('Please select'),
         ];
         $result['components'][] = [
             'component' => 'Magento_Ui/js/form/element/abstract',
             'template' => 'ui/form/field',
-            'label' => 'Height',
+            'label' => __('Width'),
         ];
         $result['components'][] = [
             'component' => 'Magento_Ui/js/form/element/abstract',
             'template' => 'ui/form/field',
-            'label' => 'Depth',
+            'label' => __('Height'),
+        ];
+        $result['components'][] = [
+            'component' => 'Magento_Ui/js/form/element/abstract',
+            'template' => 'ui/form/field',
+            'label' => __('Depth'),
         ];
         $result['components'][] = [
             'component' => 'Magento_Ui/js/form/element/abstract',
             'template' => 'ui/form/field',
             'elementTmpl' => 'ui/form/element/select',
-            'label' => 'Dimension Unit',
+            'label' => __('Dimension Unit'),
             'options' => $this->getDimensionUnits(),
-            'caption' => 'Please select',
+            'caption' => __('Please select'),
             'value' => $this->getDimensionUnits()[0]['value']
         ];
 
         return $result;
-    }
-
-    /**
-     * @return mixed[]
-     */
-    private function getExportPackageInputs(): array
-    {
-        /** @TODO: use provider classes for input retrieval */
-        return [];
     }
 
     /**
@@ -192,12 +188,13 @@ class PackagingPopup extends AbstractDataProvider
         foreach ($this->getItems() as $item) {
             $options[] = [
                 'value' => $item->getOrderItemId(),
-                'label' => $item->getName() . ' (Qty: ' . $item->getQty() . ')',
+                'label' => $item->getName() . ' (' . __('Qty') . ': ' . $item->getQty() . ')',
             ];
         }
         $result['components'][] = [
             'nodeTemplate' => 'dhl_packaging_popup.dhl_packaging_popup.dhl_items_checkbox_set',
             'options' => $options,
+            'notice' => __('Select which items to combine into one package. If you don\'t select all, you will have to configure another package next.'),
         ];
 
         return $result;
@@ -229,10 +226,7 @@ class PackagingPopup extends AbstractDataProvider
     {
         $result = [];
         foreach ($this->getItems() as $item) {
-            $result['item' . $item->getOrderItemId()]['components'] = array_merge(
-                $this->getItemPropertyInputs($item),
-                $this->getExportItemInputs($item)
-            );
+            $result['item' . $item->getOrderItemId()]['components'] = $this->getItemPropertyInputs($item);
         }
 
         return $result;
@@ -249,14 +243,14 @@ class PackagingPopup extends AbstractDataProvider
         $result[] = [
             'nodeTemplate' => 'dhl_packaging_popup.dhl_packaging_popup.dhl_item_field',
             'name' => 'dhl_item_weight',
-            'label' => "Weight ($weightUnit)",
+            'label' => __('Weight') . " ($weightUnit)",
             'value' => $item->getWeight() ?? 0.0,
             'disabled' => true,
         ];
         $result[] = [
             'nodeTemplate' => 'dhl_packaging_popup.dhl_packaging_popup.dhl_item_field',
             'name' => 'dhl_item_qty',
-            'label' => 'Qty ordered',
+            'label' => __('Qty ordered'),
             'value' => $item->getQty(),
             'disabled' => true,
         ];
@@ -266,7 +260,7 @@ class PackagingPopup extends AbstractDataProvider
             'elementTmpl' => 'ui/form/element/textarea',
             'cols' => 5,
             'rows' => 60,
-            'label' => 'Description',
+            'label' => __('Description'),
             'value' => $item->getDescription() ?: $item->getName(),
         ];
 
@@ -280,20 +274,10 @@ class PackagingPopup extends AbstractDataProvider
     {
         $items = [];
         foreach ($this->getItems() as $item) {
-            $items[$item->getOrderItemId()] = $item->getName() . ' (Qty: ' . $item->getQty() . ')';
+            $items[$item->getOrderItemId()] = $item->getName() . ' (' . __('Qty') . ': ' . $item->getQty() . ')';
         }
 
         return $items;
-    }
-
-    /**
-     * @param Order\Shipment\Item $item
-     * @return mixed[]
-     */
-    private function getExportItemInputs(Order\Shipment\Item $item): array
-    {
-        /** @TODO: use provider classes for input retrieval */
-        return [];
     }
 
     /**
@@ -365,7 +349,7 @@ class PackagingPopup extends AbstractDataProvider
         $result['components'][] = [
             'component' => 'Magento_Ui/js/form/components/button',
             'name' => 'buttonSubmit',
-            'title' => 'Create Shipment & Label',
+            'title' => __('Create Shipment & Label'),
             'buttonClasses' => 'primary',
             'actions' => [
                 [
@@ -386,13 +370,13 @@ class PackagingPopup extends AbstractDataProvider
         $result['components'][] = [
             'component' => 'Magento_Ui/js/form/components/button',
             'name' => 'buttonReset',
-            'title' => 'Configure another package',
+            'title' => __('Configure Another Package'),
             'disabled' => true,
             'actions' => [
                 [
                     'targetName' => 'dhl_packaging_popup.dhl_packaging_popup',
                     'actionName' => 'setActiveFieldset',
-                    'params'     => ['dhl_fieldset_items'],
+                    'params' => ['dhl_fieldset_items'],
                 ],
                 [
                     'targetName' => 'dhl_packaging_popup.dhl_packaging_popup',
