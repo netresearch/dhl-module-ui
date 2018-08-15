@@ -27,7 +27,6 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">Packing Items</item>
-                <item name="dhlType" xsi:type="string" translate="true">dhl_fieldset</item>
             </item>
         </argument>
         <settings>
@@ -41,7 +40,6 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">Item properties</item>
-                <item name="dhlType" xsi:type="string" translate="true">dhl_fieldset</item>
                 <item name="js_config" xsi:type="array">
                     <item name="visible" xsi:type="boolean">false</item>
                 </item>
@@ -58,7 +56,6 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">Package</item>
-                <item name="dhlType" xsi:type="string" translate="true">dhl_fieldset</item>
             </item>
         </argument>
         <settings>
@@ -72,7 +69,6 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">Value-Added Features</item>
-                <item name="dhlType" xsi:type="string" translate="true">dhl_fieldset</item>
             </item>
         </argument>
         <settings>
@@ -85,7 +81,6 @@
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
                 <item name="label" xsi:type="string" translate="true">Package Summary</item>
-                <item name="dhlType" xsi:type="string" translate="true">dhl_fieldset</item>
             </item>
         </argument>
         <settings>
@@ -94,4 +89,59 @@
             <opened>false</opened>
         </settings>
     </fieldset>
+
+    <!-- Templates that are used dynamically by the packaging popup. -->
+
+    <!-- Button for fieldset navigation. Uses the setActiveFieldset method of the controller.
+         Configure navigation target with nextFieldsetName property. -->
+    <button name="dhl_button_next">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="isTemplate" xsi:type="boolean">true</item>
+                <item name="title" xsi:type="string" translate="true">Next</item>
+                <item name="buttonClasses" xsi:type="string">primary</item>
+                <item name="actions" xsi:type="array">
+                    <item name="0" xsi:type="array">
+                        <item name="targetName" xsi:type="string">dhl_packaging_popup.dhl_packaging_popup</item>
+                        <item name="actionName" xsi:type="string">setActiveFieldset</item>
+                        <item name="params" xsi:type="array">
+                            <item name="0" xsi:type="string">${ $.nextFieldsetName }</item>
+                        </item>
+                    </item>
+                </item>
+            </item>
+        </argument>
+    </button>
+    <!-- Main packing items selection checkboc set. Receives options from runtime configuration. -->
+    <component name="dhl_items_checkbox_set">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="isTemplate" xsi:type="boolean">true</item>
+                <item name="component" xsi:type="string">Magento_Ui/js/form/element/checkbox-set</item>
+                <item name="name" xsi:type="string">dhl_order_items</item>
+                <item name="label" xsi:type="string" translate="true">Order Items</item>
+                <item name="multiple" xsi:type="boolean">true</item>
+                <item name="links" xsi:type="array">
+                    <item name="value" xsi:type="string">${ $.provider }:data.selected_items</item>
+                </item>
+            </item>
+        </argument>
+    </component>
+    <!-- Generic form input linked to an order item. Imports item Id from parent. -->
+    <component name="dhl_item_field">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="isTemplate" xsi:type="boolean">true</item>
+                <item name="component" xsi:type="string">Magento_Ui/js/form/element/abstract</item>
+                <item name="template" xsi:type="string">ui/form/field</item>
+                <item name="links" xsi:type="array">
+                    <!-- Remove default value link to datasource. Workaround. -->
+                    <item name="value" xsi:type="string"/>
+                </item>
+                <item name="imports" xsi:type="array">
+                    <item name="orderItemId" xsi:type="string">${ $.parent }:orderItemId</item>
+                </item>
+            </item>
+        </argument>
+    </component>
 </listing>

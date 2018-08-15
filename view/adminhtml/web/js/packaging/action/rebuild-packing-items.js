@@ -42,11 +42,14 @@ define([
         removeItems(parentName);
 
         let checkboxSet = {
-            nodeTemplate: parentName + '.dhl_order_items',
+            nodeTemplate: 'dhl_packaging_popup.dhl_packaging_popup.dhl_items_checkbox_set',
+            parent: parentName,
             options: buildOptions(items, itemNames),
         };
         let button = {
-            nodeTemplate: parentName + '.buttonNext',
+            nodeTemplate: 'dhl_packaging_popup.dhl_packaging_popup.dhl_button_next',
+            parent: parentName,
+            nextFieldsetName: 'dhl_fieldset_item_properties',
         };
 
         layout([checkboxSet, button]);

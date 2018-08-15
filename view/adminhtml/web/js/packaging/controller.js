@@ -74,7 +74,7 @@ define([
                 registry.get({index: 'total_weight'}, function (totalWeightComponent) {
                     /** Get the weight components for items that are selected. */
                     let weightComponents = registry.filter(function (component) {
-                        let isItemWeightComponent = component.dhlType === 'dhl_item_weight';
+                        let isItemWeightComponent = component.index === 'dhl_item_weight';
                         let isActive = itemIds.includes(component.orderItemId);
 
                         return isItemWeightComponent && isActive;
