@@ -57,30 +57,32 @@ define([
              * Whenever the selected Packing Items change, check which actions are available and calculate the current
              * total shipment weight.
              *
-             * @param {int[]} items
+             * @param {string[]} items
              */
             handleItemSelectChange: function (items) {
                 this.toggleReadyState(items);
-                this.calculatePackageWeight();
+                this.calculatePackageWeight(items);
             },
 
             /**
              * Update the package total weight input value with data from the selected shipment items.
              *
+             * @param {string[]} itemIds
              * @private
              */
-            calculatePackageWeight: function () {
+            calculatePackageWeight: function (itemIds) {
                 registry.get({index: 'total_weight'}, function (totalWeightComponent) {
-                    let weightComponents = registry.filter({dhlType: 'dhl_item_weight'});
+                    /** Get the weight components for items that are selected. */
+                    let weightComponents = registry.filter(function (component) {
+                        let isItemWeightComponent = component.dhlType === 'dhl_item_weight';
+                        let isActive = itemIds.includes(component.orderItemId);
+
+                        return isItemWeightComponent && isActive;
+                    });
+                    /** Add up weight values of retrieved components. */
                     let newWeight = 0.0;
                     weightComponents.forEach(function (component) {
-                        let parent = registry.get({name: component.parent});
-                        if (parent.visible()) {
-                            let itemWeight = parseFloat(component.value.peek());
-                            if (itemWeight) {
-                                newWeight += itemWeight;
-                            }
-                        }
+                        newWeight += parseFloat(component.value.peek());
                     });
                     totalWeightComponent.value(newWeight);
                 });
@@ -138,7 +140,7 @@ define([
             /**
              * The available Packing items have changed.
              *
-             * @param {int[]} availableItems
+             * @param {string[]} availableItems
              */
             handleAvailableItemsChange: function (availableItems) {
                 if (!_.isEmpty(this.itemNames)) {

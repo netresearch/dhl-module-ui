@@ -6,6 +6,7 @@ declare(strict_types=1);
 
 namespace Dhl\Ui\DataProvider;
 
+use Dhl\ShippingCore\Model\Config\CoreConfigInterface;
 use Magento\Framework\Registry;
 use Magento\Sales\Model\Order;
 use Magento\Ui\DataProvider\AbstractDataProvider;
@@ -26,6 +27,11 @@ class PackagingPopup extends AbstractDataProvider
     private $registy;
 
     /**
+     * @var CoreConfigInterface
+     */
+    private $shippingCoreConfig;
+
+    /**
      * @var Order\Shipment\Item[]
      */
     private $items;
@@ -37,6 +43,7 @@ class PackagingPopup extends AbstractDataProvider
      * @param string $primaryFieldName
      * @param string $requestFieldName
      * @param Registry $registry
+     * @param CoreConfigInterface $shippingCoreConfig
      * @param array $meta
      * @param array $data
      */
@@ -45,11 +52,13 @@ class PackagingPopup extends AbstractDataProvider
         string $primaryFieldName,
         string $requestFieldName,
         Registry $registry,
+        CoreConfigInterface $shippingCoreConfig,
         array $meta = [],
         array $data = []
     ) {
         $this->registy = $registry;
-
+        $this->shippingCoreConfig = $shippingCoreConfig;
+        
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
 
@@ -120,6 +129,7 @@ class PackagingPopup extends AbstractDataProvider
         $totalWeight = array_reduce($this->getItems(), function (?float $carry, Order\Shipment\Item $item) {
             return $carry + $item->getWeight();
         });
+        $weightUnit = $this->shippingCoreConfig->getWeightUnit($this->getItems()[0]->getShipment()->getStoreId());
         $result['components'][] = [
             'component' => 'Magento_Ui/js/form/element/abstract',
             'template' => 'ui/form/field',
@@ -132,17 +142,8 @@ class PackagingPopup extends AbstractDataProvider
             'component' => 'Magento_Ui/js/form/element/abstract',
             'template' => 'ui/form/field',
             'name' => 'total_weight',
-            'label' => 'Total Weight',
+            'label' => "Total Weight ($weightUnit)",
             'value' => $totalWeight,
-        ];
-        $result['components'][] = [
-            'component' => 'Magento_Ui/js/form/element/abstract',
-            'template' => 'ui/form/field',
-            'elementTmpl' => 'ui/form/element/select',
-            'label' => 'Weight Unit',
-            'options' => $this->getWeightUnits(),
-            'caption' => 'Please select',
-            'value' => $this->getWeightUnits()[0]['value']
         ];
         $result['components'][] = [
             'component' => 'Magento_Ui/js/form/element/abstract',
@@ -224,7 +225,7 @@ class PackagingPopup extends AbstractDataProvider
                 'component' => 'Dhl_Ui/js/packaging/view/item-properties-fieldset',
                 'label' => $item->getName(),
                 'dhlType' => 'dhl_item_properties_container',
-                'orderItemId' => (string)$item->getOrderItemId(),
+                'orderItemId' => $item->getOrderItemId(),
                 'provider' => 'dhl_packaging_popup.dhl_packaging_popup_data_source',
                 'dataScope' => 'item' . $item->getOrderItemId(),
                 'dataScopeSelectedItems' => 'data.selected_items',
@@ -255,14 +256,18 @@ class PackagingPopup extends AbstractDataProvider
      */
     private function getItemPropertyInputs(Order\Shipment\Item $item): array
     {
+        $weightUnit = $this->shippingCoreConfig->getWeightUnit($item->getShipment()->getStoreId());
         $result = [];
         $result[] = [
             'component' => 'Magento_Ui/js/form/element/abstract',
             'template' => 'ui/form/field',
-            'label' => 'Weight',
+            'label' => "Weight ($weightUnit)",
             'dhlType' => 'dhl_item_weight',
-            'value' => $item->getWeight(),
+            'value' => $item->getWeight() ?? 0.0,
             'disabled' => true,
+            'imports' => [
+                'orderItemId' => '${ $.parent }:orderItemId',
+            ]
         ];
         $result[] = [
             'component' => 'Magento_Ui/js/form/element/abstract',
@@ -270,6 +275,9 @@ class PackagingPopup extends AbstractDataProvider
             'label' => 'Qty ordered',
             'value' => $item->getQty(),
             'disabled' => true,
+            'imports' => [
+                'orderItemId' => '${ $.parent }:orderItemId',
+            ]
         ];
         $result[] = [
             'component' => 'Magento_Ui/js/form/element/abstract',
@@ -279,6 +287,9 @@ class PackagingPopup extends AbstractDataProvider
             'rows' => 60,
             'label' => 'Description',
             'value' => $item->getDescription(),
+            'imports' => [
+                'orderItemId' => '${ $.parent }:orderItemId',
+            ]
         ];
 
         return $result;
@@ -333,23 +344,6 @@ class PackagingPopup extends AbstractDataProvider
             [
                 'label' => 'type 2',
                 'value' => 'type 2',
-            ],
-        ];
-    }
-
-    /**
-     * @return string[][]
-     */
-    private function getWeightUnits(): array
-    {
-        return [
-            [
-                'label' => 'kg',
-                'value' => 'KILOGRAM',
-            ],
-            [
-                'label' => 'lb',
-                'value' => 'POUND',
             ],
         ];
     }
