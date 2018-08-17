@@ -55,8 +55,7 @@ class PackagingPopup extends AbstractDataProvider
         CoreConfigInterface $shippingCoreConfig,
         array $meta = [],
         array $data = []
-    )
-    {
+    ) {
         $this->registy = $registry;
         $this->shippingCoreConfig = $shippingCoreConfig;
 
@@ -80,6 +79,10 @@ class PackagingPopup extends AbstractDataProvider
             ),
             'package' => array_merge_recursive(
                 $this->getPackageInputs(),
+                $this->getNextButton('dhl_fieldset_package_customs')
+            ),
+            'customs' => array_merge_recursive(
+                [],
                 $this->getNextButton('dhl_fieldset_services')
             ),
             'service' => array_merge_recursive(
@@ -87,8 +90,7 @@ class PackagingPopup extends AbstractDataProvider
                 $this->getNextButton('dhl_fieldset_summary')
             ),
             'summary' => array_merge_recursive(
-                $this->getNewPackageButton(),
-                $this->getSubmitButton()
+                []
             ),
             'available_items' => array_map(
                 function ($item) {
@@ -116,8 +118,14 @@ class PackagingPopup extends AbstractDataProvider
      */
     private function getServiceInputs(): array
     {
-        /** @TODO: use provider classes for input retrieval */
-        return [];
+        $result['components'][] = [
+            'component' => 'Magento_Ui/js/form/element/abstract',
+            'template' => 'ui/form/field',
+            'elementTmpl' => 'ui/form/element/switcher',
+            'label' => __('Insurance'),
+            'value' => true,
+        ];
+        return $result;
     }
 
     /**
@@ -336,53 +344,6 @@ class PackagingPopup extends AbstractDataProvider
         $result['components'][] = [
             'nodeTemplate' => 'dhl_packaging_popup.dhl_packaging_popup.dhl_button_next',
             'nextFieldsetName' => $nextFieldsetName,
-        ];
-
-        return $result;
-    }
-
-    /**
-     * @return mixed[][]
-     */
-    private function getSubmitButton(): array
-    {
-        $result['components'][] = [
-            'component' => 'Magento_Ui/js/form/components/button',
-            'name' => 'buttonSubmit',
-            'title' => __('Create Shipment & Label'),
-            'buttonClasses' => 'primary',
-            'actions' => [
-                [
-                    'targetName' => 'dhl_packaging_popup.dhl_packaging_popup',
-                    'actionName' => 'submit',
-                ]
-            ]
-        ];
-
-        return $result;
-    }
-
-    /**
-     * @return mixed[][]
-     */
-    private function getNewPackageButton(): array
-    {
-        $result['components'][] = [
-            'component' => 'Magento_Ui/js/form/components/button',
-            'name' => 'buttonReset',
-            'title' => __('Configure Another Package'),
-            'disabled' => true,
-            'actions' => [
-                [
-                    'targetName' => 'dhl_packaging_popup.dhl_packaging_popup',
-                    'actionName' => 'setActiveFieldset',
-                    'params' => ['dhl_fieldset_items'],
-                ],
-                [
-                    'targetName' => 'dhl_packaging_popup.dhl_packaging_popup',
-                    'actionName' => 'reset',
-                ]
-            ]
         ];
 
         return $result;

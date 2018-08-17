@@ -35,12 +35,12 @@ define([
                 this._super();
 
                 shipmentData.isReadyForSubmit().subscribe(function (isReady) {
-                    registry.get({index: 'buttonSubmit'}, function (button) {
+                    registry.get({index: 'dhl_button_submit'}, function (button) {
                         button.disabled(!isReady);
                     });
                 });
                 shipmentData.isReadyForReset().subscribe(function (isReady) {
-                    registry.get({index: 'buttonReset'}, function (button) {
+                    registry.get({index: 'dhl_button_new_package'}, function (button) {
                         button.disabled(!isReady);
                     });
                 });

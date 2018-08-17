@@ -54,11 +54,24 @@
     <fieldset name="dhl_fieldset_package" component="Dhl_Ui/js/packaging/view/fieldset">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
-                <item name="label" xsi:type="string" translate="true">Package</item>
+                <item name="label" xsi:type="string" translate="true">Package Details</item>
             </item>
         </argument>
         <settings>
             <dataScope>data.package</dataScope>
+            <collapsible>true</collapsible>
+            <opened>false</opened>
+        </settings>
+    </fieldset>
+
+    <fieldset name="dhl_fieldset_package_customs" component="Dhl_Ui/js/packaging/view/fieldset">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="label" xsi:type="string" translate="true">Customs Information</item>
+            </item>
+        </argument>
+        <settings>
+            <dataScope>data.customs</dataScope>
             <collapsible>true</collapsible>
             <opened>false</opened>
         </settings>
@@ -76,6 +89,7 @@
             <opened>false</opened>
         </settings>
     </fieldset>
+
     <fieldset name="dhl_fieldset_summary" component="Dhl_Ui/js/packaging/view/fieldset">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
@@ -87,6 +101,35 @@
             <collapsible>true</collapsible>
             <opened>false</opened>
         </settings>
+        <button name="dhl_button_new_package">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="title" xsi:type="string" translate="true">Configure Another Package</item>
+                    <item name="buttonClasses" xsi:type="string">action-default</item>
+                    <item name="disabled" xsi:type="boolean">true</item>
+                    <item name="actions" xsi:type="array">
+                        <item name="0" xsi:type="array">
+                            <item name="targetName" xsi:type="string">dhl_packaging_popup.dhl_packaging_popup</item>
+                            <item name="actionName" xsi:type="string">reset</item>
+                        </item>
+                    </item>
+                </item>
+            </argument>
+        </button>
+        <button name="dhl_button_submit">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="title" xsi:type="string" translate="true">Create Shipment and Label</item>
+                    <item name="buttonClasses" xsi:type="string">action-default submit-button primary</item>
+                    <item name="actions" xsi:type="array">
+                        <item name="0" xsi:type="array">
+                            <item name="targetName" xsi:type="string">dhl_packaging_popup.dhl_packaging_popup</item>
+                            <item name="actionName" xsi:type="string">submit</item>
+                        </item>
+                    </item>
+                </item>
+            </argument>
+        </button>
     </fieldset>
 
     <!-- Templates that are used dynamically by the packaging popup. -->
