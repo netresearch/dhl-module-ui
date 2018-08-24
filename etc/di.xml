@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <type name="Dhl\Ui\Observer\ChangePackagingTemplateObserver">
+        <arguments>
+            <argument name="packagingPopup" xsi:type="object">Dhl\ShippingCore\Model\Support\PackagingPopup\Proxy</argument>
+            <argument name="coreRegistry" xsi:type="object">Magento\Framework\Registry\Proxy</argument>
+        </arguments>
+    </type>
+</config>
