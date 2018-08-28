@@ -23,7 +23,7 @@
         attr="'id': 'label_method_' + method.method_code + '_' + method.carrier_code"
     >
         <div text="method.method_title"/>
-        <div if="method.extension_attributes && method.extension_attributes.additional_info">
+        <div if="method.extension_attributes && method.extension_attributes.additional_info && method.extension_attributes.additional_info.delivery_date">
             <small data-bind="i18n: 'Expected delivery date:'"/>
             <small text="method.extension_attributes.additional_info.delivery_date"/>
         </div>
