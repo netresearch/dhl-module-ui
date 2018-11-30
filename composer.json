@@ -1,7 +1,8 @@
 {
     "name": "dhl/module-ui",
-    "description": "Module providing the UI integration for the DHL global webservices components",
+    "version": "0.1.0",
     "type": "magento2-module",
+    "description": "Module providing the UI integration for the DHL global webservices components",
     "license": "OSL-3.0",
     "authors": [
         {
@@ -18,7 +19,7 @@
         ]
     },
     "require": {
-        "dhl/module-shipping-core": "@dev",
+        "dhl/module-shipping-core": "^0.1.0",
         "magento/module-ui": "^101.1.0",
         "magento/module-checkout": "^100.3.0"
     }
