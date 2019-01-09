@@ -4,7 +4,87 @@ In general this module should only be required by the meta package.
 
 All functionality provided will be activated through the Dhl_ShippingCore module.
 
-###  Example Packaging Popup:
+## Features
+
+### Estimated delivery date in checkout
+
+Through additional data provided on a RateMethod these will be wrapped into an extension attribute 
+(see `Dhl\ShippingCore\Api\Data\MethodAdditionalInfoInterface` - the available data keys are listed in this interface).
+
+```php
+<?php
+
+$data = [Dhl\ShippingCore\Api\Data\MethodAdditionalInfoInterface::DELIVERY_DATE => 'Estimated delivery date'];
+
+/** @var Dhl\ShippingCore\Model\Method\AdditionalInfoFactory $additionalInfoFactory */
+$additionalInfo = $additionalInfoFactory->create([
+                        'data' => $data
+                    ]);
+
+
+$priceInBaseCurrency = 5.0;
+/** @var Magento\Quote\Model\Quote\Address\RateResult\MethodFactory $methodFactory */
+$method = $methodFactory->create(
+                [
+                    'data' => [
+                        'carrier' => 'my_carrier',
+                        'carrier_title' => 'Carrier Title',
+                        'method' => 'method_code',
+                        'method_title' => 'Method Title',
+                        'price' => $priceInBaseCurrency,
+                        'cost' => $priceInBaseCurrency,
+
+                        // Pass delivery date and carrier logo through specific 'additional_info' key
+                        Dhl\ShippingCore\Api\Data\MethodAdditionalInfoInterface::ATTRIBUTE_KEY => $additionalInfo
+                    ],
+                ]
+            );
+```
+
+This information will be used in {{Dhl\ShippingCore\Plugin\Quote\Cart\ShippingMethodConverterPlugin}} to get parsed into checkout as extension attributes
+
+Output via: {{view/frontend/web/template/checkout/shipping/custom-method-item-template.html}}
+
+### Carrier logo in checkout
+
+Through additional data provided on a RateMethod these will be wrapped into an extension attribute 
+(see `Dhl\ShippingCore\Api\Data\MethodAdditionalInfoInterface` - the available data keys are listed in this interface).
+
+```php
+<?php
+
+$data = [Dhl\ShippingCore\Api\Data\MethodAdditionalInfoInterface::CARRIER_LOGO_URL => 'LOGO URL'];
+
+/** @var Dhl\ShippingCore\Model\Method\AdditionalInfoFactory $additionalInfoFactory */
+$additionalInfo = $additionalInfoFactory->create([
+                        'data' => $data
+                    ]);
+
+
+$priceInBaseCurrency = 5.0;
+/** @var Magento\Quote\Model\Quote\Address\RateResult\MethodFactory $methodFactory */
+$method = $methodFactory->create(
+                [
+                    'data' => [
+                        'carrier' => 'my_carrier',
+                        'carrier_title' => 'Carrier Title',
+                        'method' => 'method_code',
+                        'method_title' => 'Method Title',
+                        'price' => $priceInBaseCurrency,
+                        'cost' => $priceInBaseCurrency,
+
+                        // Pass delivery date and carrier logo through specific 'additional_info' key
+                        Dhl\ShippingCore\Api\Data\MethodAdditionalInfoInterface::ATTRIBUTE_KEY => $additionalInfo
+                    ],
+                ]
+            );
+```
+
+This information will be used in {{Dhl\ShippingCore\Plugin\Quote\Cart\ShippingMethodConverterPlugin}} to get parsed into checkout as extension attributes
+
+Output via: {{view/frontend/web/template/checkout/shipping/custom-method-item-template.html}}
+
+### Packaging Popup replacement:
 
 Involved components:
 
