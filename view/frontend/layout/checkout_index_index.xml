@@ -12,7 +12,18 @@
                                             <item name="children" xsi:type="array">
                                                 <item name="shippingAddress" xsi:type="array">
                                                     <item name="config" xsi:type="array">
-                                                        <item name="shippingMethodItemTemplate" xsi:type="string">Dhl_Ui/checkout/shipping/custom-method-item-template</item>
+                                                        <item name="shippingMethodItemTemplate" xsi:type="string">Dhl_Ui/checkout/custom-method-item-template</item>
+                                                    </item>
+                                                    <item name="children" xsi:type="array">
+                                                        <item name="shippingAdditional" xsi:type="array">
+                                                            <item name="component" xsi:type="string">uiComponent</item>
+                                                            <item name="displayArea" xsi:type="string">shippingAdditional</item>
+                                                            <item name="children" xsi:type="array">
+                                                                <item name="shipping-settings-container" xsi:type="array">
+                                                                    <item name="component" xsi:type="string">Dhl_Ui/js/view/checkout/shipping-settings</item>
+                                                                </item>
+                                                            </item>
+                                                        </item>
                                                     </item>
                                                 </item>
                                             </item>
