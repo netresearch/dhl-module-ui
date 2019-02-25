@@ -1,4 +1,9 @@
-<div class="choice field">
+<style>
+    .field._error .dhl-checkbox {
+        color: #e02b27;
+    }
+</style>
+<div class="choice field dhl-checkbox">
     <input type="checkbox"
            class="checkbox"
            style="width: auto"
@@ -14,7 +19,8 @@
                 },
            hasFocus: focused">
 
-    <label class="label" data-bind="checked: value, attr: { for: uid }">
+    <label class="label"
+           data-bind="checked: value, attr: { for: uid }">
         <span data-bind="text: description || label"></span>
     </label>
 </div>

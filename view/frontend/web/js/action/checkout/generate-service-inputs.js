@@ -2,12 +2,12 @@ define([
     'underscore',
     'uiLayout',
     'Dhl_Ui/js/model/checkout/service/validation-map',
-    'Dhl_Ui/js/action/checkout/resolve-input-template'
+    'Dhl_Ui/js/action/service/resolve-input-template'
 ], function (_, layout, serviceValidationMap, resolveInputTemplate) {
     'use strict';
 
     /**
-     * @param {{validation_rules: {name: string, params: *[]}}} serviceInput
+     * @param {DhlInput} serviceInput
      */
     var buildValidationData = function (serviceInput) {
         var validationData = {};
@@ -24,25 +24,35 @@ define([
     };
 
     /**
-     * @var {object} service
+     * @var {DhlService} service
      * @var {string} parentName
      */
     return function (service, parentName) {
-        var serviceInputLayout = _.map(service.inputs, function (serviceInput) {
-            return {
-                parent: parentName,
-                serviceInput: serviceInput,
-                service: service,
-                component: 'Dhl_Ui/js/view/checkout/service-input',
-                inputType: serviceInput.input_type,
-                elementTmpl: resolveInputTemplate(serviceInput.input_type),
-                tooltip: serviceInput.tooltip ? {description: serviceInput.tooltip} : false,
-                comment: serviceInput.comment,
-                value: serviceInput.value,
-                validation: buildValidationData(serviceInput),
-            };
-
-        }, this);
+        var serviceInputLayout = _.map(
+            service.inputs,
+            /**
+             * @param {DhlInput} serviceInput
+             * @return {Object}
+             */
+            function (serviceInput) {
+                if (!service.enabled_for_checkout) {
+                    return;
+                }
+                return {
+                    parent: parentName,
+                    serviceInput: serviceInput,
+                    service: service,
+                    inputCode: serviceInput.code,
+                    component: 'Dhl_Ui/js/view/checkout/service-input',
+                    inputType: serviceInput.input_type,
+                    elementTmpl: resolveInputTemplate(serviceInput.input_type),
+                    tooltip: serviceInput.tooltip ? {description: serviceInput.tooltip} : false,
+                    comment: serviceInput.comment,
+                    value: serviceInput.default_value,
+                    validation: buildValidationData(serviceInput),
+                };
+            }
+        );
 
         layout(serviceInputLayout);
     }

@@ -12,5 +12,32 @@ define([
      * Save current DHL service selection against Magento REST API endpoint.
      */
     return function () {
+        var url, urlParams, serviceUrl, payload;
+        if (customer.isLoggedIn()) {
+            url = '/carts/mine/dhl/services/save';
+            urlParams = {};
+        } else {
+            url = '/guest-carts/:cartId/dhl/services/save';
+            urlParams = {
+                cartId: quote.getQuoteId()
+            };
+        }
+        payload = {
+            serviceSelection: [],
+        };
+        _.each(serviceSelection.get()(), function (value, key) {
+            payload.serviceSelection.push(
+                {
+                    attribute_code: key,
+                    value: value
+                }
+            );
+        });
+
+        serviceUrl = urlBuilder.createUrl(url, urlParams);
+        return storage.post(
+            serviceUrl,
+            JSON.stringify(payload)
+        );
     };
 });

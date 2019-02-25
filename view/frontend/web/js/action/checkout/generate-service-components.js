@@ -5,7 +5,7 @@ define([
     'use strict';
 
     /**
-     * @var {object[]} services
+     * @var {DhlService[]} services
      * @var {string} parentName
      */
     return function (services, parentName) {
@@ -14,6 +14,7 @@ define([
                 parent: parentName,
                 component: 'Dhl_Ui/js/view/checkout/service',
                 service: service,
+                serviceCode: service.code,
             };
         }, this);
 

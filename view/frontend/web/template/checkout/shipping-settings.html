@@ -20,8 +20,10 @@
                 <span data-bind="html: comment.content"/>
             </p>
         <!-- /ko -->
-        <!-- ko if: error()-->
+        <!-- ko if: errors()-->
+            <!-- ko foreach: { data: errors, as: 'error' } -->
             <label class="message error" text="error"/>
+            <!-- /ko -->
         <!-- /ko -->
     </fieldset>
 </div>

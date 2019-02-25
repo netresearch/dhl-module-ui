@@ -3,21 +3,93 @@ define([
 ], function (ko) {
     'use strict';
 
+    /**
+     * @callback DhlShippingSettingsObservable
+     * @param {DhlShippingSettings} [value]
+     * @return {DhlShippingSettings}
+     */
+
+    /**
+     * @var {DhlShippingSettingsObservable} checkoutData
+     */
     var checkoutData = ko.observable({});
 
     /**
-     * @type {Object}
+     * Here come the type definitions of the DhlShippingSettings coming from the Magento REST endpoint.
+     * They are defined in PHP at Dhl\ShippingCore\Api\Data\Checkout\CheckoutDataInterface
+     *
+     * @typedef {{carriers: DhlCarrier[]}} DhlShippingSettings
      */
+
+    /**
+     * @typedef {{
+     *     carrier_code: string,
+     *     service_compatibility_data: DhlCompatibility[],
+     *     service_data: DhlService[],
+     *     service_metadata: {
+     *         comments_after: DhlComment,
+     *         comments_before: DhlComment,
+     *         image_url: string,
+     *         title: string,
+     *     }
+     * }} DhlCarrier
+     */
+
+    /**
+     * @typedef {{
+     *     incompatibility_rule: boolean,
+     *     subjects: string[],
+     *     error_message: string,
+     * }} DhlCompatibility
+     */
+
+    /**
+     * @typedef {{
+     *     available_at_postal_facility: boolean,
+     *     code: string,
+     *     enabled_for_autocreate: boolean,
+     *     enabled_for_checkout: boolean,
+     *     enabled_for_packaging: boolean,
+     *     inputs: DhlInput[],
+     *     label: string,
+     *     packaging_readonly: boolean,
+     *     routes: {string},
+     *     sort_order: int,
+     * }} DhlService
+     */
+
+     /**
+     * @typedef {{
+     *     code: string,
+     *     comment: DhlComment,
+     *     default_value: *,
+     *     input_type: string,
+     *     label: string,
+     *     options: {label: string, value: string, disabled: boolean}
+     *     placeholder: string,
+     *     sort_order: int,
+     *     tooltip: string,
+     *     validation_rules: {name: string, params: string[]}[],
+     * }} DhlInput
+     */
+
+    /**
+     * @typedef {{
+     *     content: string,
+     *     footnote: boolean,
+     * }} DhlComment
+     */
+
     return {
         /**
-         * @return {Observable}
+         * @return {DhlShippingSettingsObservable}
          */
         get: function () {
             return checkoutData;
         },
 
         /**
-         * @param {Observable} data
+         * @param {DhlShippingSettings} data
          */
         set: function (data) {
             checkoutData(data)
@@ -25,7 +97,7 @@ define([
 
         /**
          * @param {string} carrierName
-         * @return {object|false}
+         * @return {DhlCarrier|boolean}
          */
         getByCarrier: function (carrierName) {
             if ('carriers' in checkoutData() === false) {

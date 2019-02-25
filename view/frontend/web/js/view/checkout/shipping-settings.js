@@ -13,7 +13,7 @@ define([
     return UiCollection.extend({
         defaults: {
             template: 'Dhl_Ui/checkout/shipping-settings',
-            error: '',
+            errors: [],
             image: '',
             title: '',
             commentsBefore: [],
@@ -23,7 +23,7 @@ define([
 
         initObservable: function () {
             this._super();
-            this.observe('services error image title commentsBefore commentsAfter visible');
+            this.observe('services errors image title commentsBefore commentsAfter visible');
 
             return this;
         },
@@ -42,25 +42,6 @@ define([
         },
 
         /**
-         * Initiates validation of its' children components.
-         *
-         * @returns {Array} An array of validation results.
-         */
-        validate: function () {
-            var elems;
-
-            this.allValid = true;
-
-            elems = this.elems.sortBy(function (elem) {
-                return !elem.active();
-            });
-
-            elems = elems.map(this._validate, this);
-
-            return _.flatten(elems);
-        },
-
-        /**
          * @private
          */
         refresh: function () {
@@ -68,6 +49,9 @@ define([
             if (!shippingMethod) {
                 return;
             }
+            /**
+             * @type {DhlCarrier}
+             */
             var carrierData = checkoutData.getByCarrier(shippingMethod.carrier_code);
             if (!carrierData) {
                 this.visible(false);

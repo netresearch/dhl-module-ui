@@ -5,12 +5,20 @@ define([
 ], function (_, ko, storage) {
     'use strict';
 
+    /**
+     * @callback DhlServiceSelectionObservable
+     * @param {*[][]} [value]
+     * @return {*[][]}
+     */
+
+    /**
+     * @property DhlServiceSelectionObservable
+     */
     var services = storage.get('cachedServiceValues') ? ko.observable(storage.get('cachedServiceValues')) : ko.observable({});
 
     return {
-
         /**
-         * @return {Observable}
+         * @return {DhlServiceSelectionObservable}
          */
         get: function () {
             return services;
@@ -18,12 +26,18 @@ define([
 
         /**
          * @param {string} name
-         * @param {string} code
-         * @return {*|undefined} Service input value or null if service not found
+         * @param {string|null} code
+         * @return {*|undefined} Service input value(s) or null if service not found
          */
         getServiceValue: function (name, code) {
-            if (name in services() && code in services()[name]) {
-                return services()[name][code]
+            if (name in services()) {
+                var service = services()[name];
+                if (!code) {
+                    return service;
+                }
+                if (code in service) {
+                    return service[code]
+                }
             }
 
             return null;
@@ -50,7 +64,6 @@ define([
          */
         removeService: function (name, code) {
             var workingCopy = services();
-            console.log(workingCopy);
             delete workingCopy[name][code];
             if (_.isEmpty(workingCopy[name])) {
                 delete workingCopy[name];

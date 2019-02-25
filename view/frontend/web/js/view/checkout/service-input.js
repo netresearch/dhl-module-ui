@@ -4,12 +4,27 @@ define([
 ], function (Component, serviceSelections) {
     'use strict';
 
+
     return Component.extend({
+        /**
+         * @property {DhlService} service
+         */
+        service: {},
+
+        /**
+         * @property {DhlInput} serviceInput
+         */
+        serviceInput: {},
+
+        /**
+         * @property {DhlComment} comment
+         */
+        comment: {},
+
+
         defaults: {
             template: 'Dhl_Ui/checkout/form/field',
-            serviceInput: {},
-            service: {},
-            comment: {},
+            inputCode: '',
             elementTmpl: '',
             value: '',
             label: '${ $.serviceInput.label }',

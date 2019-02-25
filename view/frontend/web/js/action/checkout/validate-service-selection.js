@@ -1,41 +1,25 @@
 define([
     'underscore',
     'uiRegistry',
-    'Dhl_Ui/js/action/checkout/validate-service-compatibility',
-], function (_, registry, validateServiceCompatibility) {
+], function (_, registry) {
     'use strict';
 
     /**
      * Trigger built in form input component validation of service inputs.
      *
-     * @return {boolean}
-     */
-    var validateValues = function () {
-        var shippingSettings = registry.get({component: 'Dhl_Ui/js/view/checkout/shipping-settings'}),
-            result = true;
-
-        debugger;
-        return shippingSettings.validate();
-        // _.each(inputs, function (input) {
-        //     var validationResult = input.validate();
-        //     if (!validationResult.valid) {
-        //         result = false;
-        //     }
-        // });
-
-        return result;
-    };
-
-    /**
-     * Run uiComponent validators for DHL Service components and
-     * return the composite validation result.
-     *
      * @return {bool}
      */
     return function () {
-        var compatibilityValid = validateServiceCompatibility();
-        var valuesValid = validateValues();
+        var inputs = registry.filter({component: 'Dhl_Ui/js/view/checkout/service-input'}),
+            result = true;
 
-        return compatibilityValid && valuesValid;
+        _.each(inputs, function (input) {
+            var validationResult = input.validate();
+            if (!validationResult.valid) {
+                result = false;
+            }
+        });
+
+        return result;
     };
 });
