@@ -23,8 +23,10 @@ define([
     var templates = {
         text: 'ui/form/element/input',
         checkbox: 'Dhl_Ui/checkout/form/element/checkbox',
-        time: 'Dhl_Ui/checkout/form/element/radio',
-        date: 'Dhl_Ui/checkout/form/element/radio'
+        radio: 'Dhl_Ui/checkout/form/element/radio',
+        radioset: 'Dhl_Ui/checkout/form/element/radio',
+        time: 'Dhl_Ui/checkout/form/element/radio-styled',
+        date: 'Dhl_Ui/checkout/form/element/radio-styled'
     };
 
     /**
