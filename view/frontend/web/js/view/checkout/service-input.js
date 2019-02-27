@@ -1,7 +1,8 @@
 define([
     'Magento_Ui/js/form/element/abstract',
     'Dhl_Ui/js/model/checkout/service/service-selections',
-], function (Component, serviceSelections) {
+    'Dhl_Ui/js/model/checkout/footnotes',
+], function (Component, serviceSelections, footnotes) {
     'use strict';
 
 
@@ -28,6 +29,7 @@ define([
             elementTmpl: '',
             value: '',
             label: '${ $.serviceInput.label }',
+            labelVisible: '${ $.serviceInput.label_visible }',
             description: '${ $.serviceInput.label }',
             inputName: '${ $.serviceInput.code }',
             autocomplete: '${ $.serviceInput.code }',
@@ -58,9 +60,18 @@ define([
                         this.serviceInput.code
                     );
                 }
-                //enforceCompatibility();
-                //validateCompatibility();
             }, this);
         },
+
+        /**
+         * @param {DhlComment} comment
+         * @return {boolean}
+         */
+        showAsterisk: function (comment) {
+            if (!comment.footnote_id) {
+                return false;
+            }
+            return footnotes.isFootnoteVisible(comment.footnote_id);
+        }
     });
 });

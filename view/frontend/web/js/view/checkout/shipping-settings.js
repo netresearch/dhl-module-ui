@@ -6,9 +6,24 @@ define([
     'Dhl_Ui/js/model/checkout/checkout-data-refresh',
     'Dhl_Ui/js/action/checkout/generate-service-components',
     'Dhl_Ui/js/action/checkout/update-shipping-data',
-    'Dhl_Ui/js/model/checkout/checkout-data'
-], function (_, ko, UiCollection, quote, settingsRefresh, generateServiceComponents, updateShippingData, checkoutData) {
+    'Dhl_Ui/js/model/checkout/checkout-data',
+    'Dhl_Ui/js/model/checkout/service/service-selections',
+    'Dhl_Ui/js/model/checkout/footnotes',
+], function (
+    _,
+    ko,
+    UiCollection,
+    quote,
+    settingsRefresh,
+    generateServiceComponents,
+    updateShippingData,
+    checkoutData,
+    serviceSelections,
+    footnotes
+) {
     'use strict';
+
+    var carrierData;
 
     return UiCollection.extend({
         defaults: {
@@ -18,12 +33,13 @@ define([
             title: '',
             commentsBefore: [],
             commentsAfter: [],
+            footnotes: [],
             visible: false
         },
 
         initObservable: function () {
             this._super();
-            this.observe('services errors image title commentsBefore commentsAfter visible');
+            this.observe('services errors image title commentsBefore commentsAfter footnotes visible');
 
             return this;
         },
@@ -49,10 +65,8 @@ define([
             if (!shippingMethod) {
                 return;
             }
-            /**
-             * @type {DhlCarrier}
-             */
-            var carrierData = checkoutData.getByCarrier(shippingMethod.carrier_code);
+
+            carrierData = checkoutData.getByCarrier(shippingMethod.carrier_code);
             if (!carrierData) {
                 this.visible(false);
                 return;
@@ -63,9 +77,21 @@ define([
             this.commentsAfter(carrierData.service_metadata.comments_after);
             this.visible(true);
 
+            this.updateFootnotes();
+            serviceSelections.get().subscribe(this.updateFootnotes.bind(this));
+
             this.destroyChildren();
             generateServiceComponents(carrierData.service_data, this.name);
             this.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
         },
+
+        /**
+         * Update footnotes which may depend on current service selection.
+         */
+        updateFootnotes: function () {
+            this.footnotes(footnotes.filterAvailable(
+                carrierData.service_metadata.footnotes
+            ));
+        }
     });
 });

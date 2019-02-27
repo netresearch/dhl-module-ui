@@ -42,7 +42,7 @@ define([
     return function (countryId, postalCode) {
         var fromCache = storage.get(countryId + postalCode);
         if (fromCache) {
-            //console.warn('Loading DHL checkout data from cache');
+            console.warn('DHL Checkout data cache disabled');
             //checkoutData.set(fromCache);
             //return;
         }

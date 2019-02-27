@@ -14,9 +14,18 @@
         <!-- ko foreach: { data: elems, as: 'element' } -->
             <render if="hasTemplate()"/>
         <!-- /ko -->
+
+        <!-- ko if: footnotes -->
+        <!-- ko foreach: { data: footnotes, as: 'footnote' } -->
+            <p class="field-note">
+                <span class="asterisk" style="color: #e02b27; font-size: 1.2rem;">*</span>
+                <span data-bind="html: footnote.content"/>
+            </p>
+        <!-- /ko -->
+
+        <!-- /ko -->
         <!-- ko foreach: { data: commentsAfter, as: 'comment' } -->
             <p class="field-note">
-                <span if="comment.footnote" class="asterisk" style="color: #e02b27; font-size: 1.2rem;">*</span>
                 <span data-bind="html: comment.content"/>
             </p>
         <!-- /ko -->

@@ -26,7 +26,7 @@ define([
 
         /**
          * @param {string} name
-         * @param {string|null} code
+         * @param {string} [code]
          * @return {*|undefined} Service input value(s) or null if service not found
          */
         getServiceValue: function (name, code) {

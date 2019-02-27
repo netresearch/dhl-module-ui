@@ -31,8 +31,19 @@ define([
      *         comments_before: DhlComment,
      *         image_url: string,
      *         title: string,
+     *         footnotes: DhlFootnote[],
      *     }
      * }} DhlCarrier
+     */
+
+    /**
+     * @typedef {{
+     *     content: string,
+     *     id: string,
+     *     subjects: string[],
+     *     subjects_must_be_selected: boolean,
+     *     subjects_must_be_available: boolean,
+     * }} DhlFootnote
      */
 
     /**
@@ -65,6 +76,7 @@ define([
      *     default_value: *,
      *     input_type: string,
      *     label: string,
+      *    label_visible: bool,
      *     options: {label: string, value: string, disabled: boolean}
      *     placeholder: string,
      *     sort_order: int,
@@ -76,7 +88,7 @@ define([
     /**
      * @typedef {{
      *     content: string,
-     *     footnote: boolean,
+     *     footnote_id: string,
      * }} DhlComment
      */
 

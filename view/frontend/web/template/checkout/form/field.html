@@ -1,6 +1,6 @@
 <div class="field" data-bind="visible: visible, attr: {'name': element.dataScope}, css: additionalClasses">
 
-    <!-- ko if: element.label && element.inputType !== 'checkbox' -->
+    <!-- ko if: element.label && element.labelVisible === 'true' && element.inputType !== 'checkbox' -->
     <label class="label" data-bind="attr: { for: element.uid }">
         <span data-bind="text: element.label"></span>
     </label>
@@ -13,10 +13,13 @@
         <!-- ko template: element.tooltipTpl --><!-- /ko -->
         <!-- /ko -->
 
-        <!-- ko if: element.comment -->
+        <!-- ko if: element.comment.content -->
         <div class="field-note">
             <span data-bind="html: element.comment.content"/>
-            <span if="element.comment.footnote" class="asterisk" style="color: #e02b27; font-size: 1.2rem;">*</span>
+            <span data-bind="visible: showAsterisk(element.comment)"
+                  class="asterisk"
+                  style="color: #e02b27;
+                  font-size: 1.2rem;">*</span>
         </div>
         <!-- /ko -->
 
