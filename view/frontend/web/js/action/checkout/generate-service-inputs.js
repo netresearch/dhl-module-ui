@@ -2,8 +2,9 @@ define([
     'underscore',
     'uiLayout',
     'Dhl_Ui/js/model/checkout/service/validation-map',
+    'Dhl_Ui/js/model/checkout/service/service-selections',
     'Dhl_Ui/js/action/service/resolve-input-template'
-], function (_, layout, serviceValidationMap, resolveInputTemplate) {
+], function (_, layout, serviceValidationMap, serviceSelections, resolveInputTemplate) {
     'use strict';
 
     /**
@@ -24,31 +25,47 @@ define([
     };
 
     /**
+     * Load default service input value either from cache or from Input model.
+     *
+     * @param {DhlService} service
+     * @param {DhlInput} serviceInput
+     * @return {string}
+     */
+    var getDefaultValue = function (service, serviceInput) {
+        var cachedValue = serviceSelections.getServiceValue(
+            service.code,
+            serviceInput.code
+        );
+        if (cachedValue !== null) {
+            return cachedValue;
+        }
+
+        return serviceInput.default_value;
+    };
+
+    /**
      * @var {DhlService} service
      * @var {string} parentName
      */
     return function (service, parentName) {
         var serviceInputLayout = _.map(
             service.inputs,
-            /**
-             * @param {DhlInput} serviceInput
-             * @return {Object}
-             */
-            function (serviceInput) {
+            /** @type {DhlInput} */
+            function ( serviceInput) {
                 if (!service.enabled_for_checkout) {
                     return;
                 }
                 return {
+                    component: 'Dhl_Ui/js/view/checkout/service-input',
                     parent: parentName,
                     serviceInput: serviceInput,
                     service: service,
                     inputCode: serviceInput.code,
-                    component: 'Dhl_Ui/js/view/checkout/service-input',
                     inputType: serviceInput.input_type,
-                    elementTmpl: resolveInputTemplate(serviceInput.input_type),
                     tooltip: serviceInput.tooltip ? {description: serviceInput.tooltip} : false,
                     comment: serviceInput.comment,
-                    value: serviceInput.default_value,
+                    elementTmpl: resolveInputTemplate(serviceInput.input_type),
+                    value: getDefaultValue(service, serviceInput),
                     validation: buildValidationData(serviceInput),
                 };
             }

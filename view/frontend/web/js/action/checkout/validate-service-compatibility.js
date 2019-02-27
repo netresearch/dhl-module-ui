@@ -10,15 +10,15 @@ define([
     'use strict';
 
     /**
-     * @param {DhlCompatibility} compatibility
+     * @param {DhlCompatibility} rule
      * @return {string}
      */
-    var buildErrorMessage = function (compatibility) {
-        var subjectNames = _.map(compatibility.subjects, function (subject) {
+    var buildErrorMessage = function (rule) {
+        var subjectNames = _.map(rule.subjects, function (subject) {
             return  '"' + resolveName(quote.shippingMethod().carrier_code, subject) + '"';
         });
 
-        return compatibility.error_message.replace(
+        return rule.error_message.replace(
             '%1',
             subjectNames.join(' ' + $t('and') + ' ')
         );
@@ -42,10 +42,10 @@ define([
     };
 
     /**
-     * @param {DhlCompatibility} compatibility
+     * @param {DhlCompatibility} rule
      */
-    var markRelatedInputsWithError = function (compatibility) {
-        _.each(compatibility.subjects, function (subject) {
+    var markRelatedInputsWithError = function (rule) {
+        _.each(rule.subjects, function (subject) {
             var serviceInputs = [],
                 codes = subject.split('.'),
                 serviceCode = codes.shift(),
@@ -74,26 +74,26 @@ define([
     /**
      * Is triggered by incompatibility_rule value of "true".
      *
-     * @param {DhlCompatibility} compatibility
+     * @param {DhlCompatibility} rule
      * @param {int} serviceDifference - The number of selected services that are subjects of the compatibility rule.
      * @return {boolean}
      */
-    var isIncompatibleServiceCombination = function (compatibility, serviceDifference) {
-        return compatibility.incompatibility_rule && serviceDifference === 0
+    var isIncompatibleServiceCombination = function (rule, serviceDifference) {
+        return rule.incompatibility_rule && serviceDifference === 0
     };
 
     /**
      * Checks if there are any services selected that require another service that is missing.
      * Is triggered by incompatibility_rule value of "false".
      *
-     * @param {DhlCompatibility} compatibility
+     * @param {DhlCompatibility} rule
      * @param {int} serviceDifference - The number of selected services that are subjects of the compatibility rule.
      * @return {boolean}
      */
-    var isMissingRequiredServices = function (compatibility, serviceDifference) {
-        if (!compatibility.incompatibility_rule) {
+    var isMissingRequiredServices = function (rule, serviceDifference) {
+        if (!rule.incompatibility_rule) {
             /** Either all or none of the services may be selected. */
-            return !_.contains([0, compatibility.subjects.length], serviceDifference);
+            return !_.contains([0, rule.subjects.length], serviceDifference);
         }
 
         return  false;

@@ -73,7 +73,7 @@ define([
      * @typedef {{
      *     code: string,
      *     comment: DhlComment,
-     *     default_value: *,
+     *     default_value: string,
      *     input_type: string,
      *     label: string,
       *    label_visible: bool,

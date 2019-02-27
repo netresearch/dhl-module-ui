@@ -1,17 +1,15 @@
 define([
     'underscore',
-    'ko',
     'uiCollection',
     'Magento_Checkout/js/model/quote',
     'Dhl_Ui/js/model/checkout/checkout-data-refresh',
     'Dhl_Ui/js/action/checkout/generate-service-components',
-    'Dhl_Ui/js/action/checkout/update-shipping-data',
+    'Dhl_Ui/js/action/checkout/rest/update-shipping-data',
     'Dhl_Ui/js/model/checkout/checkout-data',
     'Dhl_Ui/js/model/checkout/service/service-selections',
     'Dhl_Ui/js/model/checkout/footnotes',
 ], function (
     _,
-    ko,
     UiCollection,
     quote,
     settingsRefresh,
@@ -23,6 +21,9 @@ define([
 ) {
     'use strict';
 
+    /**
+     * @param {DhlCarrier} carrierData
+     */
     var carrierData;
 
     return UiCollection.extend({
@@ -41,12 +42,6 @@ define([
             this._super();
             this.observe('services errors image title commentsBefore commentsAfter footnotes visible');
 
-            return this;
-        },
-
-        initialize: function () {
-            this._super();
-
             checkoutData.get().subscribe(this.refresh, this);
             quote.shippingMethod.subscribe(this.refresh, this);
 
@@ -55,6 +50,8 @@ define([
                     updateShippingData(shippingAddress.countryId, shippingAddress.postcode);
                 }
             });
+
+            return this;
         },
 
         /**
@@ -87,6 +84,8 @@ define([
 
         /**
          * Update footnotes which may depend on current service selection.
+         *
+         * @private
          */
         updateFootnotes: function () {
             this.footnotes(footnotes.filterAvailable(

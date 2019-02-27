@@ -1,10 +1,10 @@
 define([
     'Magento_Ui/js/form/element/abstract',
-    'Dhl_Ui/js/model/checkout/service/service-selections',
     'Dhl_Ui/js/model/checkout/footnotes',
-], function (Component, serviceSelections, footnotes) {
+    'Dhl_Ui/js/model/checkout/service/service-selections',
+    'Dhl_Ui/js/action/checkout/enforce-service-compatibility',
+], function (Component, footnotes, serviceSelections, enforceServiceCompatibility) {
     'use strict';
-
 
     return Component.extend({
         /**
@@ -17,17 +17,12 @@ define([
          */
         serviceInput: {},
 
-        /**
-         * @property {DhlComment} comment
-         */
-        comment: {},
-
-
         defaults: {
             template: 'Dhl_Ui/checkout/form/field',
             inputCode: '',
             elementTmpl: '',
             value: '',
+            comment: {},
             label: '${ $.serviceInput.label }',
             labelVisible: '${ $.serviceInput.label_visible }',
             description: '${ $.serviceInput.label }',
@@ -36,31 +31,28 @@ define([
             placeholder: '${ $.serviceInput.placeholder }',
         },
 
-        initialize: function () {
+        /**
+         * Update the serviceSelections model and trigger additional validation.
+         * Automatically executed when this.value changes.
+         *
+         * @param {string} newValue
+         */
+        onUpdate: function (newValue) {
             this._super();
 
-            var cachedValue = serviceSelections.getServiceValue(
-                this.service.code,
-                this.serviceInput.code
-            );
-            if (cachedValue !== null) {
-                this.value(cachedValue);
+            if (newValue) {
+                serviceSelections.addService(
+                    this.service.code,
+                    this.serviceInput.code,
+                    newValue
+                );
+            } else {
+                serviceSelections.removeService(
+                    this.service.code,
+                    this.serviceInput.code
+                );
             }
-
-            this.value.subscribe(function (value) {
-                if (value) {
-                    serviceSelections.addService(
-                        this.service.code,
-                        this.serviceInput.code,
-                        value
-                    );
-                } else {
-                    serviceSelections.removeService(
-                        this.service.code,
-                        this.serviceInput.code
-                    );
-                }
-            }, this);
+            enforceServiceCompatibility();
         },
 
         /**
