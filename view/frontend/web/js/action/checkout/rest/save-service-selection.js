@@ -33,13 +33,16 @@ define([
         };
         /** Only submit service selections for the current carrier */
         if (serviceSelectionData[carrier]) {
-            _.each(serviceSelectionData[carrier], function (value, key) {
-                payload.serviceSelection.push(
-                    {
-                        attribute_code: key,
-                        value: value
-                    }
-                );
+            _.each(serviceSelectionData[carrier], function (selection, serviceCode) {
+                _.each(selection, function (value, inputCode) {
+                    payload.serviceSelection.push(
+                        {
+                            serviceCode: serviceCode,
+                            inputCode: inputCode,
+                            value: value,
+                        }
+                    );
+                });
             });
         }
 
