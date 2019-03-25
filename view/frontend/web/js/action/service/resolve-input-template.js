@@ -1,20 +1,4 @@
-define([
-    'Magento_Checkout/js/model/url-builder',
-    'Magento_Customer/js/model/customer',
-    'mage/storage',
-    'Magento_Checkout/js/model/quote',
-    'Magento_Checkout/js/model/shipping-service',
-    'Dhl_Ui/js/model/checkout/storage',
-    'Dhl_Ui/js/model/checkout/checkout-data'
-], function (
-    urlBuilder,
-    customer,
-    request,
-    quote,
-    shippingService,
-    storage,
-    checkoutData
-) {
+define([], function () {
     'use strict';
 
     /**

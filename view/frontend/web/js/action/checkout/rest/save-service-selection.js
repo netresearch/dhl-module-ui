@@ -12,12 +12,18 @@ define([
      * Save current DHL service selection against Magento REST API endpoint.
      */
     return function () {
-        var url, urlParams, serviceUrl, payload;
+        var url,
+            urlParams,
+            serviceUrl,
+            payload,
+            carrier = quote.shippingMethod().carrier_code,
+            serviceSelectionData = serviceSelection.get()();
+
         if (customer.isLoggedIn()) {
-            url = '/carts/mine/dhl/services/save';
+            url = '/carts/mine/dhl/services/set-selection';
             urlParams = {};
         } else {
-            url = '/guest-carts/:cartId/dhl/services/save';
+            url = '/guest-carts/:cartId/dhl/services/set-selection';
             urlParams = {
                 cartId: quote.getQuoteId()
             };
@@ -25,14 +31,17 @@ define([
         payload = {
             serviceSelection: [],
         };
-        _.each(serviceSelection.get()(), function (value, key) {
-            payload.serviceSelection.push(
-                {
-                    attribute_code: key,
-                    value: value
-                }
-            );
-        });
+        /** Only submit service selections for the current carrier */
+        if (serviceSelectionData[carrier]) {
+            _.each(serviceSelectionData[carrier], function (value, key) {
+                payload.serviceSelection.push(
+                    {
+                        attribute_code: key,
+                        value: value
+                    }
+                );
+            });
+        }
 
         serviceUrl = urlBuilder.createUrl(url, urlParams);
         return storage.post(
