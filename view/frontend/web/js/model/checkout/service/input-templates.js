@@ -2,7 +2,7 @@ define([], function () {
     'use strict';
 
     /**
-     * @type {{date: string, checkbox: string, text: string, time: string}}
+     * @type {Object}
      */
     var templates = {
         text: 'ui/form/element/input',
@@ -13,15 +13,19 @@ define([], function () {
         date: 'Dhl_Ui/checkout/form/element/radio-styled'
     };
 
-    /**
-     * @param {string} type
-     * @return {string|false}
-     */
-    return function (type) {
-        if (templates[type]) {
-            return templates[type];
-        }
+    return {
+        /**
+         * Retrieve a template path for a type of template.
+         *
+         * @param {string} type
+         * @return {string|boolean} - Will return false if no template path is configured for this type.
+         */
+        get: function (type) {
+            if (templates[type]) {
+                return templates[type];
+            }
 
-        return false;
+            return false;
+        }
     };
 });

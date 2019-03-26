@@ -23,11 +23,23 @@ define([
     var services = storage.get('cachedServiceValues') ? ko.observable(storage.get('cachedServiceValues')) : ko.observable({});
 
     return {
+
         /**
          * @return {DhlServiceSelectionObservable}
          */
         get: function () {
             return services;
+        },
+
+        /**
+         * @return {*[][][]|null}
+         */
+        getByCarrier: function () {
+            var carrier = getCurrentCarrier();
+            if (!(carrier in services())) {
+                return null;
+            }
+            return services()[carrier];
         },
 
         /**
@@ -40,15 +52,12 @@ define([
          * @return {string|string[]|undefined} Service input value(s) or null if service not found
          */
         getServiceValue: function (name, code) {
-            var carrier = getCurrentCarrier();
-            if (!(carrier in services())) {
-                return null;
-            }
-            if (!(name in services()[carrier])) {
+            var carrierData = this.getByCarrier();
+            if (!carrierData || !(name in carrierData)) {
                 return null
             }
 
-            var service = services()[carrier][name];
+            var service = carrierData[name];
             if (!code) {
                 return service;
             } else if (code in service) {
@@ -56,6 +65,23 @@ define([
             } else {
                 return null;
             }
+        },
+
+        /**
+         * Collect all selected services and inputs in dot-separated format.
+         *
+         * @return {string[]}
+         */
+        getServiceValuesInCompoundFormat: function () {
+            var selectedServiceCodes = [];
+            _.each(this.getByCarrier(), function (values, serviceCode) {
+                selectedServiceCodes.push(serviceCode);
+                _.each(values, function (value, inputCode) {
+                    selectedServiceCodes.push([serviceCode, inputCode].join('.'))
+                })
+            });
+
+            return selectedServiceCodes;
         },
 
         /**

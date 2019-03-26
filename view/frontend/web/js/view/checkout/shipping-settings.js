@@ -2,10 +2,10 @@ define([
     'underscore',
     'uiCollection',
     'Magento_Checkout/js/model/quote',
-    'Dhl_Ui/js/model/checkout/checkout-data-refresh',
+    'Dhl_Ui/js/model/checkout/shipping-settings-refresh',
     'Dhl_Ui/js/action/checkout/generate-service-components',
     'Dhl_Ui/js/action/checkout/rest/update-shipping-data',
-    'Dhl_Ui/js/model/checkout/checkout-data',
+    'Dhl_Ui/js/model/shipping-settings',
     'Dhl_Ui/js/model/checkout/service/service-selections',
     'Dhl_Ui/js/model/checkout/footnotes',
 ], function (
@@ -15,7 +15,7 @@ define([
     settingsRefresh,
     generateServiceComponents,
     updateShippingData,
-    checkoutData,
+    shippingSettings,
     serviceSelections,
     footnotes
 ) {
@@ -42,7 +42,7 @@ define([
             this._super();
             this.observe('services errors image title commentsBefore commentsAfter footnotes visible');
 
-            checkoutData.get().subscribe(this.refresh, this);
+            shippingSettings.get().subscribe(this.refresh, this);
             quote.shippingMethod.subscribe(this.refresh, this);
 
             quote.shippingAddress.subscribe(function (shippingAddress) {
@@ -63,7 +63,7 @@ define([
                 return;
             }
 
-            carrierData = checkoutData.getByCarrier(shippingMethod.carrier_code);
+            carrierData = shippingSettings.getByCarrier(shippingMethod.carrier_code);
             if (!carrierData) {
                 this.visible(false);
                 return;

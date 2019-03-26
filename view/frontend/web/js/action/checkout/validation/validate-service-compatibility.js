@@ -3,10 +3,11 @@ define([
     'mage/translate',
     'uiRegistry',
     'Magento_Checkout/js/model/quote',
-    'Dhl_Ui/js/model/checkout/checkout-data',
+    'Dhl_Ui/js/model/shipping-settings',
     'Dhl_Ui/js/model/checkout/service/service-selections',
     'Dhl_Ui/js/action/service/resolve-name',
-], function (_, $t, registry, quote, checkoutData, serviceSelection, resolveName) {
+    'Dhl_Ui/js/model/checkout/service/service-codes',
+], function (_, $t, registry, quote, shippingSettings, serviceSelection, resolveName, serviceCodes) {
     'use strict';
 
     /**
@@ -25,42 +26,20 @@ define([
     };
 
     /**
-     * Collect all selected services and inputs in dot-separated format.
-     *
-     * @return {string[]}
-     */
-    var collectSelectedServiceCodes = function () {
-        var selectedServiceCodes = [];
-        _.each(serviceSelection.get()(), function (values, serviceCode) {
-            selectedServiceCodes.push(serviceCode);
-            _.each(values, function (value, inputCode) {
-                selectedServiceCodes.push([serviceCode, inputCode].join('.'))
-            })
-        });
-
-        return selectedServiceCodes;
-    };
-
-    /**
      * @param {DhlCompatibility} rule
      */
     var markRelatedInputsWithError = function (rule) {
         _.each(rule.subjects, function (subject) {
-            var serviceInputs = [],
-                codes = subject.split('.'),
-                serviceCode = codes.shift(),
-                inputCode = codes.shift();
-            if (inputCode) {
-                serviceInputs = [
-                    registry.get({
-                        component: 'Dhl_Ui/js/view/checkout/service-input',
-                        inputCode: inputCode,
-                    })
-                ];
+            var serviceInputs = [];
+            if (serviceCodes.getInputCode(subject)) {
+                serviceInputs = [registry.get({
+                    component: 'Dhl_Ui/js/view/checkout/service-input',
+                    inputCode: serviceCodes.getInputCode(subject),
+                })];
             } else {
                 serviceInputs = registry.get({
                     component: 'Dhl_Ui/js/view/checkout/service',
-                    serviceCode: serviceCode
+                    serviceCode: subject
                 }).elems();
             }
             _.each(serviceInputs, function (input) {
@@ -106,8 +85,8 @@ define([
      */
     return function () {
         var carrier = quote.shippingMethod().carrier_code,
-            compatibilityInfo = checkoutData.getByCarrier(carrier).service_compatibility_data,
-            selectedServiceCodes = collectSelectedServiceCodes(),
+            compatibilityInfo = shippingSettings.getByCarrier(carrier).service_compatibility_data,
+            selectedServiceCodes = serviceSelection.getServiceValuesInCompoundFormat(),
             shippingSettingsView = registry.get({component: 'Dhl_Ui/js/view/checkout/shipping-settings'});
 
         shippingSettingsView.errors([]);

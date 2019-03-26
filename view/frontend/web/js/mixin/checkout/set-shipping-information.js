@@ -1,7 +1,7 @@
 define([
     'mage/utils/wrapper',
-    'Dhl_Ui/js/action/checkout/validate-service-selection',
-    'Dhl_Ui/js/action/checkout/validate-service-compatibility',
+    'Dhl_Ui/js/action/checkout/validation/validate-service-selection',
+    'Dhl_Ui/js/action/checkout/validation/validate-service-compatibility',
     'Dhl_Ui/js/action/checkout/rest/save-service-selection'
 ], function (wrapper, validateServiceSelection, validateServiceCompatibility, saveServiceSelection) {
     'use strict';
@@ -20,10 +20,7 @@ define([
                 return saveServiceSelection().done(originalAction);
             } else {
                 // do nothing
-                return {
-                    'done': function () {
-                    }
-                }
+                return {'done': function () {}}
             }
         });
     }

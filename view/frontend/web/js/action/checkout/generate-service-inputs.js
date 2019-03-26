@@ -3,8 +3,8 @@ define([
     'uiLayout',
     'Dhl_Ui/js/model/checkout/service/validation-map',
     'Dhl_Ui/js/model/checkout/service/service-selections',
-    'Dhl_Ui/js/action/service/resolve-input-template'
-], function (_, layout, serviceValidationMap, serviceSelections, resolveInputTemplate) {
+    'Dhl_Ui/js/model/checkout/service/input-templates'
+], function (_, layout, serviceValidationMap, serviceSelections, inputTemplates) {
     'use strict';
 
     /**
@@ -44,14 +44,14 @@ define([
     };
 
     /**
-     * @var {DhlService} service
-     * @var {string} parentName
+     * @param {DhlService} service
+     * @param {string} parentName
      */
     return function (service, parentName) {
         var serviceInputLayout = _.map(
             service.inputs,
             /** @type {DhlInput} */
-            function ( serviceInput) {
+            function (serviceInput) {
                 if (!service.enabled_for_checkout) {
                     return;
                 }
@@ -60,11 +60,12 @@ define([
                     parent: parentName,
                     serviceInput: serviceInput,
                     service: service,
+                    serviceCode: service.code,
                     inputCode: serviceInput.code,
                     inputType: serviceInput.input_type,
                     tooltip: serviceInput.tooltip ? {description: serviceInput.tooltip} : false,
                     comment: serviceInput.comment,
-                    elementTmpl: resolveInputTemplate(serviceInput.input_type),
+                    elementTmpl: inputTemplates.get(serviceInput.input_type),
                     value: getDefaultValue(service, serviceInput),
                     validation: buildValidationData(serviceInput),
                 };

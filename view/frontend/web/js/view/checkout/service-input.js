@@ -2,7 +2,7 @@ define([
     'Magento_Ui/js/form/element/abstract',
     'Dhl_Ui/js/model/checkout/footnotes',
     'Dhl_Ui/js/model/checkout/service/service-selections',
-    'Dhl_Ui/js/action/checkout/enforce-service-compatibility',
+    'Dhl_Ui/js/action/checkout/validation/enforce-service-compatibility',
 ], function (Component, footnotes, serviceSelections, enforceServiceCompatibility) {
     'use strict';
 
@@ -19,7 +19,8 @@ define([
 
         defaults: {
             template: 'Dhl_Ui/checkout/form/field',
-            inputCode: '',
+            serviceCode: '',
+            inputCode: '${ $.serviceInput.code }',
             elementTmpl: '',
             value: '',
             comment: {},

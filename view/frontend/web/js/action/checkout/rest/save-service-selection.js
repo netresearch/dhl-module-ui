@@ -16,8 +16,7 @@ define([
             urlParams,
             serviceUrl,
             payload,
-            carrier = quote.shippingMethod().carrier_code,
-            serviceSelectionData = serviceSelection.get()();
+            serviceSelectionData = serviceSelection.getByCarrier();
 
         if (customer.isLoggedIn()) {
             url = '/carts/mine/dhl/services/set-selection';
@@ -32,8 +31,8 @@ define([
             serviceSelection: [],
         };
         /** Only submit service selections for the current carrier */
-        if (serviceSelectionData[carrier]) {
-            _.each(serviceSelectionData[carrier], function (selection, serviceCode) {
+        if (serviceSelectionData) {
+            _.each(serviceSelectionData, function (selection, serviceCode) {
                 _.each(selection, function (value, inputCode) {
                     payload.serviceSelection.push(
                         {

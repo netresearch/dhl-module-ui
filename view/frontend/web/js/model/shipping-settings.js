@@ -7,9 +7,7 @@ define([
      * @callback DhlShippingSettingsObservable
      * @param {DhlShippingSettings} [value]
      * @return {DhlShippingSettings}
-     */
-
-    /**
+     *
      * @var {DhlShippingSettingsObservable} checkoutData
      */
     var checkoutData = ko.observable({});
@@ -19,9 +17,7 @@ define([
      * They are defined in PHP at Dhl\ShippingCore\Api\Data\Checkout\CheckoutDataInterface
      *
      * @typedef {{carriers: DhlCarrier[]}} DhlShippingSettings
-     */
-
-    /**
+     *
      * @typedef {{
      *     carrier_code: string,
      *     service_compatibility_data: DhlCompatibility[],
@@ -34,9 +30,7 @@ define([
      *         footnotes: DhlFootnote[],
      *     }
      * }} DhlCarrier
-     */
-
-    /**
+     *
      * @typedef {{
      *     content: string,
      *     id: string,
@@ -44,17 +38,13 @@ define([
      *     subjects_must_be_selected: boolean,
      *     subjects_must_be_available: boolean,
      * }} DhlFootnote
-     */
-
-    /**
+     *
      * @typedef {{
      *     incompatibility_rule: boolean,
      *     subjects: string[],
      *     error_message: string,
      * }} DhlCompatibility
-     */
-
-    /**
+     *
      * @typedef {{
      *     available_at_postal_facility: boolean,
      *     code: string,
@@ -67,9 +57,7 @@ define([
      *     routes: {string},
      *     sort_order: int,
      * }} DhlService
-     */
-
-     /**
+     *
      * @typedef {{
      *     code: string,
      *     comment: DhlComment,
@@ -83,9 +71,7 @@ define([
      *     tooltip: string,
      *     validation_rules: {name: string, params: string[]}[],
      * }} DhlInput
-     */
-
-    /**
+     *
      * @typedef {{
      *     content: string,
      *     footnote_id: string,

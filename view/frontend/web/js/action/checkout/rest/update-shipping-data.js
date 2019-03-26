@@ -5,7 +5,7 @@ define([
     'Magento_Checkout/js/model/quote',
     'Magento_Checkout/js/model/shipping-service',
     'Dhl_Ui/js/model/checkout/storage',
-    'Dhl_Ui/js/model/checkout/checkout-data'
+    'Dhl_Ui/js/model/shipping-settings'
 ], function (
     urlBuilder,
     customer,
@@ -13,7 +13,7 @@ define([
     quote,
     shippingService,
     storage,
-    checkoutData
+    shippingSettings
 ) {
     'use strict';
 
@@ -42,8 +42,8 @@ define([
     return function (countryId, postalCode) {
         var fromCache = storage.get(countryId + postalCode);
         if (fromCache) {
-            console.warn('DHL Checkout data cache disabled');
-            //checkoutData.set(fromCache);
+            console.warn('DHL checkout shipping data cache disabled');
+            //shippingSettings.set(fromCache);
             //return;
         }
 
@@ -56,9 +56,8 @@ define([
             JSON.stringify(payload)
         ).success(
             function (response) {
-                console.log(response);
                 storage.set(countryId + postalCode, response);
-                checkoutData.set(response);
+                shippingSettings.set(response);
             }
         ).always(
             function () {

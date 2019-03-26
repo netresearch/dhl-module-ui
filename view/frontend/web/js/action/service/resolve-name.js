@@ -1,7 +1,8 @@
 define([
     'underscore',
-    'Dhl_Ui/js/model/checkout/checkout-data',
-], function (_, checkoutData) {
+    'Dhl_Ui/js/model/shipping-settings',
+    'Dhl_Ui/js/model/checkout/service/service-codes',
+], function (_, shippingSettings, serviceCodes) {
     'use strict';
 
     /**
@@ -12,10 +13,7 @@ define([
      * @return {string|boolean} - will return false if the requested service does not exist
      */
     return function (carrier, code) {
-        var carrierData = checkoutData.getByCarrier(carrier),
-            codes = code.split('.'),
-            serviceCode = codes.shift(),
-            inputCode = codes.shift(),
+        var carrierData = shippingSettings.getByCarrier(carrier),
             label = '';
 
         if (!carrierData) {
@@ -24,7 +22,7 @@ define([
 
         /** @var {DhlService} matchingService */
         var matchingService = _.find(carrierData.service_data, function (service) {
-            return service.code === serviceCode;
+            return service.code === serviceCodes.getServiceCode(code);
         });
         if (!matchingService) {
             return false;
@@ -32,10 +30,13 @@ define([
 
         label = matchingService.label;
 
-        if (inputCode) {
-            var matchingInput = _.find(matchingService.inputs, function (input) {
-                return input.code === inputCode;
-            });
+        if (serviceCodes.isCompoundCode(code)) {
+            var matchingInput = _.find(
+                matchingService.inputs,
+                function (input) {
+                    return input.code === serviceCodes.getInputCode(code);
+                }
+            );
             if (matchingInput) {
                 label += ' – ' + matchingInput.label
             }

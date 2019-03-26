@@ -2,8 +2,8 @@ define([
     'underscore',
     'Magento_Checkout/js/model/quote',
     'Dhl_Ui/js/model/checkout/service/service-selections',
-    'Dhl_Ui/js/model/checkout/checkout-data',
-], function (_, quote, serviceSelections, checkoutData) {
+    'Dhl_Ui/js/model/shipping-settings',
+], function (_, quote, serviceSelections, shippingSettings) {
     'use strict';
 
     /**
@@ -11,7 +11,7 @@ define([
      */
     var getCarrierData = function () {
         var carrierCode = quote.shippingMethod().carrier_code,
-            carrierData = checkoutData.getByCarrier(carrierCode);
+            carrierData = shippingSettings.getByCarrier(carrierCode);
         return carrierData ? carrierData : false;
     };
 
@@ -41,6 +41,7 @@ define([
                 var availableSubjects = getCarrierData().service_data.filter(function (service) {
                     return footnote.subjects.includes(service.code) && service.enabled_for_checkout;
                 }.bind(footnote));
+
                 return availableSubjects ? availableSubjects.length === footnote.subjects.length : false;
             }
 
@@ -65,10 +66,8 @@ define([
          */
         isFootnoteVisible: function (footnoteId) {
             var footnote = this.getById(footnoteId);
-            if (!footnote) {
-                return false;
-            }
-            return this.shouldBeVisible(footnote);
+
+            return footnote ? this.shouldBeVisible(footnote) : false;
         }
     };
 });
