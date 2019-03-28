@@ -5,9 +5,11 @@ define([
     'Dhl_Ui/js/model/checkout/shipping-settings-refresh',
     'Dhl_Ui/js/action/checkout/generate-service-components',
     'Dhl_Ui/js/action/checkout/rest/update-shipping-data',
+    'Dhl_Ui/js/action/checkout/validation/enforce-service-compatibility',
     'Dhl_Ui/js/model/shipping-settings',
     'Dhl_Ui/js/model/checkout/service/service-selections',
     'Dhl_Ui/js/model/checkout/footnotes',
+
 ], function (
     _,
     UiCollection,
@@ -15,6 +17,7 @@ define([
     settingsRefresh,
     generateServiceComponents,
     updateShippingData,
+    enforceServiceCompatibility,
     shippingSettings,
     serviceSelections,
     footnotes
@@ -80,6 +83,8 @@ define([
             this.destroyChildren();
             generateServiceComponents(carrierData.service_data, this.name);
             this.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
+
+            enforceServiceCompatibility();
         },
 
         /**

@@ -40,9 +40,11 @@ define([
      * }} DhlFootnote
      *
      * @typedef {{
-     *     incompatibility_rule: boolean,
      *     subjects: string[],
      *     error_message: string,
+     *     masters: string[],
+     *     incompatibility_rule: boolean,
+     *     hide_subjects: boolean,
      * }} DhlCompatibility
      *
      * @typedef {{

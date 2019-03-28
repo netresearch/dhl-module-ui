@@ -11,12 +11,12 @@
                style="width: auto"
                data-bind="checkedValue: option.value, checked: $parent.value"
                attr="
-               id: $parent.serviceInput.code+option.value,
-               name: $parent.serviceInput.code+option.value,
-               disabled:option.disabled"
+               id: $parent.inputCode + option.value,
+               name: $parent.inputCode + option.value,
+               disabled: option.disabled || $parent.disabled"
         />
         <label class="admin__field-label"
-               attr="for: $parent.serviceInput.code+option.value">
+               attr="for: $parent.inputCode + option.value">
             <span data-bind="text: option.label"></span>
         </label>
     </div>

@@ -12,7 +12,6 @@
         padding: 6px 8px;
         cursor: pointer;
     }
-
     .dhl-radioset-styled input:disabled + label {
         cursor: not-allowed;
         color: #ccc;
@@ -20,7 +19,6 @@
     .dhl-radioset-styled input:checked + label {
         background: rgb(255, 204, 0);
     }
-
     .field._error .dhl-radioset-styled input:checked + label {
         background: #fae5e5;
         color: #e02b27;
@@ -34,12 +32,12 @@
                style="display: none"
                data-bind="checkedValue: option.value, checked: $parent.value"
                attr="
-               id: $parent.serviceInput.code+option.value,
-               name: $parent.serviceInput.code+option.value,
-               disabled:option.disabled"
+               id: $parent.inputCode + option.value,
+               name: $parent.inputCode + option.value,
+               disabled: option.disabled || $parent.disabled"
         />
         <label class="admin__field-label"
-               attr="for: $parent.serviceInput.code+option.value">
+               attr="for: $parent.inputCode + option.value">
             <span data-bind="text: option.label"></span>
         </label>
     </div>
