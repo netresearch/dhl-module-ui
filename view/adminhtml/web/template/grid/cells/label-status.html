@@ -1,0 +1,16 @@
+<!--
+See LICENSE.md for license details.
+-->
+<div class="data-grid-cell-content">
+    <span ifnot="!!$row()[$col.index]" data-bind="i18n: 'Not Available'"></span>
+
+    <img if="$row()[$col.index] === 'pending'" data-bind="
+        attr: {alt: $t('Pending'), title: $t('Pending'), src: getPendingIconUrl()}
+    "/>
+    <img if="$row()[$col.index] === 'processed'" data-bind="
+        attr: {alt: $t('Processed'), title: $t('Processed'), src: getProcessedIconUrl()}
+    "/>
+    <img if="$row()[$col.index] === 'failed'" data-bind="
+        attr: {alt: $t('Failed'), title: $t('Failed'), src: getFailedIconUrl()}
+    "/>
+</div>
