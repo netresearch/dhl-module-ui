@@ -36,6 +36,7 @@ define([
          * Update the serviceSelections model and trigger additional validation.
          * Automatically executed when this.value changes.
          *
+         * @protected
          * @param {string} newValue
          */
         onUpdate: function (newValue) {
