@@ -1,6 +1,5 @@
 define([
     'Magento_Checkout/js/model/url-builder',
-    'Magento_Customer/js/model/customer',
     'mage/storage',
     'Magento_Checkout/js/model/quote',
     'Magento_Checkout/js/model/shipping-service',
@@ -8,7 +7,6 @@ define([
     'Dhl_Ui/js/model/shipping-settings'
 ], function (
     urlBuilder,
-    customer,
     request,
     quote,
     shippingService,
@@ -21,16 +19,8 @@ define([
      * @return {string}
      */
     var buildRequestUrl = function () {
-        var url, urlParams;
-        if (customer.isLoggedIn()) {
-            url = '/carts/mine/dhl/get-checkout-data';
+        var url = '/dhl/get-checkout-data',
             urlParams = {};
-        } else {
-            url = '/guest-carts/:cartId/dhl/get-checkout-data';
-            urlParams = {
-                cartId: quote.getQuoteId()
-            };
-        }
 
         return urlBuilder.createUrl(url, urlParams);
     };
