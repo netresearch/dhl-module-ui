@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">recipient_street_form.recipient_street_form_data_source</item>
+            <item name="deps" xsi:type="string">recipient_street_form.recipient_street_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Recipient Street</item>
+        <item name="config" xsi:type="array">
+            <item name="dataScope" xsi:type="string">data</item>
+            <item name="namespace" xsi:type="string">recipient_street_form</item>
+        </item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+        <item name="buttons" xsi:type="array">
+            <item name="back" xsi:type="string">Dhl\Ui\Block\Adminhtml\RecipientStreet\Edit\Buttons\BackButton</item>
+            <item name="save" xsi:type="string">Dhl\Ui\Block\Adminhtml\RecipientStreet\Edit\Buttons\SaveButton</item>
+        </item>
+    </argument>
+    <dataSource name="recipient_street_form_data_source">
+        <argument name="dataProvider" xsi:type="configurableObject">
+            <argument name="class" xsi:type="string">Dhl\Ui\DataProvider\RecipientStreet</argument>
+            <argument name="name" xsi:type="string">recipient_street_form_data_source</argument>
+            <argument name="primaryFieldName" xsi:type="string">order_address_id</argument>
+            <argument name="requestFieldName" xsi:type="string">order_address_id</argument>
+        </argument>
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <settings>
+            <submitUrl path="dhl/recipient_street/save"/>
+        </settings>
+    </dataSource>
+    <fieldset name="recipient_street">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="collapsible" xsi:type="boolean">false</item>
+                <item name="label" xsi:type="string" translate="true">Recipient Street</item>
+                <item name="sortOrder" xsi:type="number">20</item>
+            </item>
+        </argument>
+        <field name="recipient_street_name">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Name</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">recipientStreet</item>
+                    <item name="dataScope" xsi:type="string">name</item>
+                </item>
+            </argument>
+        </field>
+        <field name="recipient_street_number">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Number</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">recipientStreet</item>
+                    <item name="dataScope" xsi:type="string">number</item>
+                </item>
+            </argument>
+        </field>
+        <field name="recipient_street_supplement">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Supplement</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="source" xsi:type="string">recipientStreet</item>
+                    <item name="dataScope" xsi:type="string">supplement</item>
+                </item>
+            </argument>
+        </field>
+    </fieldset>
+</form>
