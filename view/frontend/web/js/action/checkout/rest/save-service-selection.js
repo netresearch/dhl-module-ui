@@ -38,7 +38,7 @@ define([
                         {
                             serviceCode: serviceCode,
                             inputCode: inputCode,
-                            value: value,
+                            inputValue: value,
                         }
                     );
                 });
