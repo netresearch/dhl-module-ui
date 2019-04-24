@@ -2,24 +2,24 @@ define([
     'underscore',
     'uiCollection',
     'uiLayout',
-    'Dhl_Ui/js/action/checkout/generate-service-inputs'
-], function (_, Component, layout, generateServiceInputs) {
+    'Dhl_Ui/js/action/checkout/shipping-option/generate-input-components'
+], function (_, Component, layout, generateInputs) {
     'use strict';
 
     return Component.extend({
         /**
-         * @property {DhlService} service
+         * @property {DhlShippingOption} shippingOption
          */
-        service: {},
+        shippingOption: {},
 
         /**
-         * @property {string} serviceCode
+         * @property {string} shippingOptionCode
          */
-        serviceCode: '',
+        shippingOptionCode: '',
 
         defaults: {
-            template: "Dhl_Ui/checkout/service",
-            label: '${ $.service.label }',
+            template: "Dhl_Ui/checkout/shipping-option",
+            label: '${ $.shippingOption.label }',
             validateWholeGroup: false,
             visible: true,
         },
@@ -37,11 +37,11 @@ define([
         initialize: function () {
             this._super();
 
-            generateServiceInputs(this.service, this.name);
+            generateInputs(this.shippingOption, this.name);
         },
 
         /**
-         * Update service visibility everytime a child is added or a child changes visibility.
+         * Update shipping option visibility everytime a child is added or a child changes visibility.
          *
          * @param {Object} input
          * @protected
@@ -54,7 +54,7 @@ define([
         },
 
         /**
-         * Hide the service if all it's children are hidden.
+         * Hide the shipping option if all it's children are hidden.
          *
          * @private
          */

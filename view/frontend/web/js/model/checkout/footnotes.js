@@ -1,9 +1,9 @@
 define([
     'underscore',
     'Magento_Checkout/js/model/quote',
-    'Dhl_Ui/js/model/checkout/service/service-selections',
-    'Dhl_Ui/js/model/shipping-settings',
-], function (_, quote, serviceSelections, shippingSettings) {
+    'Dhl_Ui/js/model/checkout/shipping-option/selections',
+    'Dhl_Ui/js/model/checkout-data',
+], function (_, quote, selections, checkoutData) {
     'use strict';
 
     /**
@@ -11,7 +11,7 @@ define([
      */
     var getCarrierData = function () {
         var carrierCode = quote.shippingMethod().carrier_code,
-            carrierData = shippingSettings.getByCarrier(carrierCode);
+            carrierData = checkoutData.getByCarrier(carrierCode);
         return carrierData ? carrierData : false;
     };
 
@@ -32,14 +32,14 @@ define([
         shouldBeVisible: function (footnote) {
             if (footnote.subjects_must_be_selected) {
                 var selectedSubjects = footnote.subjects.filter(function (subject) {
-                    return serviceSelections.getServiceValue(subject);
+                    return selections.getShippingOptionValue(subject);
                 });
 
                 return selectedSubjects ? selectedSubjects.length === footnote.subjects.length : false;
             }
             if (footnote.subjects_must_be_available) {
-                var availableSubjects = getCarrierData().service_data.filter(function (service) {
-                    return footnote.subjects.includes(service.code) && service.enabled_for_checkout;
+                var availableSubjects = getCarrierData().shipping_options.filter(function (shippingOption) {
+                    return footnote.subjects.includes(shippingOption.code) && shippingOption.enabled_for_checkout;
                 }.bind(footnote));
 
                 return availableSubjects ? availableSubjects.length === footnote.subjects.length : false;
@@ -53,7 +53,7 @@ define([
          * @return {DhlFootnote|boolean}
          */
         getById: function (footnoteId) {
-            var match = getCarrierData().service_metadata.footnotes.find(function (footnote) {
+            var match = getCarrierData().metadata.footnotes.find(function (footnote) {
                 return footnote.id === footnoteId;
             });
 

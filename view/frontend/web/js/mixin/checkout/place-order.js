@@ -6,7 +6,7 @@ define([
 
     /**
      * Clear the DHL checkout storage when placing the order to reset
-     * the customer's service selections for their next quote.
+     * the customer's shipping option selections for their next quote.
      *
      * @see 'Magento_Checkout/js/action/place-order'
      * */

@@ -20,11 +20,11 @@ define([
      *
      * @typedef {{
      *     carrier_code: string,
-     *     service_compatibility_data: DhlCompatibility[],
-     *     service_data: DhlService[],
-     *     service_metadata: {
-     *         comments_after: DhlComment,
-     *         comments_before: DhlComment,
+     *     compatibility_data: DhlCompatibility[],
+     *     shipping_options: DhlShippingOption[],
+     *     metadata: {
+     *         comments_after: DhlComment[],
+     *         comments_before: DhlComment[],
      *         image_url: string,
      *         title: string,
      *         footnotes: DhlFootnote[],
@@ -58,7 +58,7 @@ define([
      *     packaging_readonly: boolean,
      *     routes: {string},
      *     sort_order: int,
-     * }} DhlService
+     * }} DhlShippingOption
      *
      * @typedef {{
      *     code: string,

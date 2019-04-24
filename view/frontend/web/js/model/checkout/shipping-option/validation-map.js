@@ -11,7 +11,7 @@ define([
 
     return {
         /**
-         * Translate a DHL service input validator into a Magento validator code
+         * Translate a DHL shipping option input validator into a Magento validator code
          * for use in abstract JS component validation.
          *
          * @param {string} rule

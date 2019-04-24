@@ -3,10 +3,10 @@ define([
     'mage/translate',
     'uiRegistry',
     'Magento_Checkout/js/model/quote',
-    'Dhl_Ui/js/model/shipping-settings',
-    'Dhl_Ui/js/model/checkout/service/service-selections',
-    'Dhl_Ui/js/action/service/resolve-name',
-    'Dhl_Ui/js/model/checkout/service/service-codes',
+    'Dhl_Ui/js/model/checkout-data',
+    'Dhl_Ui/js/model/checkout/shipping-option/selections',
+    'Dhl_Ui/js/action/shipping-option/resolve-name',
+    'Dhl_Ui/js/model/checkout/shipping-option/shipping-option-codes',
 ], function (_, $t, registry, quote, shippingSettings, serviceSelection, resolveName, serviceCodes) {
     'use strict';
 
@@ -33,12 +33,12 @@ define([
             var serviceInputs = [];
             if (serviceCodes.getInputCode(subject)) {
                 serviceInputs = [registry.get({
-                    component: 'Dhl_Ui/js/view/checkout/service-input',
+                    component: 'Dhl_Ui/js/view/checkout/shipping-option-input',
                     inputCode: serviceCodes.getInputCode(subject),
                 })];
             } else {
                 serviceInputs = registry.get({
-                    component: 'Dhl_Ui/js/view/checkout/service',
+                    component: 'Dhl_Ui/js/view/checkout/shipping-option',
                     serviceCode: subject
                 }).elems();
             }
@@ -85,9 +85,9 @@ define([
      */
     return function () {
         var carrier = quote.shippingMethod().carrier_code,
-            compatibilityInfo = shippingSettings.getByCarrier(carrier).service_compatibility_data,
-            selectedServiceCodes = serviceSelection.getServiceValuesInCompoundFormat(),
-            shippingSettingsView = registry.get({component: 'Dhl_Ui/js/view/checkout/shipping-settings'});
+            compatibilityInfo = shippingSettings.getByCarrier(carrier).compatibility_data,
+            selectedServiceCodes = serviceSelection.getSelectionsInCompoundFormat(),
+            shippingSettingsView = registry.get({component: 'Dhl_Ui/js/view/checkout/shipping-options-area'});
 
         shippingSettingsView.errors([]);
 

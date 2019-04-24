@@ -4,8 +4,8 @@ define([
     'Magento_Customer/js/model/customer',
     'mage/storage',
     'Magento_Checkout/js/model/quote',
-    'Dhl_Ui/js/model/checkout/service/service-selections'
-], function (_, urlBuilder, customer, storage, quote, serviceSelection) {
+    'Dhl_Ui/js/model/checkout/shipping-option/selections'
+], function (_, urlBuilder, customer, storage, quote, selection) {
     'use strict';
 
     /**
@@ -16,27 +16,27 @@ define([
             urlParams,
             serviceUrl,
             payload,
-            serviceSelectionData = serviceSelection.getByCarrier();
+            selections = selection.getByCarrier();
 
         if (customer.isLoggedIn()) {
-            url = '/carts/mine/dhl/services/set-selection';
+            url = '/carts/mine/dhl/shipping-option/selection/set';
             urlParams = {};
         } else {
-            url = '/guest-carts/:cartId/dhl/services/set-selection';
+            url = '/guest-carts/:cartId/dhl/shipping-option/selection/set';
             urlParams = {
                 cartId: quote.getQuoteId()
             };
         }
         payload = {
-            serviceSelection: [],
+            selections: [],
         };
         /** Only submit service selections for the current carrier */
-        if (serviceSelectionData) {
-            _.each(serviceSelectionData, function (selection, serviceCode) {
+        if (selections) {
+            _.each(selections, function (selection, serviceCode) {
                 _.each(selection, function (value, inputCode) {
-                    payload.serviceSelection.push(
+                    payload.selections.push(
                         {
-                            serviceCode: serviceCode,
+                            shippingOptionCode: serviceCode,
                             inputCode: inputCode,
                             inputValue: value,
                         }
@@ -49,6 +49,11 @@ define([
         return storage.post(
             serviceUrl,
             JSON.stringify(payload)
+        ).error(
+            function (response) {
+                console.error('Shipping option selection could not be saved');
+                console.error(response);
+            }
         );
     };
 });

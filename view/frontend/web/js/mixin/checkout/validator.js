@@ -69,7 +69,7 @@ define([
                 }
                 return true;
             },
-            $t('This service is not available at a DHL packing station of post office.')
+            $t('This shipping option is not available at a DHL packing station of post office.')
         );
 
         return validator;

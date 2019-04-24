@@ -2,24 +2,24 @@ define([
     'underscore',
     'uiCollection',
     'Magento_Checkout/js/model/quote',
-    'Dhl_Ui/js/model/checkout/shipping-settings-refresh',
-    'Dhl_Ui/js/action/checkout/generate-service-components',
-    'Dhl_Ui/js/action/checkout/rest/update-shipping-data',
-    'Dhl_Ui/js/action/checkout/validation/enforce-service-compatibility',
-    'Dhl_Ui/js/model/shipping-settings',
-    'Dhl_Ui/js/model/checkout/service/service-selections',
+    'Dhl_Ui/js/model/checkout/checkout-data-refresh',
+    'Dhl_Ui/js/action/checkout/shipping-option/generate-components',
+    'Dhl_Ui/js/action/checkout/webapi/get-checkout-data',
+    'Dhl_Ui/js/action/checkout/shipping-option/validation/enforce-compatibility',
+    'Dhl_Ui/js/model/checkout-data',
+    'Dhl_Ui/js/model/checkout/shipping-option/selections',
     'Dhl_Ui/js/model/checkout/footnotes',
 
 ], function (
     _,
     UiCollection,
     quote,
-    settingsRefresh,
-    generateServiceComponents,
-    updateShippingData,
-    enforceServiceCompatibility,
-    shippingSettings,
-    serviceSelections,
+    dataRefresh,
+    generateShippingOptions,
+    getCheckoutData,
+    enforceCompatibility,
+    checkoutData,
+    selections,
     footnotes
 ) {
     'use strict';
@@ -31,7 +31,7 @@ define([
 
     return UiCollection.extend({
         defaults: {
-            template: 'Dhl_Ui/checkout/shipping-settings',
+            template: 'Dhl_Ui/checkout/shipping-options-area',
             errors: [],
             image: '',
             title: '',
@@ -43,14 +43,14 @@ define([
 
         initObservable: function () {
             this._super();
-            this.observe('services errors image title commentsBefore commentsAfter footnotes visible');
+            this.observe('errors image title commentsBefore commentsAfter footnotes visible');
 
-            shippingSettings.get().subscribe(this.refresh, this);
+            checkoutData.get().subscribe(this.refresh, this);
             quote.shippingMethod.subscribe(this.refresh, this);
 
             quote.shippingAddress.subscribe(function (shippingAddress) {
-                if (settingsRefresh.shouldRefresh(shippingAddress.countryId, shippingAddress.postcode)) {
-                    updateShippingData(shippingAddress.countryId, shippingAddress.postcode);
+                if (dataRefresh.shouldRefresh(shippingAddress.countryId, shippingAddress.postcode)) {
+                    getCheckoutData(shippingAddress.countryId, shippingAddress.postcode);
                 }
             });
 
@@ -66,25 +66,25 @@ define([
                 return;
             }
 
-            carrierData = shippingSettings.getByCarrier(shippingMethod.carrier_code);
+            carrierData = checkoutData.getByCarrier(shippingMethod.carrier_code);
             if (!carrierData) {
                 this.visible(false);
                 return;
             }
-            this.image(carrierData.service_metadata.image_url);
-            this.title(carrierData.service_metadata.title);
-            this.commentsBefore(carrierData.service_metadata.comments_before);
-            this.commentsAfter(carrierData.service_metadata.comments_after);
+            this.image(carrierData.metadata.image_url);
+            this.title(carrierData.metadata.title);
+            this.commentsBefore(carrierData.metadata.comments_before);
+            this.commentsAfter(carrierData.metadata.comments_after);
             this.visible(true);
 
             this.updateFootnotes();
-            serviceSelections.get().subscribe(this.updateFootnotes.bind(this));
+            selections.get().subscribe(this.updateFootnotes.bind(this));
 
             this.destroyChildren();
-            generateServiceComponents(carrierData.service_data, this.name);
+            generateShippingOptions(carrierData.shipping_options, this.name);
             this.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
 
-            enforceServiceCompatibility();
+            enforceCompatibility();
         },
 
         /**
@@ -94,7 +94,7 @@ define([
          */
         updateFootnotes: function () {
             this.footnotes(footnotes.filterAvailable(
-                carrierData.service_metadata.footnotes
+                carrierData.metadata.footnotes
             ));
         }
     });

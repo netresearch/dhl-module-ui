@@ -19,8 +19,8 @@
                                                             <item name="component" xsi:type="string">uiComponent</item>
                                                             <item name="displayArea" xsi:type="string">shippingAdditional</item>
                                                             <item name="children" xsi:type="array">
-                                                                <item name="shipping-settings-container" xsi:type="array">
-                                                                    <item name="component" xsi:type="string">Dhl_Ui/js/view/checkout/shipping-settings</item>
+                                                                <item name="shipping-options-area" xsi:type="array">
+                                                                    <item name="component" xsi:type="string">Dhl_Ui/js/view/checkout/shipping-options-area</item>
                                                                 </item>
                                                             </item>
                                                         </item>

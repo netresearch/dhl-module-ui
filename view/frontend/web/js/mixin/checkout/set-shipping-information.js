@@ -1,23 +1,23 @@
 define([
     'mage/utils/wrapper',
-    'Dhl_Ui/js/action/checkout/validation/validate-service-selection',
-    'Dhl_Ui/js/action/checkout/validation/validate-service-compatibility',
-    'Dhl_Ui/js/action/checkout/rest/save-service-selection'
-], function (wrapper, validateServiceSelection, validateServiceCompatibility, saveServiceSelection) {
+    'Dhl_Ui/js/action/checkout/shipping-option/validation/validate-selection',
+    'Dhl_Ui/js/action/checkout/shipping-option/validation/validate-compatibility',
+    'Dhl_Ui/js/action/checkout/webapi/update-shipping-option-selection'
+], function (wrapper, validateSelection, validateCompatibility, updateSelection) {
     'use strict';
 
     /**
      * Intercept click on "Next" button in checkout
-     * to validate and save service input values.
+     * to validate and save shipping option input values.
      *
      * @param {callback} setShippingInformationAction
      */
     return function (setShippingInformationAction) {
         return wrapper.wrap(setShippingInformationAction, function (originalAction) {
-            var servicesValid = validateServiceSelection(),
-                servicesCompatible = validateServiceCompatibility();
-            if (servicesValid && servicesCompatible) {
-                return saveServiceSelection().done(originalAction);
+            var selectionsValid = validateSelection(),
+                selectionsCompatible = validateCompatibility();
+            if (selectionsValid && selectionsCompatible) {
+                return updateSelection().done(originalAction);
             } else {
                 // do nothing
                 return {'done': function () {}}

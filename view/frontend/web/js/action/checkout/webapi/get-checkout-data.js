@@ -4,40 +4,32 @@ define([
     'Magento_Checkout/js/model/quote',
     'Magento_Checkout/js/model/shipping-service',
     'Dhl_Ui/js/model/checkout/storage',
-    'Dhl_Ui/js/model/shipping-settings'
+    'Dhl_Ui/js/model/checkout-data'
 ], function (
     urlBuilder,
     request,
     quote,
     shippingService,
     storage,
-    shippingSettings
+    checkoutData
 ) {
     'use strict';
 
     /**
-     * @return {string}
-     */
-    var buildRequestUrl = function () {
-        var url = '/dhl/get-checkout-data',
-            urlParams = {};
-
-        return urlBuilder.createUrl(url, urlParams);
-    };
-
-    /**
+     * Retrieve checkout data from Magento 2 REST endpoint and update checkoutData model.
+     *
      * @param {string} countryId
      * @param {string} postalCode
      */
     return function (countryId, postalCode) {
         var fromCache = storage.get(countryId + postalCode);
         if (fromCache) {
-            console.warn('DHL checkout shipping data cache disabled');
-            //shippingSettings.set(fromCache);
+            console.warn('DHL checkout data cache disabled');
+            //checkoutData.set(fromCache);
             //return;
         }
 
-        var serviceUrl = buildRequestUrl(),
+        var serviceUrl = urlBuilder.createUrl('/dhl/checkout-data/get', {}),
             payload = {countryId: countryId, postalCode: postalCode};
 
         shippingService.isLoading(true);
@@ -47,7 +39,7 @@ define([
         ).success(
             function (response) {
                 storage.set(countryId + postalCode, response);
-                shippingSettings.set(response);
+                checkoutData.set(response);
             }
         ).always(
             function () {
