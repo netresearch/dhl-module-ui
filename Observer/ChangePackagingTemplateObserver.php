@@ -9,6 +9,8 @@ namespace Dhl\Ui\Observer;
 use Dhl\ShippingCore\Model\Support\PackagingPopup;
 use \Magento\Framework\Event\Observer;
 use \Magento\Framework\Event\ObserverInterface;
+use Magento\Sales\Model\Order\Shipment;
+use Magento\Shipping\Block\Adminhtml\Order\Packaging;
 
 /**
  * Class ChangePackagingTemplateObserver
@@ -45,13 +47,15 @@ class ChangePackagingTemplateObserver implements ObserverInterface
     public function execute(Observer $observer)
     {
         $block = $observer->getEvent()->getBlock();
-        if ($block instanceof \Magento\Shipping\Block\Adminhtml\Order\Packaging
+        if ($block instanceof Packaging
             && $block->getNameInLayout() === 'shipment_packaging'
         ) {
-            /** @var \Magento\Sales\Model\Order\Shipment $currentShipment */
+            /** @var Shipment $currentShipment */
             $currentShipment = $this->coreRegistry->registry('current_shipment');
-            $shippingMethod = $currentShipment->getOrder()->getShippingMethod(true);
-            if ($this->packagingPopup->isSupported($shippingMethod->getData('carrier_code'))) {
+            /** @var string|null $shippingMethod */
+            $shippingMethod = $currentShipment->getOrder()->getShippingMethod();
+            $carrier = strtok($shippingMethod, '_');
+            if ($carrier !== false && $this->packagingPopup->isSupported($carrier)) {
                 $block->setTemplate('Dhl_Ui::order/packaging/popup.phtml');
             }
         }
