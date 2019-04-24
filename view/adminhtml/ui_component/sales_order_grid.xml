@@ -6,24 +6,24 @@ See LICENSE.md for license details.
          xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <listingToolbar name="listing_top">
         <filters name="listing_filters">
-            <filterSelect name="dhl_label_status" provider="${ $.parentName }"
+            <filterSelect name="dhlgw_label_status" provider="${ $.parentName }"
                           component="Magento_Ui/js/form/element/ui-select"
                           template="ui/grid/filters/elements/ui-select">
                 <settings>
                     <label translate="true">DHL Label Status</label>
-                    <dataScope>dhl_label_status</dataScope>
+                    <dataScope>dhlgw_label_status</dataScope>
                     <options class="Dhl\Ui\Component\Listing\Column\LabelStatus\Options"/>
                 </settings>
             </filterSelect>
         </filters>
     </listingToolbar>
     <columns name="sales_order_columns">
-        <column name="dhl_label_status" component="Dhl_Ui/js/grid/columns/label-status">
+        <column name="dhlgw_label_status" component="Dhl_Ui/js/grid/columns/label-status">
             <settings>
                 <label translate="true">DHL Label Status</label>
                 <visible>false</visible>
                 <bodyTmpl>Dhl_Ui/grid/cells/label-status</bodyTmpl>
-                <filter>dhl_label_status</filter>
+                <filter>dhlgw_label_status</filter>
             </settings>
         </column>
     </columns>
