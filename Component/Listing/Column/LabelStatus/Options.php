@@ -2,6 +2,8 @@
 /**
  * See LICENSE.md for license details.
  */
+declare(strict_types=1);
+
 namespace Dhl\Ui\Component\Listing\Column\LabelStatus;
 
 use Dhl\ShippingCore\Api\LabelStatusManagementInterface;

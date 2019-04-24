@@ -6,20 +6,20 @@ declare(strict_types=1);
 
 namespace Dhl\Ui\ViewModel\Order\Info;
 
-use Dhl\ShippingCore\Model\RecipientStreet;
+use Dhl\ShippingCore\Api\RecipientStreetInterface;
 use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\Escaper;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 
 /**
- * RecipientStreetView ViewModel
+ * RecipientStreet
  *
  * @package Dhl\Ui\ViewModel
  * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @link https://www.netresearch.de/
+ * @link    https://www.netresearch.de/
  */
-class RecipientStreetView implements ArgumentInterface
+class RecipientStreet implements ArgumentInterface
 {
     /**
      * @var UrlInterface
@@ -55,18 +55,19 @@ class RecipientStreetView implements ArgumentInterface
     /**
      * Get link to edit recipient street page.
      *
-     * @param RecipientStreet $recipientStreet
-     * @param string $orderId
+     * @param RecipientStreetInterface $recipientStreet
+     * @param int $orderId
      * @return string
      */
-    public function getRecipientStreetEditLink(RecipientStreet $recipientStreet, string $orderId): string
+    public function getRecipientStreetEditLink(RecipientStreetInterface $recipientStreet, int $orderId): string
     {
         if ($this->authorization->isAllowed('Magento_Sales::actions_edit')) {
             $label = __('Edit');
             $url = $this->urlBuilder->getUrl('dhl/recipient_street/edit', [
-                'order_address_id' => $recipientStreet->getId(),
+                'order_address_id' => $recipientStreet->getOrderAddressId(),
                 'order_id' => $orderId
             ]);
+
             return '<a href="' . $this->escaper->escapeUrl($url) . '">' . $this->escaper->escapeHtml($label) . '</a>';
         }
 

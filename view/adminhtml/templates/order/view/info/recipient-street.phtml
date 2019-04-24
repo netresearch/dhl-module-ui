@@ -3,28 +3,34 @@
  * See LICENSE.md for license details.
  */
 
-/** @var \Dhl\ShippingCore\Model\RecipientStreet $recipientStreet */
+/** @var \Dhl\ShippingCore\Api\RecipientStreetInterface $recipientStreet */
 $recipientStreet = $block->getData('recipient_street');
 $orderId = $block->getData('order_id');
-/** @var \Dhl\Ui\ViewModel\Order\Info\RecipientStreetView $viewModel */
+/** @var \Dhl\Ui\ViewModel\Order\Info\RecipientStreet $viewModel */
 $viewModel = $block->getData('viewModel');
 ?>
 <?php if ($recipientStreet): ?>
     <section class="admin__page-section order-addresses">
         <div class="admin__page-section-content">
-                <div class="admin__page-section-item order-shipping-address">
-                    <?php /* Shipping Address */ ?>
-                    <div class="admin__page-section-item-title">
-                        <span class="title"><?= $block->escapeHtml(__('DHL Shipping Address')) ?></span>
-                        <div class="actions"><?= $viewModel->getRecipientStreetEditLink($recipientStreet, $orderId); ?></div>
+            <div class="admin__page-section-item order-shipping-address">
+                <?php /* Shipping Address */ ?>
+                <div class="admin__page-section-item-title">
+                    <span class="title"><?= $block->escapeHtml(__('DHL Recipient Street')) ?></span>
+                    <div class="actions">
+                        <?= /* @noEscape */ $viewModel->getRecipientStreetEditLink($recipientStreet, $orderId); ?>
                     </div>
-                    <strong><?= $block->escapeHtml(__('Street:')) ?></strong>
-                    <span><?= $block->escapeHtml($recipientStreet->getName()) ?></span><br>
-                    <strong><?= $block->escapeHtml(__('Number:')) ?></strong>
-                    <span><?= $block->escapeHtml($recipientStreet->getNumber()) ?></span><br>
-                    <strong><?= $block->escapeHtml(__('Supplement:')) ?></strong>
-                    <span><?= $block->escapeHtml($recipientStreet->getSupplement()) ?></span>
                 </div>
+                <div class="admin__page-section-item-content dhl-recipient-street">
+                    <dl>
+                        <dt class="label"><?= $block->escapeHtml(__('Street Name')) ?></dt>
+                        <dd class="values"><?= $block->escapeHtml($recipientStreet->getName()) ?></dd>
+                        <dt class="label"><?= $block->escapeHtml(__('Street Number')) ?></dt>
+                        <dd class="values"><?= $block->escapeHtml($recipientStreet->getNumber()) ?></dd>
+                        <dt class="label"><?= $block->escapeHtml(__('Supplement')) ?></dt>
+                        <dd class="values"><?= $block->escapeHtml($recipientStreet->getSupplement()) ?></dd>
+                    </dl>
+                </div>
+            </div>
         </div>
     </section>
 <?php endif; ?>
