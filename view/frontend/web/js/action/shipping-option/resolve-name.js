@@ -21,7 +21,7 @@ define([
         }
 
         /** @var {DhlShippingOption} matchingOption */
-        var matchingOption = _.find(carrierData.shipping_options, function (shippingOption) {
+        var matchingOption = _.find(carrierData.package_level_options, function (shippingOption) {
             return shippingOption.code === codes.getShippingOptionCode(code);
         });
         if (!matchingOption) {

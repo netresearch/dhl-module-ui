@@ -81,7 +81,7 @@ define([
             selections.get().subscribe(this.updateFootnotes.bind(this));
 
             this.destroyChildren();
-            generateShippingOptions(carrierData.shipping_options, this.name);
+            generateShippingOptions(carrierData.package_level_options, this.name);
             this.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
 
             enforceCompatibility();

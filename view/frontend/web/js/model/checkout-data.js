@@ -21,7 +21,7 @@ define([
      * @typedef {{
      *     carrier_code: string,
      *     compatibility_data: DhlCompatibility[],
-     *     shipping_options: DhlShippingOption[],
+     *     package_level_options: DhlShippingOption[],
      *     metadata: {
      *         comments_after: DhlComment[],
      *         comments_before: DhlComment[],
@@ -56,7 +56,6 @@ define([
      *     inputs: DhlInput[],
      *     label: string,
      *     packaging_readonly: boolean,
-     *     routes: {string},
      *     sort_order: int,
      * }} DhlShippingOption
      *
@@ -71,7 +70,7 @@ define([
      *     placeholder: string,
      *     sort_order: int,
      *     tooltip: string,
-     *     validation_rules: {name: string, params: string[]}[],
+     *     validation_rules: {name: string, param: mixed}[],
      * }} DhlInput
      *
      * @typedef {{

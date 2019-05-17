@@ -38,7 +38,7 @@ define([
                 return selectedSubjects ? selectedSubjects.length === footnote.subjects.length : false;
             }
             if (footnote.subjects_must_be_available) {
-                var availableSubjects = getCarrierData().shipping_options.filter(function (shippingOption) {
+                var availableSubjects = getCarrierData().package_level_options.filter(function (shippingOption) {
                     return footnote.subjects.includes(shippingOption.code) && shippingOption.enabled_for_checkout;
                 }.bind(footnote));
 
