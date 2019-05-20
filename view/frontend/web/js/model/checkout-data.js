@@ -19,7 +19,7 @@ define([
      * @typedef {{carriers: DhlCarrier[]}} DhlShippingSettings
      *
      * @typedef {{
-     *     carrier_code: string,
+     *     code: string,
      *     compatibility_data: DhlCompatibility[],
      *     package_level_options: DhlShippingOption[],
      *     metadata: {
@@ -103,7 +103,7 @@ define([
                 return false;
             }
             var carrier = checkoutData().carriers.find(function (carrier) {
-                return carrier.carrier_code === carrierName;
+                return carrier.code === carrierName;
             });
 
             return carrier ? carrier : false;
