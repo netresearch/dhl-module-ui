@@ -50,9 +50,6 @@ define([
      * @typedef {{
      *     available_at_postal_facility: boolean,
      *     code: string,
-     *     enabled_for_autocreate: boolean,
-     *     enabled_for_checkout: boolean,
-     *     enabled_for_packaging: boolean,
      *     inputs: DhlInput[],
      *     label: string,
      *     packaging_readonly: boolean,
@@ -63,6 +60,7 @@ define([
      *     code: string,
      *     comment: DhlComment,
      *     default_value: string,
+     *     disabled: boolean,
      *     input_type: string,
      *     label: string,
       *    label_visible: bool,

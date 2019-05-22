@@ -39,7 +39,7 @@ define([
             }
             if (footnote.subjects_must_be_available) {
                 var availableSubjects = getCarrierData().package_level_options.filter(function (shippingOption) {
-                    return footnote.subjects.includes(shippingOption.code) && shippingOption.enabled_for_checkout;
+                    return footnote.subjects.includes(shippingOption.code);
                 }.bind(footnote));
 
                 return availableSubjects ? availableSubjects.length === footnote.subjects.length : false;

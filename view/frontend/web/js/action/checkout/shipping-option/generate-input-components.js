@@ -52,9 +52,6 @@ define([
             shippingOption.inputs,
             /** @type {DhlInput} */
             function (shippingOptionInput) {
-                if (!shippingOption.enabled_for_checkout) {
-                    return;
-                }
                 return {
                     component: 'Dhl_Ui/js/view/checkout/shipping-option-input',
                     parent: parentName,
