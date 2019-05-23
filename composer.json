@@ -19,8 +19,14 @@
         ]
     },
     "require": {
-        "dhl/module-shipping-core": "^0.1.0",
+        "dhl/module-shipping-core": "^0.3.0",
         "magento/module-ui": "^101.0.0",
         "magento/module-checkout": "^100.2.0"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-develop": "0.1.x-dev",
+            "dev-feature-shipping-options": "0.3.x-dev"
+        }
     }
 }
