@@ -4,28 +4,29 @@
  */
 declare(strict_types=1);
 
-namespace Dhl\Ui\DataProvider;
+namespace Dhl\Ui\ViewModel\Order\Packaging;
 
 use Dhl\ShippingCore\Model\Config\CoreConfigInterface;
 use Magento\Framework\Api\SimpleDataObjectConverter;
 use Magento\Framework\Registry;
-use Magento\Sales\Model\Order;
-use Magento\Ui\DataProvider\AbstractDataProvider;
+use Magento\Framework\View\Element\Block\ArgumentInterface;
+use Magento\Sales\Api\Data\ShipmentInterface;
+use Magento\Sales\Model\Order\Shipment;
+use Magento\Sales\Model\Order\Shipment\Item;
 
 /**
- * Class PackagingPopup
+ * Class Popup
  *
- * @package Dhl\Ui\DataProvider
  * @author Paul Siedler <paul.siedler@netresearch.de>
- * @copyright 2018 Netresearch GmbH & Co. KG
- * @link http://www.netresearch.de/
+ * @link https://www.netresearch.de/
  */
-class PackagingPopup extends AbstractDataProvider
+class Popup implements ArgumentInterface
 {
+
     /**
      * @var Registry
      */
-    private $registy;
+    private $registry;
 
     /**
      * @var CoreConfigInterface
@@ -33,82 +34,198 @@ class PackagingPopup extends AbstractDataProvider
     private $shippingCoreConfig;
 
     /**
-     * @var Order\Shipment\Item[]
+     * @var ShipmentInterface|Shipment
      */
-    private $items;
+    private $shipment;
 
     /**
-     * PackagingPopup constructor.
+     * Popup constructor.
      *
-     * @param string $name
-     * @param string $primaryFieldName
-     * @param string $requestFieldName
      * @param Registry $registry
      * @param CoreConfigInterface $shippingCoreConfig
-     * @param array $meta
-     * @param array $data
      */
     public function __construct(
-        string $name,
-        string $primaryFieldName,
-        string $requestFieldName,
         Registry $registry,
-        CoreConfigInterface $shippingCoreConfig,
-        array $meta = [],
-        array $data = []
+        CoreConfigInterface $shippingCoreConfig
     ) {
-        $this->registy = $registry;
+        $this->registry = $registry;
         $this->shippingCoreConfig = $shippingCoreConfig;
-
-        parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
 
     /**
-     * @return mixed[][]
+     * @return ShipmentInterface|Shipment
      */
-    public function getData(): array
+    private function getShipment()
     {
-        $result = [
-            'items' => array_merge_recursive(
-                $this->getItemInputs(),
-                $this->getNextButton('dhl_fieldset_item_properties')
-            ),
-            'item_properties' => array_merge_recursive(
-                $this->getItemPropertyGroups(),
-                $this->getItemPropertyGroupDataSources(),
-                $this->getNextButton('dhl_fieldset_package')
-            ),
-            'package' => array_merge_recursive(
-                $this->getPackageInputs(),
-                $this->getNextButton('dhl_fieldset_package_customs')
-            ),
-            'customs' => array_merge_recursive(
-                [],
-                $this->getNextButton('dhl_fieldset_services')
-            ),
-            'service' => array_merge_recursive(
-                $this->getServiceInputs(),
-                $this->getNextButton('dhl_fieldset_summary')
-            ),
-            'summary' => array_merge_recursive(
-                []
-            ),
-            'available_items' => array_map(
-                function ($item) {
-                    /** @var Order\Shipment\Item $item */
-                    return $item->getOrderItemId();
-                },
-                $this->getItems()
-            ),
-            'selected_items' => array_map(
-                function ($item) {
-                    /** @var Order\Shipment\Item $item */
-                    return $item->getOrderItemId();
-                },
-                $this->getItems()
-            ),
-            'active_fieldset' => 'dhl_fieldset_items',
-            'item_names' => $this->getItemNames(),
+        if ($this->shipment === null) {
+            $this->shipment = $this->registry->registry('current_shipment');
+        }
+
+        return $this->shipment;
+    }
+
+    /**
+     * @return string[][]
+     */
+    private function getDimensionUnits(): array
+    {
+        return [
+            [
+                'label' => 'cm',
+                'value' => 'CENTIMETER',
+            ],
+            [
+                'label' => 'in',
+                'value' => 'INCH',
+            ],
+        ];
+    }
+
+    /**
+     * @return mixed[]
+     */
+    private function getPackageTypes(): array
+    {
+        return [
+            [
+                'label' => 'type 1',
+                'value' => 'type 1',
+            ],
+            [
+                'label' => 'type 2',
+                'value' => 'type 2',
+            ],
+        ];
+    }
+
+    public function getPackageOptions(): array
+    {
+        $result = [];
+        $totalWeight = array_reduce(
+            $this->getShipment()->getAllItems(),
+            function (float $carry, Item $item) {
+                return $carry + $item->getWeight();
+            },
+            0
+        );
+        $weightUnit = $this->shippingCoreConfig->getWeightUnit($this->getShipment()->getStoreId());
+        $result['shippingOptions'][] = [
+            'code' => 'total_weight',
+            'label' => __('Total Weight (%1)', $weightUnit),
+            'enabledForCheckout' => true,
+            'enabledForAutocreate' => true,
+            'enabledForPackaging' => true,
+            'availableAtPostalFacility' => true,
+            'packagingReadonly' => false,
+            'sortOrder' => 10,
+            'routes' => [],
+            'inputs' => [
+                [
+                    'code' => 'weight',
+                    'label' => 'Weight',
+                    'labelVisible' => false,
+                    'options' => [],
+                    'tooltip' => 'Note that this is an estimation only. If the weight of your physical package differs, different rates may apply.',
+                    'sortOrder' => 0,
+                    'validationRules' => [],
+                    'inputType' => 'text',
+                    'defaultValue' => $totalWeight,
+                ],
+
+            ],
+        ];
+        $result['shippingOptions'][] = [
+            'code' => 'package_type',
+            'label' => __('Type'),
+            'enabledForCheckout' => true,
+            'enabledForAutocreate' => true,
+            'enabledForPackaging' => true,
+            'availableAtPostalFacility' => true,
+            'packagingReadonly' => false,
+            'sortOrder' => 10,
+            'routes' => [],
+            'inputs' => [
+                [
+                    'code' => 'type',
+                    'label' => 'Please select',
+                    'labelVisible' => false,
+                    'options' => $this->getPackageTypes(),
+                    'tooltip' => __('You can manage your package types in the shipping method configuration section.'),
+                    'sortOrder' => 0,
+                    'validationRules' => [],
+                    'inputType' => 'radio',
+                    'defaultValue' => '',
+                ],
+
+            ],
+        ];
+        $result['shippingOptions'][] = [
+            'code' => 'dimensions',
+            'label' => __('Dimensions'),
+            'enabledForCheckout' => true,
+            'enabledForAutocreate' => true,
+            'enabledForPackaging' => true,
+            'availableAtPostalFacility' => true,
+            'packagingReadonly' => false,
+            'sortOrder' => 10,
+            'routes' => [],
+            'inputs' => [
+                [
+                    'code' => 'width',
+                    'label' => __('Width'),
+                    'labelVisible' => true,
+                    'options' => [],
+                    'sortOrder' => 0,
+                    'validationRules' => [],
+                    'inputType' => 'text',
+                    'defaultValue' => '',
+                ],
+                [
+                    'code' => 'height',
+                    'label' => __('Height'),
+                    'labelVisible' => true,
+                    'options' => [],
+                    'sortOrder' => 0,
+                    'validationRules' => [],
+                    'inputType' => 'text',
+                    'defaultValue' => '',
+                ],
+                [
+                    'code' => 'depth',
+                    'label' => __('Depth'),
+                    'labelVisible' => true,
+                    'options' => [],
+                    'sortOrder' => 0,
+                    'validationRules' => [],
+                    'inputType' => 'text',
+                    'defaultValue' => '',
+                ],
+
+            ],
+        ];
+        $result['shippingOptions'][] = [
+            'code' => 'dimension_unit',
+            'label' => __('Dimension Unit'),
+            'enabledForCheckout' => true,
+            'enabledForAutocreate' => true,
+            'enabledForPackaging' => true,
+            'availableAtPostalFacility' => true,
+            'packagingReadonly' => false,
+            'sortOrder' => 10,
+            'routes' => [],
+            'inputs' => [
+                [
+                    'code' => 'type',
+                    'label' => 'Please select',
+                    'labelVisible' => false,
+                    'options' => $this->getDimensionUnits(),
+                    'sortOrder' => 0,
+                    'validationRules' => [],
+                    'inputType' => 'radio',
+                    'defaultValue' => $this->getDimensionUnits()[0]['value'],
+                ],
+
+            ],
         ];
 
         return $this->normalizeKeys($result);
@@ -134,12 +251,43 @@ class PackagingPopup extends AbstractDataProvider
         return $result;
     }
 
-    /**
-     * @return mixed[]
-     */
-    private function getServiceInputs(): array
+    public function getItemOptions(): array
     {
-        return [
+        $result = [];
+
+        $result['shippingOptions'] = [
+            [
+                'code' => 'product_name',
+                'label' => 'Product name',
+                'enabledForCheckout' => true,
+                'enabledForAutocreate' => true,
+                'enabledForPackaging' => true,
+                'availableAtPostalFacility' => true,
+                'packagingReadonly' => true,
+                'sortOrder' => 10,
+                'routes' => [],
+                'inputs' => [
+                    [
+                        'code' => 'name',
+                        'label' => 'Product name',
+                        'labelVisible' => true,
+                        'options' => [],
+                        'sortOrder' => 0,
+                        'validationRules' => [],
+                        'inputType' => 'text',
+                        'isDisabled' => true,
+                        'comment' => [],
+                    ],
+                ],
+            ],
+        ];
+
+        return $this->normalizeKeys($result);
+    }
+
+    public function getServiceOptions(): array
+    {
+        $result = [
             'shippingOptions' => [
                 [
                     'code' => 'preferredDay',
@@ -401,325 +549,26 @@ class PackagingPopup extends AbstractDataProvider
                 ],
             ],
         ];
+
+        return $this->normalizeKeys($result);
     }
 
-    /**
-     * @return mixed[]
-     */
-    private function getPackageInputs(): array
+    public function getItemData(): array
     {
-        $result = [];
-        $totalWeight = array_reduce(
-            $this->getItems(),
-            function (float $carry, Order\Shipment\Item $item) {
-                return $carry + $item->getWeight();
+        $result = array_reduce(
+            $this->getShipment()->getAllItems(),
+            /**
+             * @var string[] $carry
+             * @var Item $item
+             */
+            function ($carry, $item) {
+                $carry[] = $item->getData();
+
+                return $carry;
             },
-            0
+            []
         );
-        $weightUnit = $this->shippingCoreConfig->getWeightUnit($this->getItems()[0]->getShipment()->getStoreId());
-        $result['shippingOptions'][] = [
-            'code' => 'total_weight',
-            'label' => __('Total Weight (%1)', $weightUnit),
-            'enabledForCheckout' => true,
-            'enabledForAutocreate' => true,
-            'enabledForPackaging' => true,
-            'availableAtPostalFacility' => true,
-            'packagingReadonly' => false,
-            'sortOrder' => 10,
-            'routes' => [],
-            'inputs' => [
-                [
-                    'code' => 'weight',
-                    'label' => 'Weight',
-                    'labelVisible' => false,
-                    'options' => [],
-                    'tooltip' => 'Note that this is an estimation only. If the weight of your physical package differs, different rates may apply.',
-                    'sortOrder' => 0,
-                    'validationRules' => [],
-                    'inputType' => 'text',
-                    'defaultValue' => $totalWeight,
-                ],
 
-            ],
-        ];
-        $result['shippingOptions'][] = [
-            'code' => 'package_type',
-            'label' => __('Type'),
-            'enabledForCheckout' => true,
-            'enabledForAutocreate' => true,
-            'enabledForPackaging' => true,
-            'availableAtPostalFacility' => true,
-            'packagingReadonly' => false,
-            'sortOrder' => 10,
-            'routes' => [],
-            'inputs' => [
-                [
-                    'code' => 'type',
-                    'label' => 'Please select',
-                    'labelVisible' => false,
-                    'options' => $this->getPackageTypes(),
-                    'tooltip' => __('You can manage your package types in the shipping method configuration section.'),
-                    'sortOrder' => 0,
-                    'validationRules' => [],
-                    'inputType' => 'radio',
-                    'defaultValue' => '',
-                ],
-
-            ],
-        ];
-        $result['shippingOptions'][] = [
-            'code' => 'dimensions',
-            'label' => __('Dimensions'),
-            'enabledForCheckout' => true,
-            'enabledForAutocreate' => true,
-            'enabledForPackaging' => true,
-            'availableAtPostalFacility' => true,
-            'packagingReadonly' => false,
-            'sortOrder' => 10,
-            'routes' => [],
-            'inputs' => [
-                [
-                    'code' => 'width',
-                    'label' => __('Width'),
-                    'labelVisible' => true,
-                    'options' => [],
-                    'sortOrder' => 0,
-                    'validationRules' => [],
-                    'inputType' => 'text',
-                    'defaultValue' => '',
-                ],
-                [
-                    'code' => 'height',
-                    'label' => __('Height'),
-                    'labelVisible' => true,
-                    'options' => [],
-                    'sortOrder' => 0,
-                    'validationRules' => [],
-                    'inputType' => 'text',
-                    'defaultValue' => '',
-                ],
-                [
-                    'code' => 'depth',
-                    'label' => __('Depth'),
-                    'labelVisible' => true,
-                    'options' => [],
-                    'sortOrder' => 0,
-                    'validationRules' => [],
-                    'inputType' => 'text',
-                    'defaultValue' => '',
-                ],
-
-            ],
-        ];
-        $result['shippingOptions'][] = [
-            'code' => 'dimension_unit',
-            'label' => __('Dimension Unit'),
-            'enabledForCheckout' => true,
-            'enabledForAutocreate' => true,
-            'enabledForPackaging' => true,
-            'availableAtPostalFacility' => true,
-            'packagingReadonly' => false,
-            'sortOrder' => 10,
-            'routes' => [],
-            'inputs' => [
-                [
-                    'code' => 'type',
-                    'label' => 'Please select',
-                    'labelVisible' => false,
-                    'options' => $this->getDimensionUnits(),
-                    'sortOrder' => 0,
-                    'validationRules' => [],
-                    'inputType' => 'radio',
-                    'defaultValue' => $this->getDimensionUnits()[0]['value'],
-                ],
-
-            ],
-        ];
-
-        return $result;
-    }
-
-    /**
-     * @return mixed[]
-     */
-    private function getItemInputs(): array
-    {
-        $result = [];
-        $result['shippingOptions'] = [];
-        /** @var Order\Shipment\Item $item */
-        foreach ($this->getItems() as $item) {
-            $result['shippingOptions'][] = [
-                'code' => 'item_' . $item->getOrderItemId(),
-                'label' => $item->getName(),
-                'enabledForCheckout' => true,
-                'enabledForAutocreate' => true,
-                'enabledForPackaging' => true,
-                'availableAtPostalFacility' => true,
-                'packagingReadonly' => false,
-                'sortOrder' => 10,
-                'routes' => [],
-                'inputs' => [
-                    [
-                        'code' => 'enabled_' . $item->getOrderItemId(),
-                        'label' => '',
-                        'labelVisible' => false,
-                        'sortOrder' => 0,
-                        'validationRules' => [],
-                        'inputType' => 'checkbox',
-                        'defaultValue' => true,
-                    ],
-                    [
-                        'code' => 'qty',
-                        'label' => __('Qty.'),
-                        'labelVisible' => true,
-                        'sortOrder' => 10,
-                        'validationRules' => [],
-                        'inputType' => 'text',
-                        'defaultValue' => $item->getQty(),
-                    ],
-
-                ],
-            ];
-        }
-
-        return $result;
-    }
-
-    /**
-     * @return mixed[]
-     */
-    private function getItemPropertyGroups(): array
-    {
-        $result = [];
-        foreach ($this->getItems() as $item) {
-            $result['shippingOptions'][] =
-                [
-                    'code' => 'dhl_item_properties_' . $item->getOrderItemId(),
-                    'label' => $item->getName(),
-                    'enabledForCheckout' => true,
-                    'enabledForAutocreate' => true,
-                    'enabledForPackaging' => true,
-                    'availableAtPostalFacility' => true,
-                    'packagingReadonly' => false,
-                    'sortOrder' => 10,
-                    'routes' => [],
-                    'inputs' => [
-                        [
-                            'code' => 'qty',
-                            'label' => __('Qty.'),
-                            'labelVisible' => true,
-                            'sortOrder' => 10,
-                            'validationRules' => [],
-                            'inputType' => 'text',
-                            'defaultValue' => $item->getQty(),
-                        ],
-                        [
-                            'code' => 'weight',
-                            'label' => __('Weight'),
-                            'labelVisible' => true,
-                            'sortOrder' => 20,
-                            'validationRules' => [],
-                            'inputType' => 'text',
-                            'defaultValue' => $item->getWeight(),
-                            'disabled' => true,
-                        ],
-                        [
-                            'code' => 'description',
-                            'label' => __('Description'),
-                            'labelVisible' => true,
-                            'sortOrder' => 30,
-                            'validationRules' => [],
-                            'inputType' => 'textarea',
-                            'defaultValue' => $item->getDescription() ?? $item->getName(),
-                        ],
-
-                    ],
-
-                ];
-            //            $result['shippingOptions'][] = [
-            //                'component' => 'Dhl_Ui/js/packaging/view/item-properties-fieldset',
-            //                'label' => $item->getName(),
-            //                'orderItemId' => $item->getOrderItemId(),
-            //                'provider' => 'dhl_packaging_popup.dhl_packaging_popup_data_source',
-            //                'dataScope' => 'item' . $item->getOrderItemId(),
-            //                'dataScopeSelectedItems' => 'data.selected_items',
-            //            ];
-        }
-
-        return $result;
-    }
-
-    /**
-     * @return mixed[]
-     */
-    private function getItemNames(): array
-    {
-        $items = [];
-        foreach ($this->getItems() as $item) {
-            $items[$item->getOrderItemId()] = $item->getName() . ' (' . __('Qty') . ': ' . $item->getQty() . ')';
-        }
-
-        return $items;
-    }
-
-    /**
-     * @return Order\Shipment\Item[]
-     */
-    private function getItems(): array
-    {
-        if ($this->items === null) {
-            $shipment = $this->registy->registry('current_shipment');
-            $this->items = $shipment->getAllItems();
-        }
-
-        return $this->items;
-    }
-
-    /**
-     * @return mixed[]
-     */
-    private function getPackageTypes(): array
-    {
-        return [
-            [
-                'label' => 'type 1',
-                'value' => 'type 1',
-            ],
-            [
-                'label' => 'type 2',
-                'value' => 'type 2',
-            ],
-        ];
-    }
-
-    /**
-     * @return string[][]
-     */
-    private function getDimensionUnits(): array
-    {
-        return [
-            [
-                'label' => 'cm',
-                'value' => 'CENTIMETER',
-            ],
-            [
-                'label' => 'in',
-                'value' => 'INCH',
-            ],
-        ];
-    }
-
-    /**
-     * @param string $nextFieldsetName
-     * @return mixed[][]
-     */
-    private function getNextButton(string $nextFieldsetName): array
-    {
-        $result['components'][] = [
-            'nodeTemplate' => 'dhl_packaging_popup.dhl_packaging_popup.dhl_button_next',
-            'nextFieldsetName' => $nextFieldsetName,
-        ];
-
-        return $result;
+        return $this->normalizeKeys($result);
     }
 }

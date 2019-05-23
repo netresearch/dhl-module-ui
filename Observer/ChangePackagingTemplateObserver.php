@@ -9,6 +9,7 @@ namespace Dhl\Ui\Observer;
 use Dhl\ShippingCore\Model\Support\PackagingPopup;
 use \Magento\Framework\Event\Observer;
 use \Magento\Framework\Event\ObserverInterface;
+use Magento\Framework\Registry;
 use Magento\Sales\Model\Order\Shipment;
 use Magento\Shipping\Block\Adminhtml\Order\Packaging;
 
@@ -20,7 +21,7 @@ use Magento\Shipping\Block\Adminhtml\Order\Packaging;
 class ChangePackagingTemplateObserver implements ObserverInterface
 {
     /**
-     * @var \Magento\Framework\Registry
+     * @var Registry
      */
     private $coreRegistry;
 
@@ -32,10 +33,10 @@ class ChangePackagingTemplateObserver implements ObserverInterface
     /**
      * ChangePackagingTemplateObserver constructor.
      *
-     * @param \Magento\Framework\Registry $coreRegistry
+     * @param Registry $coreRegistry
      * @param PackagingPopup $packagingPopup
      */
-    public function __construct(\Magento\Framework\Registry $coreRegistry, PackagingPopup $packagingPopup)
+    public function __construct(Registry $coreRegistry, PackagingPopup $packagingPopup)
     {
         $this->coreRegistry = $coreRegistry;
         $this->packagingPopup = $packagingPopup;

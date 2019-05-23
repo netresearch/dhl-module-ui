@@ -13,6 +13,10 @@ define([
              * data. It also uses built-in form functionality to submit the final shipment request to Magento.
              */
             defaults: {
+                items: [],
+                itemOptions: [],
+                packageOptions: [],
+                serviceOptions: [],
                 itemNames: {},
                 imports: {
                     itemNames: '${ $.provider }:data.item_names'
@@ -44,6 +48,11 @@ define([
                         button.disabled(!isReady);
                     });
                 });
+            },
+
+            initChildren: function () {
+                this._super();
+                
             },
 
             /** @inheritdoc */

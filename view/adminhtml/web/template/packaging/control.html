@@ -1,0 +1,16 @@
+<div id="grid_tab" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+    <ul class="tabs-horiz ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist" data-bind="foreach: { data: packages, as: 'package' }">
+        <li class="ui-state-default ui-corner-top"
+            data-bind='css: {"ui-tabs-active ui-state-active": package.id == $parent.currentPackage },
+             attr: {tabindex: package.id},
+             click: $parent.selectPackage'
+            role="tab">
+            <a data-bind="attr: {title: 'Package' + package.id}" class="ui-tabs-anchor" data-tab-type="" role="presentation" tabindex="-1">
+                <span data-bind="text:'Package ' + package.id"></span>
+            </a>
+        </li>
+    </ul>
+    <each args="data: elems, as: 'element'">
+        <render if="hasTemplate()"/>
+    </each>
+</div>

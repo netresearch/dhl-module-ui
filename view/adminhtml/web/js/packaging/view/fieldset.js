@@ -1,17 +1,11 @@
 define([
         "Magento_Ui/js/form/components/fieldset",
-        "uiLayout",
-    ], function (Component, layout) {
+        "Dhl_Ui/js/action/shipping-option/generate-components",
+    ], function (Component, generateComponents) {
         return Component.extend({
             defaults: {
-                childComponents: [],
+                shippingOptions: [],
                 activeFieldset: '',
-                imports: {
-                    childComponents: '${ $.provider }:${ $.dataScope }.components',
-                },
-                links: {
-                    activeFieldset: '${ $.provider }:data.active_fieldset',
-                },
                 listens: {
                     activeFieldset: 'handleActiveFieldsetChange',
                 }
@@ -23,9 +17,8 @@ define([
              */
             initialize: function () {
                 return this._super()
-                           .initChildComponents();
+                    .initChildComponents();
             },
-
 
 
             /**
@@ -34,14 +27,7 @@ define([
              * @private
              */
             initChildComponents: function () {
-                let layouts = [];
-                for (let input of this.childComponents) {
-                    input.parent = this.name;
-                    layouts.push(input)
-                }
-                if (layouts.length > 0) {
-                    layout(layouts);
-                }
+                generateComponents(this.shippingOptions, this.name);
             },
 
             handleActiveFieldsetChange: function (activeFieldset) {
