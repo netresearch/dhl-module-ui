@@ -3,9 +3,10 @@ define([
     'underscore',
     "uiCollection",
     'Dhl_Ui/js/packaging/model/package-state',
+    'Dhl_Ui/js/model/shipping-option/selections',
     'uiLayout',
     'mageUtils'
-], function (ko, _, Component, packageState, layout, utils) {
+], function (ko, _, Component, packageState, selections, layout, utils) {
     var self;
     return Component.extend({
         defaults: {
@@ -46,16 +47,16 @@ define([
 
             var fieldsets = [
                 self.generateItemSelectionFieldset(),
-                self.generateFieldset('package', 'Package options', self.packageOptions.shipping_options),
-                self.generateFieldset('service', 'Service options', self.serviceOptions.shipping_options)
+                self.generateFieldset('package', 'Package options', self.packageOptions),
+                self.generateFieldset('service', 'Service options', self.serviceOptions)
             ];
             layout(fieldsets);
         },
 
         generateItemSelectionFieldset: function () {
-            var baseFieldset = self.generateFieldset('item', 'Package items', self.itemOptions.shipping_options);
+            var baseFieldset = self.generateFieldset('item', 'Package items', self.itemOptions);
             baseFieldset.items = self.items;
-            baseFieldset.component = 'Dhl_Ui/js/packaging/view/item-properties-fieldset';
+            baseFieldset.component = 'Dhl_Ui/js/packaging/view/item-controller';
             return baseFieldset;
         },
 
@@ -73,12 +74,15 @@ define([
         },
 
         selectPackage: function (package) {
-            if (package.id !== packageState.currentPackage) {
+            if (package.id !== packageState.currentPackage()) {
                 packageState.switchPackage(package.id);
                 self.reset();
                 self.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
             }
-        }
+        },
 
+        submitPackages: function () {
+            console.log(selections.getAll().map((f) => f()));
+        }
     });
 });

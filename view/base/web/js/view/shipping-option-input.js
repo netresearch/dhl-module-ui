@@ -32,11 +32,13 @@ define([
         },
 
         initialize: function () {
+            this._super();
             var value = selections.getShippingOptionValue(this.shippingOption.code, this.shippingOptionInput.code);
             if (value !== null) {
                 this.value(value);
+            } else if (this.value() !== '') {
+                selections.addSelection(this.shippingOption.code, this.shippingOptionInput.code, this.value());
             }
-            this._super();
         },
 
         /**

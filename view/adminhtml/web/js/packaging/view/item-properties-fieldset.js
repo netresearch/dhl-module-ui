@@ -1,5 +1,5 @@
 define([
-        "Magento_Ui/js/form/components/fieldset",
+        "uiCollection",
         "Dhl_Ui/js/action/shipping-option/generate-components",
     ], function (Component, generateComponents) {
         return Component.extend({
@@ -29,7 +29,7 @@ define([
              * @private
              */
             initChildComponents: function () {
-                generateComponents(this.shippingOptions, this.name)
+                generateComponents(this.shippingOptions, this.name);
             },
 
             /**

@@ -118,6 +118,7 @@ define([
          * @return {[DhlShippingOptionSelectionObservable]}
          */
         getAll: function () {
+            selections[packageState.currentPackage()] = currentSelection;
             return selections;
         }
     };
