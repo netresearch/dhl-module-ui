@@ -1,166 +1,110 @@
 define([
-        "ko",
-        'underscore',
-        "Magento_Ui/js/form/form",
-        'Magento_Ui/js/lib/spinner',
-        'uiRegistry',
-        'Dhl_Ui/js/packaging/model/shipment-data',
-        'Dhl_Ui/js/packaging/action/rebuild-packing-items',
-    ], function (ko, _, Component, loader, registry, shipmentData, rebuildPackingItemsAction) {
-        return Component.extend({
-            /**
-             * This controller Component collects data from the PackagingPopup Data Provider and handles changes to the
-             * data. It also uses built-in form functionality to submit the final shipment request to Magento.
-             */
-            defaults: {
-                items: [],
-                itemOptions: [],
-                packageOptions: [],
-                serviceOptions: [],
-                itemNames: {},
-                imports: {
-                    itemNames: '${ $.provider }:data.item_names'
-                },
-                links: {
-                    availableItems: '${ $.provider }:data.available_items',
-                    selectedItems: '${ $.provider }:data.selected_items',
-                    activeFieldset: '${ $.provider }:data.active_fieldset',
-                },
-                listens: {
-                    selectedItems: 'handleItemSelectChange',
-                    availableItems: 'handleAvailableItemsChange'
-                },
-            },
-
-            /**
-             * @constructor
-             **/
-            initialize: function () {
-                this._super();
-
-                shipmentData.isReadyForSubmit().subscribe(function (isReady) {
-                    registry.get({index: 'dhl_button_submit'}, function (button) {
-                        button.disabled(!isReady);
-                    });
-                });
-                shipmentData.isReadyForReset().subscribe(function (isReady) {
-                    registry.get({index: 'dhl_button_new_package'}, function (button) {
-                        button.disabled(!isReady);
-                    });
-                });
-            },
-
-            initChildren: function () {
-                this._super();
-                
-            },
-
-            /** @inheritdoc */
-            initObservable: function () {
-                this._super().observe(['activeFieldset', 'availableItems', 'selectedItems']);
-
-                return this;
-            },
-
-            /**
-             * Whenever the selected Packing Items change, check which actions are available and calculate the current
-             * total shipment weight.
-             *
-             * @param {string[]} items
-             */
-            handleItemSelectChange: function (items) {
-                this.toggleReadyState(items);
-                this.calculatePackageWeight(items);
-            },
-
-            /**
-             * Update the package total weight input value with data from the selected shipment items.
-             *
-             * @param {string[]} itemIds
-             * @private
-             */
-            calculatePackageWeight: function (itemIds) {
-                registry.get({index: 'total_weight'}, function (totalWeightComponent) {
-                    /** Get the weight components for items that are selected. */
-                    let weightComponents = registry.filter(function (component) {
-                        let isItemWeightComponent = component.index === 'dhl_item_weight';
-                        let isActive = itemIds.includes(component.orderItemId);
-
-                        return isItemWeightComponent && isActive;
-                    });
-                    /** Add up weight values of retrieved components. */
-                    let newWeight = 0.0;
-                    weightComponents.forEach(function (component) {
-                        newWeight += parseFloat(component.value.peek());
-                    });
-                    totalWeightComponent.value(newWeight);
-                });
-            },
-
-            /**
-             * Set or unset shipmentData.readyForSubmit and readyForReset depending on wheter all or no orderItems are
-             * selected.
-             *
-             * @private
-             * @param {string[]} selection Array of currently selected itemOrderIds
-             */
-            toggleReadyState: function (selection) {
-                let remainingItems = this.availableItems().length;
-                shipmentData.setReadyForSubmit(selection.length > 0 && selection.length === remainingItems);
-                shipmentData.setReadyForReset(selection.length > 0 && selection.length < remainingItems);
-            },
-
-            /**
-             * Action target of "Next" buttons.
-             *
-             * @public
-             * @param {string} fieldset
-             */
-            setActiveFieldset: function (fieldset) {
-                this.activeFieldset(fieldset);
-            },
-
-            /**
-             * Hide loader.
-             *
-             * Overridden to get around obtuse spinner naming problem with the parent class.
-             *
-             * @protected
-             * @returns {Object}
-             */
-            hideLoader: function () {
-                loader.get(this.name + '.dhl_packaging_popup_spinner').hide();
-
-                return this;
-            },
-
-            /**
-             * On reset, recalculate the available Packing Items and select all remaining items.
-             *
-             * @protected
-             */
-            reset: function () {
-                let remainingItems = _.difference(this.availableItems(), this.selectedItems());
-                this.availableItems(remainingItems);
-                this.selectedItems(remainingItems);
-
-                this._super();
-            },
-
-            /**
-             * The available Packing items have changed.
-             *
-             * @param {string[]} availableItems
-             */
-            handleAvailableItemsChange: function (availableItems) {
-                if (!_.isEmpty(this.itemNames)) {
-                    rebuildPackingItemsAction(
-                        availableItems,
-                        this.name + '.dhl_fieldset_items',
-                        this.itemNames
-                    );
-                }
+    "ko",
+    'underscore',
+    "uiCollection",
+    'Dhl_Ui/js/packaging/model/package-state',
+    'Dhl_Ui/js/model/shipping-option/selections',
+    'uiLayout',
+    'mageUtils',
+    'Dhl_Ui/js/packaging/model/shipment-data',
+], function (ko, _, Component, packageState, selections, layout, utils, shipmentData) {
+    var self;
+    return Component.extend({
+        defaults: {
+            template: 'Dhl_Ui/packaging/control',
+            items: [],
+            itemOptions: [],
+            packageOptions: [],
+            serviceOptions: []
+        },
+        fieldsetTemplate: {
+            component: 'Dhl_Ui/js/packaging/view/fieldset',
+            label: '${ $.$data.label }',
+            name: '${ $.$data.name }',
+            parent: '${ $.$data.parent }',
+            config: {
+                shippingOptions: [],
+                activeFieldset: ''
             }
-        });
-    }
-);
+        },
+
+        packages: packageState.packages,
+        currentPackage: packageState.currentPackage,
+        allItemsPackaged: packageState.allItemsPackaged,
+
+        initialize: function () {
+            self = this;
+            self._super();
+            shipmentData.setItems(this.items);
+            self.initChildComponents();
+            return self;
+        },
+
+        initChildComponents: function () {
+            self._super();
+            self.reset();
+        },
+
+        reset: function () {
+            self.destroyChildren();
+
+            var fieldsets = [
+                self.generateItemSelectionFieldset(),
+                self.generateFieldset('package', 'Package options', self.packageOptions),
+                self.generateFieldset('service', 'Service options', self.serviceOptions)
+            ];
+            layout(fieldsets);
+        },
+
+        generateItemSelectionFieldset: function () {
+            var baseFieldset = self.generateFieldset('item', 'Package items', self.itemOptions);
+            baseFieldset.items = self.items;
+            baseFieldset.component = 'Dhl_Ui/js/packaging/view/item-controller';
+            return baseFieldset;
+        },
+
+        generateFieldset: function (name, label, options) {
+            var fieldset = utils.template(self.fieldsetTemplate, {
+                name: name,
+                label: label,
+                parent: self.name,
+            });
+            fieldset.config = {
+                shippingOptions: options,
+                activeFieldset: packageState.currentSection,
+                itemId: false
+            };
+            return fieldset;
+        },
+
+        selectPackage: function (package) {
+            if (package.id !== packageState.currentPackage()) {
+                packageState.switchPackage(package.id);
+                self.reset();
+                self.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
+            }
+        },
+
+        submitPackages: function () {
+            console.log(selections.getAll().map((f) => f()));
+        },
+
+        newPackage: function () {
+            if (packageState.allItemsPackaged() === false) {
+                packageState.newPackage(true);
+            }
+        },
+
+
+        deletePackage: function (id) {
+            //@TODO delete (current or specific) package and free up selections
+        },
+
+        getStateClass: function (package) {
+            if (package.id === packageState.currentPackage()) {
+                return 'ui-corner-top ui-tabs-active ui-state-active';
+            }
+            return 'ui-corner-top ui-state-default'
+        }
+    });
+});

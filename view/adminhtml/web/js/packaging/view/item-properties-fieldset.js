@@ -1,5 +1,5 @@
 define([
-        "uiCollection",
+        "Magento_Ui/js/form/components/fieldset",
         "Dhl_Ui/js/action/shipping-option/generate-components",
     ], function (Component, generateComponents) {
         return Component.extend({
@@ -7,7 +7,8 @@ define([
                 defaults: {
                     items: [],
                     selectedOrderItems: [],
-                    shippingOptions: []
+                    shippingOptions: [],
+                    itemId: false
                 },
                 listens: {
                     selectedOrderItems: 'handleChangedItemSelection',
@@ -29,7 +30,7 @@ define([
              * @private
              */
             initChildComponents: function () {
-                generateComponents(this.shippingOptions, this.name);
+                generateComponents(this.shippingOptions, this.name, this.itemId);
             },
 
             /**

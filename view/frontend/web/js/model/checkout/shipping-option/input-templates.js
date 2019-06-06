@@ -6,6 +6,8 @@ define([], function () {
      */
     var templates = {
         text: 'ui/form/element/input',
+        number: 'ui/form/element/input',
+        textarea: 'ui/form/element/textarea',
         checkbox: 'Dhl_Ui/checkout/form/element/checkbox',
         radio: 'Dhl_Ui/checkout/form/element/radio',
         radioset: 'Dhl_Ui/checkout/form/element/radio',

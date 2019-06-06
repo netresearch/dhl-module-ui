@@ -1,8 +1,7 @@
 define([
     'underscore',
     'ko',
-    'Dhl_Ui/js/packaging/model/package-state'
-], function (_, ko, packageState) {
+], function (_, ko) {
     'use strict';
 
 
@@ -13,19 +12,11 @@ define([
      *
      * @property DhlShippingOptionSelectionObservable
      */
-    var selections = [ko.observable({})];
+    var selections = [{items: {}}];
 
-    var currentSelection = ko.observable({});
+    var currentSelection = ko.observable({items: {}});
 
-    packageState.currentPackage.subscribe(function (previousValue) {
-        selections[previousValue] = currentSelection;
-    }, this, "beforeChange");
-    packageState.currentPackage.subscribe(function (newValue) {
-        if (!selections[newValue]) {
-            selections[newValue] = ko.observable({});
-        }
-        currentSelection = selections[newValue];
-    });
+
 
     return {
         /**
@@ -42,15 +33,19 @@ define([
          *
          * @param {string} shippingOptionCode
          * @param {string} [inputCode]
+         * @param {integer|false} itemId
          * @return {string|string[]|null} Shipping option input value(s) or null if shipping option not found
          */
-        getShippingOptionValue: function (shippingOptionCode, inputCode) {
+        getShippingOptionValue: function (shippingOptionCode, inputCode, itemId) {
             var packageData = currentSelection();
             if (!packageData || !(shippingOptionCode in packageData)) {
                 return null
             }
-
-            var selection = packageData[shippingOptionCode];
+            if (itemId === false) {
+                var selection = packageData[shippingOptionCode];
+            } else {
+                var selection = packageData['items'][itemId][shippingOptionCode];
+            }
             if (!inputCode) {
                 return selection;
             } else if (inputCode in selection) {
@@ -82,14 +77,25 @@ define([
          *
          * @param {string} shippingOptionCode
          * @param {string} inputCode
+         * @param {integer|false} itemId
          * @param {*} inputValue
          */
-        addSelection: function (shippingOptionCode, inputCode, inputValue) {
+        addSelection: function (shippingOptionCode, inputCode, itemId, inputValue) {
             var workingCopy = currentSelection();
-            if (workingCopy[shippingOptionCode] === undefined) {
-                workingCopy[shippingOptionCode] = {};
+            if (itemId === false) {
+                if (workingCopy[shippingOptionCode] === undefined) {
+                    workingCopy[shippingOptionCode] = {};
+                }
+                workingCopy[shippingOptionCode][inputCode] = inputValue;
+            } else {
+                if (workingCopy['items'][itemId] === undefined) {
+                    workingCopy['items'][itemId] = {};
+                }
+                if (workingCopy['items'][itemId][shippingOptionCode] === undefined) {
+                    workingCopy['items'][itemId][shippingOptionCode] = {};
+                }
+                workingCopy['items'][itemId][shippingOptionCode][inputCode] = inputValue;
             }
-            workingCopy[shippingOptionCode][inputCode] = inputValue;
 
             this.set(workingCopy);
         },
@@ -98,13 +104,21 @@ define([
          * Remove a shipping option selection. Values are stored separately by carrier.
          *
          * @param {string} shippingOptionCode
+         * @param {integer|false} itemId
          * @param {string} inputCode
          */
-        removeSelection: function (shippingOptionCode, inputCode) {
+        removeSelection: function (shippingOptionCode, inputCode, itemId) {
             var workingCopy = currentSelection();
-            delete workingCopy[shippingOptionCode][inputCode];
-            if (_.isEmpty(workingCopy[shippingOptionCode])) {
-                delete workingCopy[shippingOptionCode];
+            if (itemId === false) {
+                delete workingCopy[shippingOptionCode][inputCode];
+                if (_.isEmpty(workingCopy[shippingOptionCode])) {
+                    delete workingCopy[shippingOptionCode];
+                }
+            } else {
+                delete workingCopy['items'][itemId][shippingOptionCode][inputCode];
+                if (_.isEmpty(workingCopy['items'][itemId][shippingOptionCode])) {
+                    delete workingCopy['items'][itemId][shippingOptionCode];
+                }
             }
 
             this.set(workingCopy);
@@ -118,8 +132,11 @@ define([
          * @return {[DhlShippingOptionSelectionObservable]}
          */
         getAll: function () {
-            selections[packageState.currentPackage()] = currentSelection;
             return selections;
+        },
+
+        setAll:function (newSelections) {
+            selections = newSelections;
         }
     };
 });

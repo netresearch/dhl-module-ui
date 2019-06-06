@@ -29,15 +29,16 @@ define([
             inputName: '${ $.shippingOptionInput.code }',
             autocomplete: '${ $.shippingOptionInput.code }',
             placeholder: '${ $.shippingOptionInput.placeholder }',
+            itemId: false
         },
 
         initialize: function () {
             this._super();
-            var value = selections.getShippingOptionValue(this.shippingOption.code, this.shippingOptionInput.code);
+            var value = selections.getShippingOptionValue(this.shippingOption.code, this.shippingOptionInput.code, this.itemId);
             if (value !== null) {
                 this.value(value);
             } else if (this.value() !== '') {
-                selections.addSelection(this.shippingOption.code, this.shippingOptionInput.code, this.value());
+                selections.addSelection(this.shippingOption.code, this.shippingOptionInput.code, this.itemId, this.value());
             }
         },
 
@@ -52,9 +53,9 @@ define([
             this._super();
 
             if (newValue) {
-                selections.addSelection(this.shippingOption.code, this.shippingOptionInput.code, newValue);
+                selections.addSelection(this.shippingOption.code, this.shippingOptionInput.code, this.itemId, newValue);
             } else {
-                selections.removeSelection(this.shippingOption.code, this.shippingOptionInput.code);
+                selections.removeSelection(this.shippingOption.code, this.shippingOptionInput.code, this.itemId);
             }
             enforceCompatibility();
         },

@@ -22,6 +22,7 @@ define([
             label: '${ $.shippingOption.label }',
             validateWholeGroup: false,
             visible: true,
+            itemId: false
         },
 
         /**
@@ -37,7 +38,7 @@ define([
         initialize: function () {
             this._super();
 
-            generateInputs(this.shippingOption, this.name);
+            generateInputs(this.shippingOption, this.name, this.itemId);
         },
 
         /**

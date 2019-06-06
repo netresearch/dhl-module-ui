@@ -12,7 +12,7 @@ $viewModel = $block->getPopupViewModel();
             "Magento_Ui/js/core/app": {
                 "components": {
                     "dhl-packaging-popup": {
-                        "component": "Dhl_Ui/js/packaging/new_controller",
+                        "component": "Dhl_Ui/js/packaging/controller",
                         "config": {
                             "items": <?= json_encode($viewModel->getItemData()) ?>,
                             "itemOptions": <?= json_encode($viewModel->getItemOptions()) ?>,

@@ -1,66 +1,31 @@
-define([
-    'ko'
-], function (ko) {
+define([], function () {
     'use strict';
 
     /**
-     * @type {Observable}
+     * @type {[{id: integer, qty: float|integer}]}
      */
-    let data = ko.observable();
+    var items = [];
 
-    /**
-     * @type {Observable}
-     */
-    let readyForReset = ko.observable(false);
-    /**
-     * @type {Observable}
-     */
-    let readyForSubmit = ko.observable(true);
-
-    /**
-     * Manage the currently selected packaging popup package item order ids
-     */
     return {
         /**
-         * @return {Observable}
+         * @param {[{id: integer, qty: float|integer}]} newItems
          */
-        get: function () {
-            return data;
+        setItems: function (newItems) {
+            items = newItems;
         },
 
         /**
-         * @param {*} data
+         * @param {[{id: integer, qty: float|integer}]|{id: integer, qty: float|integer}}newItems
          */
-        set: function (data) {
-            data(data);
+        addItems: function (newItems) {
+            items.push(newItems);
         },
 
         /**
-         * @return {Observable}
+         * @returns {{id: integer, qty: (float|integer)}[]}
          */
-        isReadyForReset: function () {
-            return readyForReset;
-        },
-
-        /**
-         * @param {boolean} value
-         */
-        setReadyForReset: function (value) {
-            readyForReset(value);
-        },
-
-        /**
-         * @return {Observable}
-         */
-        isReadyForSubmit: function () {
-            return readyForSubmit;
-        },
-
-        /**
-         * @param {boolean} value
-         */
-        setReadyForSubmit: function (value) {
-            readyForSubmit(value);
-        },
+        getItems: function () {
+            return items;
+        }
     }
 });

@@ -7,14 +7,17 @@ define([
     /**
      * @var {DhlShippingOption[]} shippingOptions
      * @var {string} parentName
+     * @var {integer|false} itemId
      */
-    return function (shippingOptions, parentName) {
+    return function (shippingOptions, parentName, itemId) {
         var shippingOptionsLayout = _.map(shippingOptions, function (shippingOption) {
             return {
                 parent: parentName,
                 component: 'Dhl_Ui/js/view/shipping-option',
                 shippingOption: shippingOption,
                 shippingOptionCode: shippingOption.code,
+                itemId: itemId,
+                name: shippingOption.code,
             };
         }, this);
 

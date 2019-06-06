@@ -27,7 +27,7 @@ define([
              * @private
              */
             initChildComponents: function () {
-                generateComponents(this.shippingOptions, this.name);
+                generateComponents(this.shippingOptions, this.name, false);
             },
 
             handleActiveFieldsetChange: function (activeFieldset) {

@@ -77,18 +77,21 @@ class Popup implements ArgumentInterface
         return $this->shipment;
     }
 
+    /**
+     * @return string[][]
+     */
     public function getPackageOptions(): array
     {
         $data = $this->getProvidedData();
 
-        return $this->normalizeKeys($data['packageLevelOptions']);
+        return $this->normalizeKeys($data[PackagingDataProvider::GROUP_PACKAGE] ?? []);
     }
 
     /**
      * Normalize array keys to snake_case to have the same data structure as is used in checkout REST API
      *
-     * @param $dataArray
-     * @return array
+     * @param string[] $dataArray
+     * @return string[]
      */
     private function normalizeKeys($dataArray): array
     {
@@ -104,30 +107,29 @@ class Popup implements ArgumentInterface
         return $result;
     }
 
+    /**
+     * @return string[][]
+     */
     public function getItemOptions(): array
     {
         $data = $this->getProvidedData();
-        $itemProperties = [];
-        foreach ($this->getShipment()->getAllItems() as $item) {
-            $itemProperties[] = [
-                'id' => $item->getId(),
-                'orderItemId' => $item->getOrderItemId(),
-                'productName' => $item->getProductName(),
-                'shippingOptions' => $data['itemLevelOptions'],
-            ];
-        }
 
-        return $this->normalizeKeys($itemProperties);
+        return $this->normalizeKeys($data[PackagingDataProvider::GROUP_ITEM] ?? []);
     }
 
+    /**
+     * @return string[][]
+     */
     public function getServiceOptions(): array
     {
         $data = $this->getProvidedData();
 
-        //@TODO: DHLGW-203: provide differentiation between package level and service options
-        return $this->normalizeKeys($data['serviceOptions'] ?? []);
+        return $this->normalizeKeys($data[PackagingDataProvider::GROUP_SERVICE] ?? []);
     }
 
+    /**
+     * @return string[][]
+     */
     public function getItemData(): array
     {
         $result = array_reduce(
@@ -138,7 +140,7 @@ class Popup implements ArgumentInterface
              * @return array
              */
             static function ($carry, $item) {
-                $carry[] = array_merge($item->getData(), ['order_item' => $item->getOrderItem()->getData()]);
+                $carry[] = ['id' => $item->getOrderItemId(), 'qty' => $item->getQty()];
 
                 return $carry;
             },
@@ -153,9 +155,11 @@ class Popup implements ArgumentInterface
      */
     private function getProvidedData(): array
     {
+        if (!empty($this->data)) {
+            $this->data = $this->packageDataProvider->getData($this->getShipment());
+        }
         $orderCarrier = strtok((string) $this->getShipment()->getOrder()->getShippingMethod(), '_');
-        $data = $this->packageDataProvider->getData($this->getShipment()->getOrder());
 
-        return $data['carriers'][$orderCarrier] ?? [];
+        return $this->data['carriers'][$orderCarrier] ?? [];
     }
 }

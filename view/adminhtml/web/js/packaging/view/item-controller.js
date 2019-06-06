@@ -1,8 +1,11 @@
 define([
+    'underscore',
     'Magento_Ui/js/form/components/fieldset',
     'uiLayout',
-    'mageUtils'
-], function (Component, layout, utils) {
+    'mageUtils',
+    'uiRegistry',
+    'Dhl_Ui/js/packaging/model/package-state'
+], function (_, Component, layout, utils, registry, packageState) {
     'use strict';
 
     return Component.extend({
@@ -16,7 +19,7 @@ define([
             component: 'Dhl_Ui/js/packaging/view/item-properties-fieldset',
             name: '${ $.$data.id }',
             parent: '${ $.$data.parent }',
-            label: '${ $.$data.product_name }',
+            label: '${ $.$data.itemName }',
             config: {
                 shippingOptions: [],
                 activeFieldset: ''
@@ -32,18 +35,25 @@ define([
         initChildComponents: function () {
             this._super();
             var itemFieldsets = [];
-            this.shippingOptions.forEach(function (itemOptionSet) {
+            _.each(this.shippingOptions, function (itemOptionSet, id) {
                 var fieldset = utils.template(this.fieldsetTemplate, {
                     parent: this.name,
-                    id: itemOptionSet.id
+                    id: id,
+                    itemName: 'Item' + id
                 });
                 fieldset.config = {
-                    shippingOptions: itemOptionSet.shipping_options
+                    shippingOptions: itemOptionSet,
+                    itemId: id
                 };
                 itemFieldsets.push(fieldset);
-            }.bind(this));
+            }, this);
 
             layout(itemFieldsets);
+        },
+
+        onChildrenUpdate: function (hasChanged) {
+            this._super(hasChanged);
+            packageState.updateItemAvailability();
         }
     });
 });

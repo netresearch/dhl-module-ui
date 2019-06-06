@@ -29,12 +29,14 @@ define([
      *
      * @param {DhlShippingOption} shippingOption
      * @param {DhlInput} shippingOptionInput
+     * @param {integer|false} itemId
      * @return {string}
      */
-    var getDefaultValue = function (shippingOption, shippingOptionInput) {
+    var getDefaultValue = function (shippingOption, shippingOptionInput, itemId) {
         var cachedValue = selections.getShippingOptionValue(
             shippingOption.code,
-            shippingOptionInput.code
+            shippingOptionInput.code,
+            itemId
         );
         if (cachedValue !== null) {
             return cachedValue;
@@ -46,8 +48,9 @@ define([
     /**
      * @param {DhlShippingOption} shippingOption
      * @param {string} parentName
+     * @param {integer|false} itemId
      */
-    return function (shippingOption, parentName) {
+    return function (shippingOption, parentName, itemId) {
         var shippingOptionInputLayout = _.map(
             shippingOption.inputs,
             /** @type {DhlInput} */
@@ -63,8 +66,10 @@ define([
                     tooltip: shippingOptionInput.tooltip ? {description: shippingOptionInput.tooltip} : false,
                     comment: shippingOptionInput.comment,
                     elementTmpl: inputTemplates.get(shippingOptionInput.input_type),
-                    value: getDefaultValue(shippingOption, shippingOptionInput),
+                    value: getDefaultValue(shippingOption, shippingOptionInput, itemId),
                     validation: buildValidationData(shippingOptionInput),
+                    itemId: itemId,
+                    name: shippingOptionInput.code,
                 };
             }
         );

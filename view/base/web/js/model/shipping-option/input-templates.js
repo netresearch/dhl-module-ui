@@ -5,14 +5,16 @@ define([], function () {
      * @type {Object}
      */
     var templates = {
-        text: 'ui/form/element/input',
+        text: 'Dhl_Ui/form/element/input',
+        number: 'Dhl_Ui/form/element/number',
         checkbox: 'Dhl_Ui/form/element/checkbox',
         radio: 'Dhl_Ui/form/element/radio',
         radioset: 'Dhl_Ui/form/element/radio',
         time: 'Dhl_Ui/form/element/radio-styled',
         date: 'Dhl_Ui/form/element/radio-styled',
-        textarea: 'ui/form/element/textarea',
-        select: 'ui/form/element/textarea'
+        textarea: 'Dhl_Ui/form/element/textarea',
+        select: 'ui/form/element/select',
+        static: 'Dhl_Ui/form/element/static'
     };
 
     return {

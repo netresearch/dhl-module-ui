@@ -1,0 +1,12 @@
+<span class="admin__field-label" data-bind="text: value"></span>
+<input type="hidden"
+       class="admin__control-hidden"
+       data-bind="
+            value: value,
+            hasFocus: focused,
+            css: additionalClasses,
+            attr: {
+                name: inputName,
+                id: uid,
+       }"
+/>
