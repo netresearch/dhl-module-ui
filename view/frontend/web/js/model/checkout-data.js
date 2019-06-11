@@ -14,14 +14,14 @@ define([
 
     /**
      * Here come the type definitions of the DhlShippingSettings coming from the Magento REST endpoint.
-     * They are defined in PHP at Dhl\ShippingCore\Api\Data\Checkout\CheckoutDataInterface
+     * They are defined in PHP at Dhl\ShippingCore\Api\Data\ShippingDataInterface
      *
      * @typedef {{carriers: DhlCarrier[]}} DhlShippingSettings
      *
      * @typedef {{
      *     code: string,
      *     compatibility_data: DhlCompatibility[],
-     *     package_level_options: DhlShippingOption[],
+     *     service_options: DhlShippingOption[],
      *     metadata: {
      *         comments_after: DhlComment[],
      *         comments_before: DhlComment[],
