@@ -118,9 +118,16 @@ define([
         removeSelection: function (shippingOptionCode, inputCode) {
             var carrier = getCurrentCarrier(),
                 workingCopy = selections();
-            delete workingCopy[carrier][shippingOptionCode][inputCode];
-            if (_.isEmpty(workingCopy[carrier][shippingOptionCode])) {
-                delete workingCopy[carrier][shippingOptionCode];
+
+            if (workingCopy[carrier]) {
+                if (workingCopy[carrier][shippingOptionCode]) {
+                    if (workingCopy[carrier][shippingOptionCode][inputCode]) {
+                        delete workingCopy[carrier][shippingOptionCode][inputCode];
+                    }
+                    if (_.isEmpty(workingCopy[carrier][shippingOptionCode])) {
+                        delete workingCopy[carrier][shippingOptionCode];
+                    }
+                }
                 if (_.isEmpty(workingCopy[carrier])) {
                     delete workingCopy[carrier];
                 }
