@@ -23,6 +23,7 @@ define([
             inputCode: '${ $.shippingOptionInput.code }',
             elementTmpl: '',
             value: '',
+            options: [],
             comment: {},
             label: '${ $.shippingOptionInput.label }',
             labelVisible: '${ $.shippingOptionInput.label_visible }',

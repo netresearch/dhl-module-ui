@@ -11,6 +11,7 @@ define([
      * @param {DhlInput} shippingOptionInput
      */
     var buildValidationData = function (shippingOptionInput) {
+        debugger;
         var validationData = {};
         _.each(shippingOptionInput.validation_rules, function (rule) {
             var validatorName = validationMap.getValidatorName(rule.name);
@@ -60,6 +61,7 @@ define([
                     shippingOptionCode: shippingOption.code,
                     inputCode: shippingOptionInput.code,
                     inputType: shippingOptionInput.input_type,
+                    options: shippingOptionInput.options,
                     tooltip: shippingOptionInput.tooltip ? {description: shippingOptionInput.tooltip} : false,
                     comment: shippingOptionInput.comment,
                     elementTmpl: inputTemplates.get(shippingOptionInput.input_type),

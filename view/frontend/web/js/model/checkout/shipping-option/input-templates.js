@@ -10,7 +10,8 @@ define([], function () {
         radio: 'Dhl_Ui/checkout/form/element/radio',
         radioset: 'Dhl_Ui/checkout/form/element/radio',
         time: 'Dhl_Ui/checkout/form/element/radio-styled',
-        date: 'Dhl_Ui/checkout/form/element/radio-styled'
+        date: 'Dhl_Ui/checkout/form/element/radio-styled',
+        select: 'Dhl_Ui/checkout/form/element/select'
     };
 
     return {
