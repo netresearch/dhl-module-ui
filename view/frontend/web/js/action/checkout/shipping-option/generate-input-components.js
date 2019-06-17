@@ -12,10 +12,12 @@ define([
      */
     var buildValidationData = function (shippingOptionInput) {
         var validationData = {};
+
         _.each(shippingOptionInput.validation_rules, function (rule) {
             var validatorName = validationMap.getValidatorName(rule.name);
+
             if (validatorName) {
-                validationData[validatorName] = rule.param;
+                validationData[validatorName] = rule.param ? rule.param : true;
             } else {
                 console.warn('DHL shipping option validation rule ' + rule.name + ' is not defined.');
             }
@@ -36,6 +38,7 @@ define([
             shippingOption.code,
             shippingOptionInput.code
         );
+
         if (cachedValue !== null) {
             return cachedValue;
         }
@@ -50,8 +53,7 @@ define([
     return function (shippingOption, parentName) {
         var shippingOptionInputLayout = _.map(
             shippingOption.inputs,
-            /** @type {DhlInput} */
-            function (shippingOptionInput) {
+            function (/** @type {DhlInput} */ shippingOptionInput) {
                 return {
                     component: 'Dhl_Ui/js/view/checkout/shipping-option-input',
                     parent: parentName,
@@ -71,5 +73,5 @@ define([
         );
 
         layout(shippingOptionInputLayout);
-    }
+    };
 });
