@@ -53,11 +53,14 @@ define([
          * @return {DhlFootnote|boolean}
          */
         getById: function (footnoteId) {
-            var match = getCarrierData().metadata.footnotes.find(function (footnote) {
-                return footnote.id === footnoteId;
-            });
+            var match = false;
+            if (typeof getCarrierData() !== 'undefined' && typeof getCarrierData().metadata !== 'undefined') {
+                 match = getCarrierData().metadata.footnotes.find(function (footnote) {
+                    return footnote.id === footnoteId;
+                 });
+            }
 
-            return match ? match : false;
+            return match;
         },
 
         /**
