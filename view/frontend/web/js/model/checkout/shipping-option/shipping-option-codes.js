@@ -36,6 +36,11 @@ define([
             }
             var shippingData = checkoutData.getByCarrier(quote.shippingMethod().carrier_code);
             var shippingOption = _.findWhere(shippingData.service_options, {'code': code});
+
+            if (!shippingOption) {
+                return [];
+            }
+
             var inputCodes = _.pluck(shippingOption.inputs, 'code');
             return _.map(inputCodes, function (inputCode) {
                 return [code, inputCode].join('.');
