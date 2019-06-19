@@ -86,7 +86,9 @@ define([
         },
 
         submitPackages: function () {
-            console.log(selections.getAll().map((f) => f()));
+            var data = selections.getAll();
+            data[packageState.currentPackage()] = selections.get()();
+            console.log(JSON.stringify(data));
         },
 
         newPackage: function () {

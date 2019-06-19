@@ -35,15 +35,15 @@ define([
         initChildComponents: function () {
             this._super();
             var itemFieldsets = [];
-            _.each(this.shippingOptions, function (itemOptionSet, id) {
+            _.each(this.shippingOptions, function (itemOptionSet) {
                 var fieldset = utils.template(this.fieldsetTemplate, {
                     parent: this.name,
-                    id: id,
-                    itemName: 'Item' + id
+                    id: itemOptionSet.item_id,
+                    itemName: 'Item ' + itemOptionSet.item_id
                 });
                 fieldset.config = {
-                    shippingOptions: itemOptionSet,
-                    itemId: id
+                    shippingOptions: itemOptionSet.shipping_options,
+                    itemId: itemOptionSet.item_id
                 };
                 itemFieldsets.push(fieldset);
             }, this);

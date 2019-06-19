@@ -8,7 +8,8 @@ namespace Dhl\Ui\ViewModel\Order\Packaging;
 
 use Dhl\ShippingCore\Model\Config\CoreConfigInterface;
 use Dhl\ShippingCore\Model\Packaging\PackagingDataProvider;
-use Magento\Framework\Api\SimpleDataObjectConverter;
+use Dhl\ShippingCore\Model\ShippingDataHydrator;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Api\Data\ShipmentInterface;
@@ -23,7 +24,6 @@ use Magento\Sales\Model\Order\Shipment\Item;
  */
 class Popup implements ArgumentInterface
 {
-
     /**
      * @var Registry
      */
@@ -40,6 +40,11 @@ class Popup implements ArgumentInterface
     private $packageDataProvider;
 
     /**
+     * @var ShippingDataHydrator
+     */
+    private $hydrator;
+
+    /**
      * @var ShipmentInterface|Shipment
      */
     private $shipment;
@@ -54,15 +59,19 @@ class Popup implements ArgumentInterface
      *
      * @param Registry $registry
      * @param CoreConfigInterface $shippingCoreConfig
+     * @param PackagingDataProvider $dataProvider
+     * @param ShippingDataHydrator $hydrator
      */
     public function __construct(
         Registry $registry,
         CoreConfigInterface $shippingCoreConfig,
-        PackagingDataProvider $dataProvider
+        PackagingDataProvider $dataProvider,
+        ShippingDataHydrator $hydrator
     ) {
         $this->registry = $registry;
         $this->shippingCoreConfig = $shippingCoreConfig;
         $this->packageDataProvider = $dataProvider;
+        $this->hydrator = $hydrator;
     }
 
     /**
@@ -84,27 +93,7 @@ class Popup implements ArgumentInterface
     {
         $data = $this->getProvidedData();
 
-        return $this->normalizeKeys($data[PackagingDataProvider::GROUP_PACKAGE] ?? []);
-    }
-
-    /**
-     * Normalize array keys to snake_case to have the same data structure as is used in checkout REST API
-     *
-     * @param string[] $dataArray
-     * @return string[]
-     */
-    private function normalizeKeys($dataArray): array
-    {
-        $result = [];
-        foreach ($dataArray as $key => $value) {
-            if (is_array($value)) {
-                $result[SimpleDataObjectConverter::camelCaseToSnakeCase($key)] = $this->normalizeKeys($value);
-            } else {
-                $result[SimpleDataObjectConverter::camelCaseToSnakeCase($key)] = $value;
-            }
-        }
-
-        return $result;
+        return $data['package_options'] ?? [];
     }
 
     /**
@@ -114,7 +103,7 @@ class Popup implements ArgumentInterface
     {
         $data = $this->getProvidedData();
 
-        return $this->normalizeKeys($data[PackagingDataProvider::GROUP_ITEM] ?? []);
+        return $data['item_options'] ?? [];
     }
 
     /**
@@ -124,7 +113,7 @@ class Popup implements ArgumentInterface
     {
         $data = $this->getProvidedData();
 
-        return $this->normalizeKeys($data[PackagingDataProvider::GROUP_SERVICE] ?? []);
+        return $data['service_options'] ?? [];
     }
 
     /**
@@ -147,7 +136,7 @@ class Popup implements ArgumentInterface
             []
         );
 
-        return $this->normalizeKeys($result);
+        return $result;
     }
 
     /**
@@ -155,11 +144,20 @@ class Popup implements ArgumentInterface
      */
     private function getProvidedData(): array
     {
-        if (!empty($this->data)) {
-            $this->data = $this->packageDataProvider->getData($this->getShipment());
+        if (empty($this->data)) {
+            try {
+                $this->data = $this->hydrator->toArray($this->packageDataProvider->getData($this->getShipment()));
+            } catch (LocalizedException $e) {
+                $this->data = [];
+            }
         }
         $orderCarrier = strtok((string) $this->getShipment()->getOrder()->getShippingMethod(), '_');
 
-        return $this->data['carriers'][$orderCarrier] ?? [];
+        return array_filter(
+            $this->data['carriers'] ?? [],
+            function ($carrierData) use ($orderCarrier) {
+                return ($carrierData['code'] ?? '') === $orderCarrier;
+            }
+        )[0];
     }
 }

@@ -12,6 +12,7 @@ define([
     var newPackage = function (switchCurrent) {
         var new_id = packages().length;
         packages.push({"id": new_id});
+
         if (switchCurrent) {
             switchPackage(new_id)
         }
@@ -24,10 +25,14 @@ define([
         allSelections[currentPackage()] = selections.get()();
         selections.setAll(allSelections);
         if (!selections[id]) {
-            selections[id] = ko.observable({});
+            var availableItems = getAvailableItems();
+            var selection = {items: {}};
+            _.each(availableItems, function (item) {
+                selection['items'][item.id] = {'details': {'qty': item.qty}};
+            });
+            selections[id] = selection
         }
-        var newSelection = allSelections[id];
-        selections.set(newSelection);
+        selections.set(allSelections[id]);
         currentPackage(id);
     };
 
