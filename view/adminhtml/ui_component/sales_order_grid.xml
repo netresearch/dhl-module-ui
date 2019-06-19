@@ -2,8 +2,7 @@
 <!--
 See LICENSE.md for license details.
 -->
-<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <listingToolbar name="listing_top">
         <filters name="listing_filters">
             <filterSelect name="dhlgw_label_status" provider="${ $.parentName }"
@@ -16,6 +15,17 @@ See LICENSE.md for license details.
                 </settings>
             </filterSelect>
         </filters>
+        <massaction name="listing_massaction">
+            <action name="dhlgw_autocreate">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="type" xsi:type="string">autocreate</item>
+                        <item name="label" xsi:type="string" translate="true">Create Shipments</item>
+                        <item name="url" xsi:type="url" path="dhl/shipment/autocreate"/>
+                    </item>
+                </argument>
+            </action>
+        </massaction>
     </listingToolbar>
     <columns name="sales_order_columns">
         <column name="dhlgw_label_status" component="Dhl_Ui/js/grid/columns/label-status">

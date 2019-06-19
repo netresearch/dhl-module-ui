@@ -1,32 +1,35 @@
 {
-    "name": "dhl/module-ui",
-    "version": "0.1.0",
-    "type": "magento2-module",
-    "description": "Module providing the UI integration for the DHL global webservices components",
-    "license": "OSL-3.0",
-    "authors": [
-        {
-            "name": "Paul Siedler",
-            "email": "paul.siedler@netresearch.de"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Dhl\\Ui\\": ""
-        },
-        "files": [
-            "registration.php"
-        ]
-    },
-    "require": {
-        "dhl/module-shipping-core": "^0.3.0",
-        "magento/module-ui": "^101.0.0",
-        "magento/module-checkout": "^100.2.0"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-develop": "0.1.x-dev",
-            "dev-feature-shipping-options": "0.3.x-dev"
-        }
+  "name": "dhl/module-ui",
+  "version": "0.3.0",
+  "type": "magento2-module",
+  "description": "Module providing the UI integration for the DHL global webservices components",
+  "license": "OSL-3.0",
+  "authors": [
+    {
+      "name": "Paul Siedler",
+      "email": "paul.siedler@netresearch.de"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Dhl\\Ui\\": ""
+    },
+    "files": [
+      "registration.php"
+    ]
+  },
+  "require": {
+    "dhl/module-shipping-core": "^0.3.0",
+    "magento/framework": "^101.0.0|^102.0.0",
+    "magento/module-backend": "^100.2.0|^101.0.0",
+    "magento/module-checkout": "^100.2.0",
+    "magento/module-customer": "^101.0.0|^102.0.0",
+    "magento/module-sales": "^101.0.0|^102.0.0",
+    "magento/module-ui": "^101.0.0"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-develop": "0.3.x-dev"
+    }
+  }
 }
