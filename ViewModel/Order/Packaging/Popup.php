@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Dhl\Ui\ViewModel\Order\Packaging;
 
-use Dhl\ShippingCore\Model\Config\CoreConfigInterface;
+use Dhl\ShippingCore\Api\ConfigInterface;
 use Dhl\ShippingCore\Model\Packaging\PackagingDataProvider;
 use Dhl\ShippingCore\Model\ShippingDataHydrator;
 use Magento\Framework\Exception\LocalizedException;
@@ -30,7 +30,7 @@ class Popup implements ArgumentInterface
     private $registry;
 
     /**
-     * @var CoreConfigInterface
+     * @var ConfigInterface
      */
     private $shippingCoreConfig;
 
@@ -58,13 +58,13 @@ class Popup implements ArgumentInterface
      * Popup constructor.
      *
      * @param Registry $registry
-     * @param CoreConfigInterface $shippingCoreConfig
+     * @param ConfigInterface $shippingCoreConfig
      * @param PackagingDataProvider $dataProvider
      * @param ShippingDataHydrator $hydrator
      */
     public function __construct(
         Registry $registry,
-        CoreConfigInterface $shippingCoreConfig,
+        ConfigInterface $shippingCoreConfig,
         PackagingDataProvider $dataProvider,
         ShippingDataHydrator $hydrator
     ) {
