@@ -7,7 +7,8 @@ define([
     'uiLayout',
     'mageUtils',
     'Dhl_Ui/js/packaging/model/shipment-data',
-], function (ko, _, Component, packageState, selections, layout, utils, shipmentData) {
+    'Dhl_Ui/js/packaging/action/submit',
+], function (ko, _, Component, packageState, selections, layout, utils, shipmentData, submit) {
     var self;
     return Component.extend({
         defaults: {
@@ -89,6 +90,7 @@ define([
             var data = selections.getAll();
             data[packageState.currentPackage()] = selections.get()();
             console.log(JSON.stringify(data));
+            submit(data);
         },
 
         newPackage: function () {
