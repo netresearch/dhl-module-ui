@@ -16,7 +16,8 @@ define([
             items: [],
             itemOptions: [],
             packageOptions: [],
-            serviceOptions: []
+            serviceOptions: [],
+            submitUrl: ''
         },
         fieldsetTemplate: {
             component: 'Dhl_Ui/js/packaging/view/fieldset',
@@ -90,7 +91,7 @@ define([
             var data = selections.getAll();
             data[packageState.currentPackage()] = selections.get()();
             console.log(JSON.stringify(data));
-            submit(data);
+            submit(this.submitUrl, data);
         },
 
         newPackage: function () {

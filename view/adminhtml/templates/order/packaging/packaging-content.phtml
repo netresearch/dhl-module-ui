@@ -17,7 +17,8 @@ $viewModel = $block->getPopupViewModel();
                             "items": <?= json_encode($viewModel->getItemData()) ?>,
                             "itemOptions": <?= json_encode($viewModel->getItemOptions()) ?>,
                             "packageOptions": <?= json_encode($viewModel->getPackageOptions()) ?>,
-                            "serviceOptions": <?= json_encode($viewModel->getServiceOptions()) ?>
+                            "serviceOptions": <?= json_encode($viewModel->getServiceOptions()) ?>,
+                            "submitUrl": "<?= $viewModel->getSubmitUrl() ?>"
                         }
                     }
                 }

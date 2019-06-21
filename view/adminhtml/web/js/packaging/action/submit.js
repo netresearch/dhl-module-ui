@@ -3,11 +3,14 @@ define([
 ], function (storage) {
     'use strict';
 
-    return function (data) {
+    return function (submitUrl, data) {
         return storage.post(
-            'dhl/order_shipment/save',
-            JSON.stringify(data),
-            true
+            submitUrl,
+            {
+                data: JSON.stringify(data)
+            },
+            true,
+            'application/x-www-form-urlencoded'
         ).done();
     }
 });

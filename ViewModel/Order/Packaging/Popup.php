@@ -9,6 +9,7 @@ namespace Dhl\Ui\ViewModel\Order\Packaging;
 use Dhl\ShippingCore\Api\ConfigInterface;
 use Dhl\ShippingCore\Model\Packaging\PackagingDataProvider;
 use Dhl\ShippingCore\Model\ShippingDataHydrator;
+use Magento\Backend\Model\UrlInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
@@ -45,6 +46,11 @@ class Popup implements ArgumentInterface
     private $hydrator;
 
     /**
+     * @var UrlInterface
+     */
+    private $urlModel;
+
+    /**
      * @var ShipmentInterface|Shipment
      */
     private $shipment;
@@ -56,23 +62,21 @@ class Popup implements ArgumentInterface
 
     /**
      * Popup constructor.
-     *
      * @param Registry $registry
      * @param ConfigInterface $shippingCoreConfig
-     * @param PackagingDataProvider $dataProvider
+     * @param PackagingDataProvider $packageDataProvider
      * @param ShippingDataHydrator $hydrator
+     * @param UrlInterface $urlModel
      */
-    public function __construct(
-        Registry $registry,
-        ConfigInterface $shippingCoreConfig,
-        PackagingDataProvider $dataProvider,
-        ShippingDataHydrator $hydrator
-    ) {
+    public function __construct(Registry $registry, ConfigInterface $shippingCoreConfig, PackagingDataProvider $packageDataProvider, ShippingDataHydrator $hydrator, UrlInterface $urlModel)
+    {
         $this->registry = $registry;
         $this->shippingCoreConfig = $shippingCoreConfig;
-        $this->packageDataProvider = $dataProvider;
+        $this->packageDataProvider = $packageDataProvider;
         $this->hydrator = $hydrator;
+        $this->urlModel = $urlModel;
     }
+
 
     /**
      * @return ShipmentInterface|Shipment
@@ -159,5 +163,13 @@ class Popup implements ArgumentInterface
                 return ($carrierData['code'] ?? '') === $orderCarrier;
             }
         )[0];
+    }
+
+    /**
+     * @return string
+     */
+    public function getSubmitUrl(): string
+    {
+        return $this->urlModel->getUrl('dhl/order_shipment/save');
     }
 }
