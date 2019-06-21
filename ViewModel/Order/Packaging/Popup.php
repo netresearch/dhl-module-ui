@@ -170,6 +170,11 @@ class Popup implements ArgumentInterface
      */
     public function getSubmitUrl(): string
     {
-        return $this->urlModel->getUrl('dhl/order_shipment/save');
+        return $this->urlModel->getUrl(
+            'dhl/order_shipment/save/order_id/*/',
+            [
+                'order_id' => $this->getShipment()->getOrderId(),
+            ]
+        );
     }
 }
