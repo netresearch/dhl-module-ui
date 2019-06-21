@@ -8,6 +8,9 @@ define([
                 options: {}
             },
             initialize: function () {
+                this.window   = $('#packaging-window');
+                this.messages = this.window.find('.message-warning')[0];
+
                 this._super();
                 this.modal = $(this.target);
                 this.initModal();

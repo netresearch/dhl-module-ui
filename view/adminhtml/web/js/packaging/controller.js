@@ -90,8 +90,15 @@ define([
         submitPackages: function () {
             var data = selections.getAll();
             data[packageState.currentPackage()] = selections.get()();
-            console.log(JSON.stringify(data));
-            submit(this.submitUrl, data);
+
+            submit(this.submitUrl, data)
+                .done(function (response) {
+                    if (response.error) {
+                        window.packaging.messages.show().innerHTML = response.message;
+                    } else {
+                        // See vendor/magento/module-shipping/view/adminhtml/web/order/packaging.js
+                    }
+                });
         },
 
         newPackage: function () {

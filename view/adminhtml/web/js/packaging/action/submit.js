@@ -11,6 +11,6 @@ define([
             },
             true,
             'application/x-www-form-urlencoded'
-        ).done();
+        );
     }
 });
