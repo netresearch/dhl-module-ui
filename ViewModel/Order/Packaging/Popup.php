@@ -6,7 +6,6 @@ declare(strict_types=1);
 
 namespace Dhl\Ui\ViewModel\Order\Packaging;
 
-use Dhl\ShippingCore\Api\ConfigInterface;
 use Dhl\ShippingCore\Model\Packaging\PackagingDataProvider;
 use Dhl\ShippingCore\Model\ShippingDataHydrator;
 use Magento\Backend\Model\UrlInterface;
@@ -29,11 +28,6 @@ class Popup implements ArgumentInterface
      * @var Registry
      */
     private $registry;
-
-    /**
-     * @var ConfigInterface
-     */
-    private $shippingCoreConfig;
 
     /**
      * @var PackagingDataProvider
@@ -63,20 +57,21 @@ class Popup implements ArgumentInterface
     /**
      * Popup constructor.
      * @param Registry $registry
-     * @param ConfigInterface $shippingCoreConfig
      * @param PackagingDataProvider $packageDataProvider
      * @param ShippingDataHydrator $hydrator
      * @param UrlInterface $urlModel
      */
-    public function __construct(Registry $registry, ConfigInterface $shippingCoreConfig, PackagingDataProvider $packageDataProvider, ShippingDataHydrator $hydrator, UrlInterface $urlModel)
-    {
+    public function __construct(
+        Registry $registry,
+        PackagingDataProvider $packageDataProvider,
+        ShippingDataHydrator $hydrator,
+        UrlInterface $urlModel
+    ) {
         $this->registry = $registry;
-        $this->shippingCoreConfig = $shippingCoreConfig;
         $this->packageDataProvider = $packageDataProvider;
         $this->hydrator = $hydrator;
         $this->urlModel = $urlModel;
     }
-
 
     /**
      * @return ShipmentInterface|Shipment
@@ -159,7 +154,7 @@ class Popup implements ArgumentInterface
 
         return array_filter(
             $this->data['carriers'] ?? [],
-            function ($carrierData) use ($orderCarrier) {
+            static function ($carrierData) use ($orderCarrier) {
                 return ($carrierData['code'] ?? '') === $orderCarrier;
             }
         )[0];
@@ -170,11 +165,8 @@ class Popup implements ArgumentInterface
      */
     public function getSubmitUrl(): string
     {
-        return $this->urlModel->getUrl(
-            'dhl/order_shipment/save/order_id/*/',
-            [
-                'order_id' => $this->getShipment()->getOrderId(),
-            ]
-        );
+        return $this->urlModel->getUrl('dhl/order_shipment/save/order_id/*/', [
+            'order_id' => $this->getShipment()->getOrderId()
+        ]);
     }
 }
