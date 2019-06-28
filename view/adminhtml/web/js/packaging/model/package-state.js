@@ -6,11 +6,11 @@ define([
     'uiRegistry'
 ], function (_, ko, selections, getUnpackedItems, registry) {
     var packages = ko.observableArray([{"id": 0}]);
-
     var currentPackage = ko.observable(0);
+    var allItemsPackaged = ko.observable(true);
 
     var newPackage = function (switchCurrent) {
-        var new_id = packages().length;
+        var new_id = packages().reduce((carry,e) => Math.max(carry, e.id), 0) + 1;
         packages.push({"id": new_id});
 
         if (switchCurrent) {
@@ -20,46 +20,59 @@ define([
         //@TODO transfer available package items as preselection to new package selections
     };
 
-    var switchPackage = function (id) {
+    /**
+     *
+     * @param {{id: int}}package
+     */
+    var deletePackage = function (package) {
+        packages.splice(packages.indexOf(package));
         var allSelections = selections.getAll();
-        allSelections[currentPackage()] = selections.get()();
+        allSelections.splice(allSelections.findIndex((selection) => selection.packageId === package.id), 0);
         selections.setAll(allSelections);
-        if (!selections[id]) {
-            var availableItems = getAvailableItems();
-            var selection = {items: {}};
+        if (currentPackage() === package.id) {
+            switchPackage(packages().find(() => true).id)
+        }
+        updateItemAvailability();
+    };
+
+    var getSelectionsWithCurrent = function () {
+        var allSelections = selections.getAll();
+        allSelections.splice(allSelections.findIndex((selection) => selection.packageId === selections.get()().packageId), 1, selections.get()());
+        return allSelections;
+    };
+
+    var switchPackage = function (id) {
+        var allSelections = getSelectionsWithCurrent();
+        var packageSelection = allSelections.find((selection) => selection.packageId === id);
+        if (!packageSelection) {
+            var availableItems = getAvailableItems(true);
+            packageSelection = {packageId: id, items: {}};
             _.each(availableItems, function (item) {
                 selection['items'][item.id] = {'details': {'qty': item.qty}};
             });
-            selections[id] = selection
+            allSelections.push(packageSelection);
         }
-        selections.set(allSelections[id]);
+        selections.setAll(allSelections);
+        selections.set(packageSelection);
         currentPackage(id);
+        updateItemAvailability();
     };
 
-    var sections = [];
 
-    var currentSection = ko.observable('package');
-
-    var switchSection = function (section) {
-        currentPackage(section);
-    };
-
-    var nextSection = function () {
-        var index = min(sections.indexOf(currentSection()) + 1, sections.length - 1);
-        switchSection(sections[index])
-    };
-
-    var allItemsPackaged = ko.observable(true);
-
-    var getAvailableItems = function () {
-        var allSelections = selections.getAll();
-        allSelections[currentPackage()] = selections.get()();
-        for (var itemId in allSelections[currentPackage()]['items']) {
+    var getAvailableItems = function (withUnavailable) {
+        var allSelections = getSelectionsWithCurrent();
+        /**
+         * We are in an update loop here, where we can unfortunately not rely on the selection.get() data, as the
+         * values are not yet available there. Therefore we need to pull the updated values from the input components themselves
+         */
+        var packageSelection = allSelections.find((selection) => selection.packageId === currentPackage());
+        for (var itemId in packageSelection['items']) {
             var inputElement = registry.get('inputCode = qty, itemId = ' + itemId);
-            allSelections[currentPackage()]['items'][itemId]['details']['qty'] = Number(inputElement.value());
+            packageSelection['items'][itemId]['details']['qty'] = Number(inputElement.value());
         }
+        allSelections.splice(allSelections.findIndex((selection) => selection.packageId === currentPackage()), 1, packageSelection);
 
-        return getUnpackedItems(allSelections);
+        return getUnpackedItems(allSelections, withUnavailable);
     };
 
     var updateItemAvailability = function () {

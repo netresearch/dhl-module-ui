@@ -2,13 +2,14 @@
     <ul class="tabs-horiz ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist"
         data-bind="foreach: { data: packages, as: 'package' }">
         <li class="ui-corner-top ui-state-default"
-            data-bind="attr: {tabindex: package.id},
-                css: {'ui-state-active': $parent.currentPackage == package.id}
-                click: $parent.selectPackage"
+            data-bind="attr: {tabindex: id},
+                css: { 'ui-state-active': $parent.getCurrentPackageId == id}
+                "
             role="tab">
             <a data-bind="attr: {title: 'Package ' + package.id}" class="ui-tabs-anchor" data-tab-type=""
                role="presentation" tabindex="-1">
-                <span data-bind="text:'Package ' + package.id"></span>
+                <span data-bind="text:'Package ' + id, click: $parent.selectPackage"></span>
+                <span data-bind="click: $parent.deletePackage">X</span>
             </a>
         </li>
     </ul>

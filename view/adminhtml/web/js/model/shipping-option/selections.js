@@ -17,7 +17,6 @@ define([
     var currentSelection = ko.observable({items: {}});
 
 
-
     return {
         /**
          * @return {DhlShippingOptionSelectionObservable}
@@ -38,21 +37,27 @@ define([
          */
         getShippingOptionValue: function (shippingOptionCode, inputCode, itemId) {
             var packageData = currentSelection();
-            if (!packageData || !(shippingOptionCode in packageData)) {
+            if (!packageData) {
                 return null
             }
             if (itemId === false) {
+                if (!(shippingOptionCode in packageData)) {
+                    return null
+                }
                 var selection = packageData[shippingOptionCode];
             } else {
+                if (!(itemId in packageData['items']) || !(shippingOptionCode in packageData['items'][itemId])) {
+                    return null
+                }
                 var selection = packageData['items'][itemId][shippingOptionCode];
             }
             if (!inputCode) {
                 return selection;
             } else if (inputCode in selection) {
                 return selection[inputCode]
-            } else {
-                return null;
             }
+
+            return null;
         },
 
         /**
@@ -135,7 +140,7 @@ define([
             return selections;
         },
 
-        setAll:function (newSelections) {
+        setAll: function (newSelections) {
             selections = newSelections;
         }
     };

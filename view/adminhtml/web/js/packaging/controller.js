@@ -104,6 +104,8 @@ define([
         newPackage: function () {
             if (packageState.allItemsPackaged() === false) {
                 packageState.newPackage(true);
+                self.reset();
+                self.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
             }
         },
 
