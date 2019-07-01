@@ -19,6 +19,8 @@ use Magento\Sales\Model\Order\Shipment\Item;
 /**
  * Class Popup
  *
+ * Viewmodel for the packaging popup. Draws its data from the Dhl\ShippingCore\Model\Packaging\PackagingDataProvider
+ *
  * @author Paul Siedler <paul.siedler@netresearch.de>
  * @link https://www.netresearch.de/
  */
@@ -140,7 +142,10 @@ class Popup implements ArgumentInterface
     }
 
     /**
+     * Fetch data from PackagingDataProvider
+     *
      * @return string[][]
+     * @see \Dhl\ShippingCore\Model\Packaging\PackagingDataProvider
      */
     private function getProvidedData(): array
     {
@@ -169,11 +174,23 @@ class Popup implements ArgumentInterface
      */
     public function getSubmitUrl(): string
     {
-        return $this->urlModel->getUrl(
-            'dhl/order_shipment/save/order_id/*/',
-            [
-                'order_id' => $this->getShipment()->getOrderId(),
-            ]
-        );
+        if ($this->getShipment()->getId() !== null) {
+            $submitUrl = $this->urlModel->getUrl(
+                'dhl/order_shipment/save/order_id/*/shipment_id/*/',
+                [
+                    'order_id' => $this->getShipment()->getOrderId(),
+                    'shipment_id' => $this->getShipment()->getId(),
+                ]
+            );
+        } else {
+            $submitUrl = $this->urlModel->getUrl(
+                'dhl/order_shipment/save/order_id/*/',
+                [
+                    'order_id' => $this->getShipment()->getOrderId(),
+                ]
+            );
+        }
+
+        return $submitUrl;
     }
 }
