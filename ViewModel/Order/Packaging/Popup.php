@@ -56,6 +56,7 @@ class Popup implements ArgumentInterface
 
     /**
      * Popup constructor.
+     *
      * @param Registry $registry
      * @param PackagingDataProvider $packageDataProvider
      * @param ShippingDataHydrator $hydrator
@@ -152,12 +153,15 @@ class Popup implements ArgumentInterface
         }
         $orderCarrier = strtok((string) $this->getShipment()->getOrder()->getShippingMethod(), '_');
 
-        return array_filter(
+        $carrierData = array_filter(
             $this->data['carriers'] ?? [],
             static function ($carrierData) use ($orderCarrier) {
                 return ($carrierData['code'] ?? '') === $orderCarrier;
             }
-        )[0];
+        );
+
+        /** fall back to empty array, if no carrier data is provided */
+        return array_pop($carrierData) ?? [];
     }
 
     /**
@@ -165,8 +169,11 @@ class Popup implements ArgumentInterface
      */
     public function getSubmitUrl(): string
     {
-        return $this->urlModel->getUrl('dhl/order_shipment/save/order_id/*/', [
-            'order_id' => $this->getShipment()->getOrderId()
-        ]);
+        return $this->urlModel->getUrl(
+            'dhl/order_shipment/save/order_id/*/',
+            [
+                'order_id' => $this->getShipment()->getOrderId(),
+            ]
+        );
     }
 }

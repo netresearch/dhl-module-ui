@@ -89,7 +89,6 @@ define([
 
         submitPackages: function () {
             var data = selections.getAll();
-            data[packageState.currentPackage()] = selections.get()();
 
             submit(this.submitUrl, data)
                 .done(function (response) {
@@ -111,7 +110,12 @@ define([
 
 
         deletePackage: function (id) {
-            //@TODO delete (current or specific) package and free up selections
+            var currentPackage = packageState.currentPackage();
+            packageState.deletePackage(id);
+            if (currentPackage === id) {
+                self.reset();
+                self.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
+            }
         },
 
         getStateClass: function (package) {

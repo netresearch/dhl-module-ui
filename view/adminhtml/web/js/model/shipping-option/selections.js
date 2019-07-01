@@ -12,9 +12,9 @@ define([
      *
      * @property DhlShippingOptionSelectionObservable
      */
-    var selections = [{items: {}}];
+    var selections = [{packageId: 1, items: {}}];
 
-    var currentSelection = ko.observable({items: {}});
+    var currentSelection = ko.observable({packageId: 1, items: {}});
 
 
     return {
@@ -130,6 +130,12 @@ define([
         },
 
         set: function (newSelections) {
+            if (newSelections.packageId !== currentSelection().packageId) {
+                /**
+                 * Transfer current working state into selection list to avoid data loss on package switch
+                 */
+                selections = this.getAll();
+            }
             currentSelection(newSelections);
         },
 
@@ -137,6 +143,10 @@ define([
          * @return {[DhlShippingOptionSelectionObservable]}
          */
         getAll: function () {
+            /**
+             * Update selection list with latest status of the current selection so everything is up to date
+             */
+            selections.splice(selections.findIndex((selection) => selection.packageId === currentSelection().packageId), 1, currentSelection());
             return selections;
         },
 

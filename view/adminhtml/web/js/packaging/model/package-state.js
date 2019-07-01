@@ -5,19 +5,17 @@ define([
     'Dhl_Ui/js/packaging/action/get-unpacked-items',
     'uiRegistry'
 ], function (_, ko, selections, getUnpackedItems, registry) {
-    var packages = ko.observableArray([{"id": 0}]);
-    var currentPackage = ko.observable(0);
+    var packages = ko.observableArray([{"id": 1}]);
+    var currentPackage = ko.observable(1);
     var allItemsPackaged = ko.observable(true);
 
     var newPackage = function (switchCurrent) {
-        var new_id = packages().reduce((carry,e) => Math.max(carry, e.id), 0) + 1;
+        var new_id = packages().reduce((carry, e) => Math.max(carry, e.id), 1) + 1;
         packages.push({"id": new_id});
 
         if (switchCurrent) {
             switchPackage(new_id)
         }
-        return packages()[new_id];
-        //@TODO transfer available package items as preselection to new package selections
     };
 
     /**
@@ -35,34 +33,32 @@ define([
         updateItemAvailability();
     };
 
-    var getSelectionsWithCurrent = function () {
-        var allSelections = selections.getAll();
-        allSelections.splice(allSelections.findIndex((selection) => selection.packageId === selections.get()().packageId), 1, selections.get()());
-        return allSelections;
-    };
-
     var switchPackage = function (id) {
-        var allSelections = getSelectionsWithCurrent();
+        var allSelections = selections.getAll();
         var packageSelection = allSelections.find((selection) => selection.packageId === id);
         if (!packageSelection) {
+            /**
+             * If the package id requested is not yet available, create a new selections object for it and add it
+             * to the selections data
+             */
             var availableItems = getAvailableItems(true);
             packageSelection = {packageId: id, items: {}};
             _.each(availableItems, function (item) {
-                selection['items'][item.id] = {'details': {'qty': item.qty}};
+                packageSelection['items'][item.id] = {'details': {'qty': item.qty}};
             });
             allSelections.push(packageSelection);
+            allItemsPackaged(true);
         }
         selections.setAll(allSelections);
         selections.set(packageSelection);
         currentPackage(id);
-        updateItemAvailability();
     };
 
 
     var getAvailableItems = function (withUnavailable) {
-        var allSelections = getSelectionsWithCurrent();
+        var allSelections = selections.getAll();
         /**
-         * We are in an update loop here, where we can unfortunately not rely on the selection.get() data, as the
+         * We are most likely in an update loop here, where we can unfortunately not rely on the selection.get() data, as the
          * values are not yet available there. Therefore we need to pull the updated values from the input components themselves
          */
         var packageSelection = allSelections.find((selection) => selection.packageId === currentPackage());
@@ -84,10 +80,7 @@ define([
         packages: packages,
         newPackage: newPackage,
         switchPackage: switchPackage,
-        nextSection: nextSection,
-        currentSection: currentSection,
-        sections: sections,
-        switchSection: switchSection,
+        deletePackage: deletePackage,
         getAvailableItems: getAvailableItems,
         updateItemAvailability: updateItemAvailability,
         allItemsPackaged: allItemsPackaged
