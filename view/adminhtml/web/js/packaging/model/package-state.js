@@ -9,23 +9,24 @@ define([
     var currentPackage = ko.observable(1);
     var allItemsPackaged = ko.observable(true);
 
-    var newPackage = function (switchCurrent) {
+    /**
+     * Creates a new package with unfilled data and switches current selections to it
+     */
+    var newPackage = function () {
         var new_id = packages().reduce((carry, e) => Math.max(carry, e.id), 1) + 1;
         packages.push({"id": new_id});
-
-        if (switchCurrent) {
-            switchPackage(new_id)
-        }
+        switchPackage(new_id)
     };
 
     /**
+     * Remove a packages data presentation and switch the currently displayed data if necessary
      *
-     * @param {{id: int}}package
+     * @param {{id: int}} package
      */
     var deletePackage = function (package) {
         packages.splice(packages.indexOf(package));
         var allSelections = selections.getAll();
-        allSelections.splice(allSelections.findIndex((selection) => selection.packageId === package.id), 0);
+        allSelections.splice(allSelections.findIndex((selection) => selection.packageId === package.id));
         selections.setAll(allSelections);
         if (currentPackage() === package.id) {
             switchPackage(packages().find(() => true).id)
@@ -33,6 +34,11 @@ define([
         updateItemAvailability();
     };
 
+    /**
+     * Handle switching selection data for package
+     *
+     * @param id {int}
+     */
     var switchPackage = function (id) {
         var allSelections = selections.getAll();
         var packageSelection = allSelections.find((selection) => selection.packageId === id);
@@ -52,11 +58,18 @@ define([
         selections.setAll(allSelections);
         selections.set(packageSelection);
         currentPackage(id);
+        updateItemAvailability();
     };
 
 
+    /**
+     * Goes through all selection data and extracts the unpackaged items
+     *
+     * @param withUnavailable {boolean|undefined}  - if true the result array will also contain items with available qty of 0
+     * @returns {{{id: int, qty: float}}}
+     */
     var getAvailableItems = function (withUnavailable) {
-        var allSelections = selections.getAll();
+        var allSelections = JSON.parse(JSON.stringify(selections.getAll()));
         /**
          * We are most likely in an update loop here, where we can unfortunately not rely on the selection.get() data, as the
          * values are not yet available there. Therefore we need to pull the updated values from the input components themselves

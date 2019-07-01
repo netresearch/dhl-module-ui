@@ -1,6 +1,12 @@
 define([
     'Dhl_Ui/js/packaging/model/shipment-data'
 ], function (shipmentData) {
+    /**
+     * Reads through the given selections to find items that are not yet packaged
+     *
+     * @param selections {[{items: Object, packageId: int}]}
+     * @param withUnavailable {boolean|true}
+     */
     return function (selections, withUnavailable) {
         var availableItems = [];
 

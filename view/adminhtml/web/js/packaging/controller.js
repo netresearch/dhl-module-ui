@@ -73,7 +73,6 @@ define([
             });
             fieldset.config = {
                 shippingOptions: options,
-                activeFieldset: packageState.currentSection,
                 itemId: false
             };
             return fieldset;
@@ -95,6 +94,7 @@ define([
                     if (response.error) {
                         window.packaging.messages.show().innerHTML = response.message;
                     } else {
+                        // @TODO add success handling
                         // See vendor/magento/module-shipping/view/adminhtml/web/order/packaging.js
                     }
                 });
@@ -102,19 +102,21 @@ define([
 
         newPackage: function () {
             if (packageState.allItemsPackaged() === false) {
-                packageState.newPackage(true);
+                packageState.newPackage();
                 self.reset();
                 self.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
             }
         },
 
 
-        deletePackage: function (id) {
-            var currentPackage = packageState.currentPackage();
-            packageState.deletePackage(id);
-            if (currentPackage === id) {
-                self.reset();
-                self.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
+        deletePackage: function (package) {
+            if (packageState.packages.length > 1) {
+                var currentPackage = packageState.currentPackage();
+                packageState.deletePackage(package);
+                if (currentPackage === package.id) {
+                    self.reset();
+                    self.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
+                }
             }
         },
 
