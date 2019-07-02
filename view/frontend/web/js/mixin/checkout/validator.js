@@ -56,22 +56,6 @@ define([
             $t('Your input must not include one of the following: ') + specialChars.join(' ')
         );
 
-        /**
-         * Validator to make sure the input is not selected/filled while the
-         * Packing Station feature is used (a Packstation or Postfiliale
-         * is set in the street[0] field).
-         */
-        validator.addRule(
-            'dhl_not_allowed_with_parcelshop',
-            function (value, params) {
-                if (value) {
-                    return !isOnBlacklist(quote.shippingAddress().street[0], packingStationWords)
-                }
-                return true;
-            },
-            $t('This shipping option is not available at a DHL packing station of post office.')
-        );
-
         return validator;
     };
 });

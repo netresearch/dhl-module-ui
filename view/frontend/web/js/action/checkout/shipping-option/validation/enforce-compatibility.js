@@ -35,10 +35,18 @@ define([
      */
     var processIncompatibility = function (rule, actionLists) {
         var affectedOptions = rule.subjects,
+            selectedOptions = [];
+        if (rule.masters.length) {
             selectedOptions = _.intersection(
-                _.union(rule.subjects, rule.masters),
+                rule.masters,
                 shippingOptionSelections.getSelectionsInCompoundFormat()
             );
+        } else {
+            selectedOptions = _.intersection(
+                rule.subjects,
+                shippingOptionSelections.getSelectionsInCompoundFormat()
+            );
+        }
 
         if (selectedOptions.length) {
             affectedOptions = _.difference(
