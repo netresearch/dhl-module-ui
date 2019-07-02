@@ -13,7 +13,7 @@ define([], function () {
         time: 'Dhl_Ui/form/element/radio-styled',
         date: 'Dhl_Ui/form/element/radio-styled',
         textarea: 'Dhl_Ui/form/element/textarea',
-        select: 'ui/form/element/select',
+        select: 'Dhl_Ui/form/element/select',
         static: 'Dhl_Ui/form/element/static'
     };
 
