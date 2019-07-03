@@ -12,9 +12,9 @@ define([
 
         shipmentData.getItems().each(function (item) {
             var qtyPacked = selections.reduce(function (carry, selection) {
-                return carry + selection['items'][item.id]['details']['qty'];
+                return carry + Number(selection['items'][item.id]['details']['qty']);
             }, 0);
-            var qtyToShip = selections[0]['items'][item.id]['details']['qtyToShip'];
+            var qtyToShip = Number(selections[0]['items'][item.id]['details']['qtyToShip']);
             if (qtyPacked < qtyToShip || withUnavailable === true) {
                 availableItems.push({id: item.id, qty: qtyToShip - qtyPacked})
             }
