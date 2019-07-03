@@ -111,12 +111,9 @@ define([
 
         deletePackage: function (package) {
             if (packageState.packages().length > 1) {
-                var currentPackage = packageState.currentPackage();
-                packageState.deletePackage(package);
-                if (currentPackage === package.id) {
-                    self.reset();
-                    self.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
-                }
+                var id = packageState.deletePackage(package);
+                packageState.updateItemAvailability(false);
+                this.selectPackage({id: id});
             }
         },
 

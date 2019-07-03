@@ -22,16 +22,18 @@ define([
      * Remove a packages data presentation and switch the currently displayed data if necessary
      *
      * @param {{id: int}} package
+     * @return int package to switch to
      */
     var deletePackage = function (package) {
-        packages.splice(packages.indexOf(package));
+        packages.splice(packages.indexOf(package), 1);
         var allSelections = selections.getAll();
-        allSelections.splice(allSelections.findIndex((selection) => selection.packageId === package.id));
+        allSelections.splice(allSelections.findIndex((selection) => selection.packageId === package.id), 1);
         selections.setAll(allSelections);
         if (currentPackage() === package.id) {
-            switchPackage(packages().find(() => true).id)
+            return packages().find(() => true).id;
         }
-        updateItemAvailability();
+
+        return currentPackage();
     };
 
     /**
@@ -58,34 +60,38 @@ define([
         selections.setAll(allSelections);
         selections.set(packageSelection);
         currentPackage(id);
-        updateItemAvailability();
     };
 
 
     /**
      * Goes through all selection data and extracts the unpackaged items
      *
-     * @param withUnavailable {boolean|undefined}  - if true the result array will also contain items with available qty of 0
+     * @param readFromDom {boolean|undefined}  - if true the selections will be read from the actual input components
      * @returns {{{id: int, qty: float}}}
      */
-    var getAvailableItems = function (withUnavailable) {
-        var allSelections = JSON.parse(JSON.stringify(selections.getAll()));
+    var getAvailableItems = function (readFromDom) {
         /**
-         * We are most likely in an update loop here, where we can unfortunately not rely on the selection.get() data, as the
-         * values are not yet available there. Therefore we need to pull the updated values from the input components themselves
+         * We need a deep clone here, to avoid weird behaviour in intermediate states (switching, deleting, creating packages)
          */
-        var packageSelection = allSelections.find((selection) => selection.packageId === currentPackage());
-        for (var itemId in packageSelection['items']) {
-            var inputElement = registry.get('inputCode = qty, itemId = ' + itemId);
-            packageSelection['items'][itemId]['details']['qty'] = Number(inputElement.value());
+        var allSelections = JSON.parse(JSON.stringify(selections.getAll()));
+        if (readFromDom) {
+            /**
+             * We are most likely in an update loop here, where we can unfortunately not rely on the selection.get() data, as the
+             * values are not yet available there. Therefore we need to pull the updated values from the input components themselves
+             */
+            var packageSelection = allSelections.find((selection) => selection.packageId === currentPackage());
+            for (var itemId in packageSelection['items']) {
+                var inputElement = registry.get('inputCode = qty, itemId = ' + itemId);
+                packageSelection['items'][itemId]['details']['qty'] = Number(inputElement.value());
+            }
+            allSelections.splice(allSelections.findIndex((selection) => selection.packageId === currentPackage()), 1, packageSelection);
         }
-        allSelections.splice(allSelections.findIndex((selection) => selection.packageId === currentPackage()), 1, packageSelection);
 
-        return getUnpackedItems(allSelections, withUnavailable);
+        return getUnpackedItems(allSelections);
     };
 
-    var updateItemAvailability = function () {
-        allItemsPackaged(getAvailableItems().length === 0);
+    var updateItemAvailability = function (readFromDom) {
+        allItemsPackaged(getAvailableItems(readFromDom).filter((item) => item.qty > 0).length === 0);
     };
 
     return {

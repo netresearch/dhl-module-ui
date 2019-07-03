@@ -53,7 +53,7 @@ define([
 
         onChildrenUpdate: function (hasChanged) {
             this._super(hasChanged);
-            packageState.updateItemAvailability();
+            packageState.updateItemAvailability(true);
         }
     });
 });

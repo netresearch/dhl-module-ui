@@ -7,7 +7,7 @@ define([
      * @param selections {[{items: Object, packageId: int}]}
      * @param withUnavailable {boolean|true}
      */
-    return function (selections, withUnavailable) {
+    return function (selections) {
         var availableItems = [];
 
         shipmentData.getItems().each(function (item) {
@@ -15,10 +15,9 @@ define([
                 return carry + Number(selection['items'][item.id]['details']['qty']);
             }, 0);
             var qtyToShip = Number(selections[0]['items'][item.id]['details']['qtyToShip']);
-            if (qtyPacked < qtyToShip || withUnavailable === true) {
-                availableItems.push({id: item.id, qty: qtyToShip - qtyPacked})
-            }
+            availableItems.push({id: item.id, qty: qtyToShip - qtyPacked})
         });
+
         return availableItems;
     }
 });
