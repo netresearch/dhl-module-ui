@@ -115,7 +115,7 @@ define([
             if (packageState.packages().length > 1) {
                 var id = packageState.deletePackage(package);
                 packageState.updateItemAvailability(false);
-                this.selectPackage({id: id});
+                self.selectPackage({id: id});
             }
         },
 
