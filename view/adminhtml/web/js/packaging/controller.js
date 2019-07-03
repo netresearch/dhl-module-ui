@@ -110,7 +110,7 @@ define([
 
 
         deletePackage: function (package) {
-            if (packageState.packages.length > 1) {
+            if (packageState.packages().length > 1) {
                 var currentPackage = packageState.currentPackage();
                 packageState.deletePackage(package);
                 if (currentPackage === package.id) {
