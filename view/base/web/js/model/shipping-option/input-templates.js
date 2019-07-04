@@ -5,8 +5,10 @@ define([], function () {
      * @type {Object}
      */
     var templates = {
+        hidden: 'Dhl_Ui/form/element/hidden',
         text: 'Dhl_Ui/form/element/input',
         number: 'Dhl_Ui/form/element/number',
+        price: 'Dhl_Ui/form/element/price',
         checkbox: 'Dhl_Ui/form/element/checkbox',
         radio: 'Dhl_Ui/form/element/radio',
         radioset: 'Dhl_Ui/form/element/radio',

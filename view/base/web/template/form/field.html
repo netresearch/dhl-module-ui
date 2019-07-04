@@ -13,7 +13,7 @@
         <!-- ko template: element.tooltipTpl --><!-- /ko -->
         <!-- /ko -->
 
-        <!-- ko if: element.comment.content -->
+        <!-- ko if: element.comment.content && element.inputType !== 'price' -->
         <div class="field-note">
             <span data-bind="html: element.comment.content"/>
             <span data-bind="visible: showAsterisk(element.comment)"
