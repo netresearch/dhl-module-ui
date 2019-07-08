@@ -1,11 +1,343 @@
+/** variables */
+@padding-lg: 3rem;
+@wrapper-background: @color-gray-light2;
+@indent_xl_dhl: @indent__xl * 1.5;
+@indent_s_dhl: @indent__base /1.5;
+@base-border-radius: 1rem;
+@button__padding-vertical__l: .6875em;
+@button_lg_font_size: 1.6;
+@border_dhl: 2px solid @color-gray-darken0;
+
+/** mixins */
+.border-radius (@radius: @base-border-radius) {
+    -webkit-border-radius: @radius;
+    -moz-border-radius:    @radius;
+    border-radius:         @radius;
+
+    -moz-background-clip:    padding;
+    -webkit-background-clip: padding-box;
+    background-clip:         padding-box;
+}
+
+.flexbox() {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+// flex-start | flex-end | center | baseline | stretch
+.align-items(@align) {
+    -webkit-align-items: @align;
+    -ms-align-items: @align;
+    align-items: @align;
+}
+
+// row | row-reverse | column | column-reverse
+.flex-direction(@direction: row) {
+    -webkit-flex-direction: @direction;
+    -ms-flex-direction: @direction;
+    flex-direction: @direction;
+}
+
+// <flex-direction> || <flex-wrap>
+.flex-flow(@flow) {
+    -webkit-flex-flow: @flow;
+    -ms-flex-flow: @flow;
+    flex-flow: @flow;
+}
+
+.rotate (@deg) {
+    -webkit-transform: rotate(@deg);
+    -moz-transform: 	 rotate(@deg);
+    -ms-transform: 		 rotate(@deg);
+    -o-transform: 		 rotate(@deg);
+}
+
+.gradient-stripped(@color: rgba(218,218,218,.25), @angle: 45deg) {
+    background-image: linear-gradient(@angle, @color 25%, transparent 25%, transparent 50%, @color 50%, @color 75%, transparent 75%, transparent);
+    background-size: 1rem 1rem;
+}
+
+// vertical-lr || horizontal-tb || ...
+.writing-mode(@mode) {
+    writing-mode: @mode;
+    -webkit-writing-mode: @mode;
+    -ms-writing-mode: @mode;
+}
+.sticky() {
+    -webkit-position: sticky;
+    -moz-position: sticky;
+    -ms-position: sticky;
+    -o-position: sticky;
+    position: sticky;
+}
+
+/** styles */
 .admin__page-section.order-addresses {
-  .dhl-recipient-street {
-    dt.label {
-      float: left;
-      margin-right: @indent__xs;
-      &::after {
-        content: ":";
-      }
+    .dhl-recipient-street {
+        dt.label {
+            float: left;
+            margin-right: @indent__xs;
+
+            &::after {
+                content: ":";
+            }
+        }
     }
-  }
+}
+
+.dhl-packaging-popup {
+    #grid_tab {
+        position: relative;
+    }
+
+    .tab-anchor-group {
+
+        .ui-tabs-anchor {
+            display: inline-block;
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+
+    .tab-active {
+        background-color: @button-primary__background-color;
+        border-color: @button-primary__background-color;
+        a {
+            color: @button-primary__color;
+
+            &.delete-package {
+                background: lighten(@button-primary__background-color, 2%);
+            }
+        }
+    }
+
+    .delete-package {
+            padding: 1.5rem 1.3rem;
+            background: darken(@color-gray89, 2%);
+
+            &:before {
+                &:extend(.abs-icon all);
+                position: relative;
+                bottom: -1px;
+                content: @icon-remove-small__content;
+                font-size: @font-size__xl;
+            }
+
+    }
+    /* sticky footer */
+    .package-action-buttons {
+        padding: @indent__m;
+        text-align: right;
+        z-index: 20;
+
+        &.top-buttons {
+            .sticky();
+            top: 0;
+            margin: 0 0 @indent__m 0;
+            border-top: @border_dhl;
+            border-bottom: @border_dhl;
+            background: #f8f8f8;
+        }
+
+        &.bottom-buttons {
+            position: relative;
+            bottom: 0;
+            margin: 0 @indent__s 0 0;
+        }
+    }
+
+    .fieldset-wrapper {
+        &.item,
+        &.package {
+            margin: 2rem 0;
+        }
+
+        &.service {
+            margin: 2rem 0 0 0;
+        }
+
+        &.dhl-fieldset {
+            border: @border_dhl;
+            .border-radius();
+
+            >.fieldset-wrapper-title {
+                border: none;
+                .gradient-stripped();
+            }
+            >.admin__fieldset-wrapper-content {
+                padding: 0 @indent__l;
+            }
+        }
+
+        .shipping-option-label {
+            font-size: @font-size__l;
+            padding: 0;
+            margin: 0;
+        }
+
+        .shipping-option-wrapper {
+            margin: 0 0 @indent__l 0;
+
+            &:last-child {
+                margin: 0;
+            }
+
+            .field {
+
+                .label {
+                    font-weight: @font-weight__semibold;
+                    line-height: @field-label__font-size;
+                    margin-bottom: 1rem - round((@field-label__line-height - 1) * @field-label__font-size / 2, 2);
+                    margin-top: 0 - round((@field-label__line-height - 1) * @field-label__font-size / 2, 2);
+                    text-align: left;
+                    width: auto;
+                }
+                &:not(.dhl-checkbox) {
+                    display: block;
+                }
+            }
+        }
+
+        &.dhl-fieldset.service,
+        &.dhl-fieldset.package {
+            >.admin__fieldset-wrapper-content {
+                background-color: #EEEEEF;
+            }
+        }
+
+        &.dhl-fieldset.service {
+            .field-note,
+            .admin__field-tooltip {
+                display: none;
+            }
+        }
+    }
+    .field-error {
+        color: @error__color;
+    }
+}
+
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
+    .dhl-packaging-popup {
+
+        .fieldset-wrapper {
+
+            &.dhl-fieldset {
+
+                >.fieldset-wrapper-title {
+                    text-align: center;
+                }
+
+                .shipping-option-content-wrapper {
+                    .field {
+                        margin: @indent__m 0 0 0;
+                    }
+                }
+
+                &.service {
+                    .shipping-option-content-wrapper {
+                        .field {
+                            margin: @indent__s 0 0 0;
+                        }
+                    }
+                }
+            }
+        }
+
+        textarea {
+            max-width: 100%;
+        }
+
+        .ui-corner-top {
+            margin-bottom: @indent__xs;
+        }
+
+        .tab-anchor-group {
+
+            .ui-tabs-anchor {
+                padding: @indent__s;
+            }
+        }
+    }
+}
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+    .dhl-packaging-popup {
+
+        .fieldset-wrapper {
+
+            &.dhl-fieldset {
+                .flexbox();
+
+                >.fieldset-wrapper-title {
+                    .flexbox();
+                    .align-items(center);
+                    width: @indent_xl_dhl;
+
+                    span {
+                        .writing-mode(vertical-lr);
+                        .rotate(180deg);
+                        padding:  0 @indent_s_dhl 0 0;
+                    }
+                }
+                .admin__fieldset-wrapper-content {
+                    width: 100%;
+                }
+            }
+            &.dhl-fieldset {
+
+                &.item,
+                &.package{
+                    .shipping-option-content-wrapper {
+
+                        .field:not(.productId){
+                            margin: @indent__m 0 0 @indent__m;
+                        }
+                    }
+                }
+
+                &.service {
+                    .shipping-option-wrapper {
+                        display: inline-block;
+                        vertical-align: top;
+                        padding: 0 @indent__m 0 0;
+                        min-width: 33%;
+                    }
+                    .shipping-option-content-wrapper {
+
+                        .field {
+                            margin: @indent__s 0 0 @indent__m;
+
+                            &.dhl-checkbox {
+                                margin: 0;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .shipping-option-content-wrapper {
+                .flexbox();
+                .flex-flow(row wrap);
+                margin:  0 @indent__m*-1;
+
+            }
+        }
+
+        .package-action-buttons {
+
+            button {
+                padding: @button__padding-vertical__l @button__padding-vertical__l*1.3;
+                font-size: @font-size__l;
+
+                &:first-child {
+                    margin: 0 @indent__m 0 0;
+                }
+            }
+        }
+    }
 }

@@ -8,7 +8,8 @@ define([
                 activeFieldset: '',
                 listens: {
                     activeFieldset: 'handleActiveFieldsetChange',
-                }
+                },
+                additionalClasses: 'dhl-fieldset'
             },
 
             /**

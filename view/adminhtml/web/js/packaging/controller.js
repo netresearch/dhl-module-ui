@@ -6,9 +6,10 @@ define([
     'Dhl_Ui/js/model/shipping-option/selections',
     'uiLayout',
     'mageUtils',
+    'mage/translate',
     'Dhl_Ui/js/packaging/model/shipment-data',
     'Dhl_Ui/js/packaging/action/submit',
-], function (ko, _, Component, packageState, selections, layout, utils, shipmentData, submit) {
+], function (ko, _, Component, packageState, selections, layout, utils, $t, shipmentData, submit) {
     var self;
     return Component.extend({
         defaults: {
@@ -24,6 +25,7 @@ define([
             label: '${ $.$data.label }',
             name: '${ $.$data.name }',
             parent: '${ $.$data.parent }',
+            additionalClasses: 'dhl-fieldset ${ $.$data.name }',
             config: {
                 shippingOptions: [],
                 activeFieldset: ''
@@ -52,14 +54,14 @@ define([
 
             var fieldsets = [
                 self.generateItemSelectionFieldset(),
-                self.generateFieldset('package', 'Package options', self.packageOptions),
-                self.generateFieldset('service', 'Service options', self.serviceOptions)
+                self.generateFieldset('package', $t('Package Options'), self.packageOptions),
+                self.generateFieldset('service', $t('Service Options'), self.serviceOptions)
             ];
             layout(fieldsets);
         },
 
         generateItemSelectionFieldset: function () {
-            var baseFieldset = self.generateFieldset('item', 'Package items', self.itemOptions);
+            var baseFieldset = self.generateFieldset('item', $t('Package Items'), self.itemOptions);
             baseFieldset.items = self.items;
             baseFieldset.component = 'Dhl_Ui/js/packaging/view/item-controller';
             return baseFieldset;
@@ -119,7 +121,7 @@ define([
 
         getStateClass: function (package) {
             if (package.id === packageState.currentPackage()) {
-                return 'ui-corner-top ui-tabs-active ui-state-active';
+                return 'ui-corner-top ui-tabs-active ui-state-default tab-active';
             }
             return 'ui-corner-top ui-state-default'
         }

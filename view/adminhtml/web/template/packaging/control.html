@@ -1,37 +1,59 @@
+<div class="package-action-buttons top-buttons" id="dhl-package-buttons">
+    <button id="new_package" title="New package" type="button"
+            class="scalable ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
+            data-ui-id="page-actions-toolbar-new-package-button" role="button"
+            data-bind="attr: { disabled: allItemsPackaged, 'aria-disabled': allItemsPackaged }, click: newPackage, css: {disabled: allItemsPackaged}">
+    <span class="ui-button-text">
+        <span data-bind="i18n: 'New Package'"></span>
+    </span>
+    </button>
+    <button id="save" title="Save" type="button"
+            class="action-default scalable save primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
+            data-ui-id="page-actions-toolbar-save-button" role="button" aria-disabled="false"
+            data-bind="click: submitPackages">
+        <span class="ui-button-text">
+            <span data-bind="i18n: 'Save Config'"></span>
+        </span>
+    </button>
+</div>
 <div id="grid_tab" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
     <ul class="tabs-horiz ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist"
         data-bind="foreach: { data: packages, as: 'package' }">
         <li class="ui-corner-top ui-state-default"
-            data-bind="attr: {tabindex: id},
-                css: { 'ui-state-active': $parent.getCurrentPackageId == id}
+            data-bind="attr: {tabindex: id, class: $parent.getStateClass($data) }
                 "
             role="tab">
-            <a data-bind="attr: {title: 'Package ' + package.id}" class="ui-tabs-anchor" data-tab-type=""
-               role="presentation" tabindex="-1">
-                <span data-bind="text:'Package ' + id, click: $parent.selectPackage"></span>
-                <span data-bind="click: $parent.deletePackage">X</span>
-            </a>
+            <div class="tab-anchor-group">
+                <a data-bind="attr: {title: 'Package ' + package.id}, text:'Package ' + id, click: $parent.selectPackage" class="ui-tabs-anchor select-package" data-tab-type=""
+                   role="presentation" tabindex="-1">
+                </a>
+                <a data-bind="attr: {title: 'Package ' + package.id}, click: $parent.deletePackage" class="ui-tabs-anchor delete-package" data-tab-type=""
+                   role="presentation" tabindex="-1">
+                </a>
+            </div>
+
+
         </li>
     </ul>
     <each args="data: elems, as: 'element'">
         <render if="hasTemplate()"/>
     </each>
-    <div>
-        <button id="new_package" title="New package" type="button"
-                class="scalable ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
-                data-ui-id="page-actions-toolbar-new-package-button" role="button"
-                data-bind="attr: { disabled: allItemsPackaged, 'aria-disabled': allItemsPackaged }, click: newPackage, css: {disabled: allItemsPackaged}">
-            <span class="ui-button-text">
-                <span>New Package</span>
-            </span>
-        </button>
-        <button id="save" title="Save" type="button"
-                class="action-default scalable save primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
-                data-ui-id="page-actions-toolbar-save-button" role="button" aria-disabled="false"
-                data-bind="click: submitPackages">
-            <span class="ui-button-text">
-                <span>Save Config</span>
-            </span>
-        </button>
-    </div>
+</div>
+<div class="package-action-buttons bottom-buttons">
+    <button id="new_package_bottom" title="New package" type="button"
+            class="scalable ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
+            data-ui-id="page-actions-toolbar-new-package-button" role="button"
+            data-bind="attr: { disabled: allItemsPackaged, 'aria-disabled': allItemsPackaged }, click: newPackage, css: {disabled: allItemsPackaged}">
+    <span class="ui-button-text">
+        <span data-bind="i18n: 'New Package'"></span>
+    </span>
+    </button>
+    <button id="save_bottom" title="Save" type="button"
+            class="action-default scalable save primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
+            data-ui-id="page-actions-toolbar-save-button" role="button" aria-disabled="false"
+            data-bind="click: submitPackages">
+        <span class="ui-button-text">
+            <span data-bind="i18n: 'Save Config'"></span>
+        </span>
+    </button>
 </div>

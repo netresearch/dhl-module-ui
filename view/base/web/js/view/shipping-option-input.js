@@ -29,7 +29,8 @@ define([
             inputName: '${ $.shippingOptionInput.code }',
             autocomplete: '${ $.shippingOptionInput.code }',
             placeholder: '${ $.shippingOptionInput.placeholder }',
-            itemId: false
+            itemId: false,
+            additionalClasses: '${ $.shippingOptionInput.code }'
         },
 
         initialize: function () {

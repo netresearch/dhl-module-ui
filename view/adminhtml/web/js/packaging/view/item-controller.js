@@ -3,23 +3,26 @@ define([
     'Magento_Ui/js/form/components/fieldset',
     'uiLayout',
     'mageUtils',
+    'mage/translate',
     'uiRegistry',
     'Dhl_Ui/js/packaging/model/package-state'
-], function (_, Component, layout, utils, registry, packageState) {
+], function (_, Component, layout, utils, $t, registry, packageState) {
     'use strict';
 
     return Component.extend({
         defaults: {
-            label: 'Package items',
+            label: $t('Package Items'),
             items: [],
             shippingOptions: [],
-            activeFieldset: ''
+            activeFieldset: '',
+            additionalClasses: 'dhl-all-items'
         },
         fieldsetTemplate: {
             component: 'Dhl_Ui/js/packaging/view/item-properties-fieldset',
             name: '${ $.$data.id }',
             parent: '${ $.$data.parent }',
             label: '${ $.$data.itemName }',
+            additionalClasses: 'item-options',
             config: {
                 shippingOptions: [],
                 activeFieldset: ''
@@ -39,7 +42,7 @@ define([
                 var fieldset = utils.template(this.fieldsetTemplate, {
                     parent: this.name,
                     id: itemOptionSet.item_id,
-                    itemName: 'Item ' + itemOptionSet.item_id
+                    itemName: $t('Item ') + itemOptionSet.item_id
                 });
                 fieldset.config = {
                     shippingOptions: itemOptionSet.shipping_options,

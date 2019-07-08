@@ -8,7 +8,8 @@ define([
                     items: [],
                     selectedOrderItems: [],
                     shippingOptions: [],
-                    itemId: false
+                    itemId: false,
+                    additionalClasses: 'dhl-item'
                 },
                 listens: {
                     selectedOrderItems: 'handleChangedItemSelection',
