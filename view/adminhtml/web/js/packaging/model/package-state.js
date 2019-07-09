@@ -25,10 +25,15 @@ define([
      * @return int package to switch to
      */
     var deletePackage = function (package) {
-        packages.splice(packages.indexOf(package), 1);
-        var allSelections = selections.getAll();
-        allSelections.splice(allSelections.findIndex((selection) => selection.packageId === package.id), 1);
+        packages(packages().filter((item) => item.id !== package.id));
+
+        /**
+         * Filter all selections to actual packages (to prevent dangling entities)
+         */
+        var packageIds = packages().map((item) => item.id);
+        var allSelections = selections.getAll().filter((selection) => _.contains(packageIds, selection.packageId));
         selections.setAll(allSelections);
+        updateItemAvailability(false);
         if (currentPackage() === package.id) {
             return packages().find(() => true).id;
         }

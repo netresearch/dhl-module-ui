@@ -143,10 +143,15 @@ define([
          * @return {[DhlShippingOptionSelectionObservable]}
          */
         getAll: function () {
-            /**
-             * Update selection list with latest status of the current selection so everything is up to date
-             */
-            selections.splice(selections.findIndex((selection) => selection.packageId === currentSelection().packageId), 1, currentSelection());
+
+            var index = selections.findIndex((selection) => selection.packageId === currentSelection().packageId);
+            if (index >= 0) {
+                /**
+                 * Update selection list with latest status of the current selection so everything is up to date
+                 * Check if the current selection is not belonging to a deleted package
+                 */
+                selections.splice(index, 1, currentSelection());
+            }
             return selections;
         },
 
