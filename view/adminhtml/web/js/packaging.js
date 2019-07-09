@@ -27,20 +27,6 @@ define([
              */
             showWindow: function () {
                 this.modal.modal('openModal');
-                this.modal.on('modalopened', function () {
-                    this.header = $('#dhl-package-buttons'),
-                        this.container = this.header.parent().parent().parent().parent();
-
-                    this.container.on('scroll', function () {
-                        console.log(this.offsetTop);
-
-                        if (this.offsetTop > 80) {
-                            this.header.addClass('fixed');
-                        }
-                    });
-
-                });
-
             }
         });
     }
