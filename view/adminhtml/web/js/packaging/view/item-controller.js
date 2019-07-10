@@ -5,8 +5,9 @@ define([
     'mageUtils',
     'mage/translate',
     'uiRegistry',
-    'Dhl_Ui/js/packaging/model/package-state'
-], function (_, Component, layout, utils, $t, registry, packageState) {
+    'Dhl_Ui/js/packaging/model/package-state',
+    'Dhl_Ui/js/packaging/model/shipment-data'
+], function (_, Component, layout, utils, $t, registry, packageState, shipmentData) {
     'use strict';
 
     return Component.extend({
@@ -14,8 +15,7 @@ define([
             label: $t('Package Items'),
             items: [],
             shippingOptions: [],
-            activeFieldset: '',
-            additionalClasses: 'dhl-all-items'
+            activeFieldset: ''
         },
         fieldsetTemplate: {
             component: 'Dhl_Ui/js/packaging/view/item-properties-fieldset',
@@ -39,14 +39,19 @@ define([
             this._super();
             var itemFieldsets = [];
             _.each(this.shippingOptions, function (itemOptionSet) {
-                var fieldset = utils.template(this.fieldsetTemplate, {
+                var items = shipmentData.getItems(),
+                    itemData = items.find((item)=> Number(item.id) === itemOptionSet.item_id),
+                    itemCount = items.length,
+                    collapse = itemCount > 1,
+                    fieldset = utils.template(this.fieldsetTemplate, {
                     parent: this.name,
                     id: itemOptionSet.item_id,
-                    itemName: $t('Item ') + itemOptionSet.item_id
+                    itemName: itemData.productName
                 });
                 fieldset.config = {
                     shippingOptions: itemOptionSet.shipping_options,
-                    itemId: itemOptionSet.item_id
+                    itemId: itemOptionSet.item_id,
+                    collapsible: collapse
                 };
                 itemFieldsets.push(fieldset);
             }, this);

@@ -131,7 +131,11 @@ class Popup implements ArgumentInterface
              * @return array
              */
             static function ($carry, $item) {
-                $carry[] = ['id' => $item->getOrderItemId(), 'qty' => $item->getQty()];
+                $carry[] = [
+                    'id' => $item->getOrderItemId(),
+                    'qty' => $item->getQty(),
+                    'productName' => $item->getName()
+                ];
 
                 return $carry;
             },

@@ -41,21 +41,3 @@
         <render if="hasTemplate()"/>
     </each>
 </div>
-<div class="package-action-buttons bottom-buttons">
-    <button id="new_package_bottom" title="New package" type="button"
-            class="scalable ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
-            data-ui-id="page-actions-toolbar-new-package-button" role="button"
-            data-bind="attr: { disabled: allItemsPackaged, 'aria-disabled': allItemsPackaged }, click: newPackage, css: {disabled: allItemsPackaged}">
-    <span class="ui-button-text">
-        <span data-bind="i18n: 'New Package'"></span>
-    </span>
-    </button>
-    <button id="save_bottom" title="Create Shipping Label" type="button"
-            class="action-default scalable save primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
-            data-ui-id="page-actions-toolbar-save-button" role="button" aria-disabled="false"
-            data-bind="click: submitPackages">
-        <span class="ui-button-text">
-            <span data-bind="i18n: 'Create Shipping Label'"></span>
-        </span>
-    </button>
-</div>

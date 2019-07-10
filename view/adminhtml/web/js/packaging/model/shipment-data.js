@@ -15,7 +15,7 @@ define([], function () {
         },
 
         /**
-         * @param {[{id: integer, qty: float|integer}]|{id: integer, qty: float|integer}}newItems
+         * @param {[{id: integer, qty: float|integer}]|{id: integer, qty: float|integer, productName: string}}newItems
          */
         addItems: function (newItems) {
             items.push(newItems);
