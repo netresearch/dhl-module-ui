@@ -44,7 +44,7 @@ class Popup implements ArgumentInterface
     /**
      * @var UrlInterface
      */
-    private $urlModel;
+    private $urlBuilder;
 
     /**
      * @var ShipmentInterface|Shipment
@@ -62,18 +62,18 @@ class Popup implements ArgumentInterface
      * @param Registry $registry
      * @param PackagingDataProvider $packageDataProvider
      * @param ShippingDataHydrator $hydrator
-     * @param UrlInterface $urlModel
+     * @param UrlInterface $urlBuilder
      */
     public function __construct(
         Registry $registry,
         PackagingDataProvider $packageDataProvider,
         ShippingDataHydrator $hydrator,
-        UrlInterface $urlModel
+        UrlInterface $urlBuilder
     ) {
         $this->registry = $registry;
         $this->packageDataProvider = $packageDataProvider;
         $this->hydrator = $hydrator;
-        $this->urlModel = $urlModel;
+        $this->urlBuilder = $urlBuilder;
     }
 
     /**
@@ -175,7 +175,7 @@ class Popup implements ArgumentInterface
     public function getSubmitUrl(): string
     {
         if ($this->getShipment()->getId() !== null) {
-            $submitUrl = $this->urlModel->getUrl(
+            $submitUrl = $this->urlBuilder->getUrl(
                 'dhl/order_shipment/save/order_id/*/shipment_id/*/',
                 [
                     'order_id' => $this->getShipment()->getOrderId(),
@@ -183,7 +183,7 @@ class Popup implements ArgumentInterface
                 ]
             );
         } else {
-            $submitUrl = $this->urlModel->getUrl(
+            $submitUrl = $this->urlBuilder->getUrl(
                 'dhl/order_shipment/save/order_id/*/',
                 [
                     'order_id' => $this->getShipment()->getOrderId(),
@@ -192,5 +192,30 @@ class Popup implements ArgumentInterface
         }
 
         return $submitUrl;
+    }
+
+    /**
+     * Obtain the URL to redirect to after packaging popup submission.
+     *
+     * Redirects back to shipment page when label was requested for an existing
+     * shipment. Redirects back to order page when shipment was created with label.
+     *
+     * @return string
+     */
+    public function getSuccessRedirectUrl(): string
+    {
+        if ($this->getShipment()->getId() !== null) {
+            $successUrl = $this->urlBuilder->getUrl(
+                'adminhtml/order_shipment/view',
+                ['shipment_id' => $this->getShipment()->getId()]
+            );
+        } else {
+            $successUrl = $this->urlBuilder->getUrl(
+                'sales/order/view',
+                ['order_id' => $this->getShipment()->getOrderId()]
+            );
+        }
+
+        return $successUrl;
     }
 }

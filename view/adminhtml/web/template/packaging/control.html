@@ -7,12 +7,12 @@
         <span data-bind="i18n: 'New Package'"></span>
     </span>
     </button>
-    <button id="save" title="Save" type="button"
+    <button id="save" title="Create Shipping Label" type="button"
             class="action-default scalable save primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
             data-ui-id="page-actions-toolbar-save-button" role="button" aria-disabled="false"
             data-bind="click: submitPackages">
         <span class="ui-button-text">
-            <span data-bind="i18n: 'Save Config'"></span>
+            <span data-bind="i18n: 'Create Shipping Label'"></span>
         </span>
     </button>
 </div>
@@ -24,10 +24,12 @@
                 "
             role="tab">
             <div class="tab-anchor-group">
-                <a data-bind="attr: {title: 'Package ' + package.id}, text:'Package ' + id, click: $parent.selectPackage" class="ui-tabs-anchor select-package" data-tab-type=""
+                <a data-bind="attr: {title: 'Package ' + package.id}, text:'Package ' + id, click: $parent.selectPackage"
+                   class="ui-tabs-anchor select-package" data-tab-type=""
                    role="presentation" tabindex="-1">
                 </a>
-                <a data-bind="attr: {title: 'Package ' + package.id}, click: $parent.deletePackage" class="ui-tabs-anchor delete-package" data-tab-type=""
+                <a data-bind="attr: {title: 'Package ' + package.id}, click: $parent.deletePackage"
+                   class="ui-tabs-anchor delete-package" data-tab-type=""
                    role="presentation" tabindex="-1">
                 </a>
             </div>
@@ -48,12 +50,12 @@
         <span data-bind="i18n: 'New Package'"></span>
     </span>
     </button>
-    <button id="save_bottom" title="Save" type="button"
+    <button id="save_bottom" title="Create Shipping Label" type="button"
             class="action-default scalable save primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
             data-ui-id="page-actions-toolbar-save-button" role="button" aria-disabled="false"
             data-bind="click: submitPackages">
         <span class="ui-button-text">
-            <span data-bind="i18n: 'Save Config'"></span>
+            <span data-bind="i18n: 'Create Shipping Label'"></span>
         </span>
     </button>
 </div>

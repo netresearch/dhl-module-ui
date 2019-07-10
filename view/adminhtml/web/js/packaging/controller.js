@@ -18,7 +18,8 @@ define([
             itemOptions: [],
             packageOptions: [],
             serviceOptions: [],
-            submitUrl: ''
+            submitUrl: '',
+            successRedirect: ''
         },
         fieldsetTemplate: {
             component: 'Dhl_Ui/js/packaging/view/fieldset',
@@ -95,9 +96,8 @@ define([
                 .done(function (response) {
                     if (response.error) {
                         window.packaging.messages.show().innerHTML = response.message;
-                    } else {
-                        // @TODO add success handling
-                        // See vendor/magento/module-shipping/view/adminhtml/web/order/packaging.js
+                    } else if (response.ok) {
+                        window.location.href = self.successRedirect;
                     }
                 });
         },
