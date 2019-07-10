@@ -1,4 +1,4 @@
-<div class="field" data-bind="visible: visible, attr: {'name': element.dataScope}, css: additionalClasses">
+<div class="field" data-bind="visible: visible, attr: {'name': element.dataScope }, css: { hidden: element.inputType === 'hidden' }, class: additionalClasses">
 
     <!-- ko if: element.label && element.labelVisible === 'true' && element.inputType !== 'checkbox' -->
     <label class="label" data-bind="attr: { for: element.uid }">
