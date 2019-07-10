@@ -16,7 +16,7 @@ define([
      */
     var buildErrorMessage = function (rule) {
         var subjectNames = _.map(rule.subjects, function (subject) {
-            return  '"' + resolveName(quote.shippingMethod().carrier_code, subject) + '"';
+            return '"' + resolveName(quote.shippingMethod().carrier_code, subject) + '"';
         });
 
         return rule.error_message.replace(
@@ -75,7 +75,7 @@ define([
             return !_.contains([0, rule.subjects.length], serviceDifference);
         }
 
-        return  false;
+        return false;
     };
 
     /**
@@ -92,12 +92,14 @@ define([
         shippingSettingsView.errors([]);
 
         _.each(compatibilityInfo, function (compatibility) {
-            var serviceDifference = _.difference(compatibility.subjects, selectedServiceCodes).length;
-            if (isIncompatibleServiceCombination(compatibility, serviceDifference)
-                || isMissingRequiredServices(compatibility, serviceDifference)
-            ) {
-                shippingSettingsView.errors.push(buildErrorMessage(compatibility));
-                markRelatedInputsWithError(compatibility);
+            if (compatibility.masters.length === 0 || _.intersection(selectedServiceCodes, compatibility.masters).length) {
+                var serviceDifference = _.difference(compatibility.subjects, selectedServiceCodes).length;
+                if (isIncompatibleServiceCombination(compatibility, serviceDifference)
+                    || isMissingRequiredServices(compatibility, serviceDifference)
+                ) {
+                    shippingSettingsView.errors.push(buildErrorMessage(compatibility));
+                    markRelatedInputsWithError(compatibility);
+                }
             }
         }.bind(this));
 
