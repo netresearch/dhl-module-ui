@@ -13,7 +13,7 @@ define([
      * Creates a new package with unfilled data and switches current selections to it
      */
     var newPackage = function () {
-        var new_id = packages().reduce((carry, e) => Math.max(carry, e.id), 1) + 1;
+        var new_id = _.max(packages(),(item) => item.id).id + 1;
         packages.push({"id": new_id});
         switchPackage(new_id)
     };
@@ -59,6 +59,7 @@ define([
             _.each(availableItems, function (item) {
                 packageSelection['items'][item.id] = {'details': {'qty': item.qty}};
             });
+            // @TODO: fill in initial package values, preferably via hook
             allSelections.push(packageSelection);
             allItemsPackaged(true);
         }
