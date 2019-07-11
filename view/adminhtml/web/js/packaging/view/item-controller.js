@@ -15,7 +15,9 @@ define([
             label: $t('Package Items'),
             items: [],
             shippingOptions: [],
-            activeFieldset: ''
+            activeFieldset: '',
+            template: "Dhl_Ui/form/fieldset",
+            title: $t('For editing package items click to enlarge')
         },
         fieldsetTemplate: {
             component: 'Dhl_Ui/js/packaging/view/item-properties-fieldset',
