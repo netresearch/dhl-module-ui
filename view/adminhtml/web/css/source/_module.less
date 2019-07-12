@@ -15,29 +15,6 @@
 @dhl_header_fontweight: 400;
 
 /** mixins */
-.border-radius (@radius: @base-border-radius) {
-    -webkit-border-radius: @radius;
-    -moz-border-radius:    @radius;
-    border-radius:         @radius;
-
-    -moz-background-clip:    padding;
-    -webkit-background-clip: padding-box;
-    background-clip:         padding-box;
-}
-
-.border-right-radius(@radius: @base-border-radius) {
-    -webkit-border-top-right-radius: @radius;
-    -webkit-border-bottom-right-radius: @radius;
-    -moz-border-radius-topright: @radius;
-    -moz-border-radius-bottomright: @radius;
-    border-top-right-radius: @radius;
-    border-bottom-right-radius: @radius;
-
-    -moz-background-clip:    padding;
-    -webkit-background-clip: padding-box;
-    background-clip:         padding-box;
-}
-
 .flexbox() {
     display: -webkit-box;
     display: -moz-box;
@@ -186,7 +163,7 @@
 
         &.dhl-fieldset {
             border: @border_dhl;
-            .border-radius();
+
 
             >.fieldset-wrapper-title {
                 padding: 0 0 0 @indent__m;
@@ -201,7 +178,6 @@
             >.admin__fieldset-wrapper-content {
                 padding: 0 @indent__l;
                 background-color: @color-white;
-                .border-right-radius();
 
                 .admin__collapsible-block-wrapper {
                     margin: 0;
@@ -297,6 +273,9 @@
                             margin: @indent__s 0 0 0;
                         }
                     }
+                }
+                span.static {
+                    text-align: left;
                 }
             }
         }
