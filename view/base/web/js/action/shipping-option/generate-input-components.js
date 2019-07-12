@@ -15,7 +15,7 @@ define([
         _.each(shippingOptionInput.validation_rules, function (rule) {
             var validatorName = validationMap.getValidatorName(rule.name);
             if (validatorName) {
-                validationData[validatorName] = rule.param;
+                validationData[validatorName] = rule.param ? rule.param : true;
             } else {
                 console.warn('DHL shipping option validation rule ' + rule.name + ' is not defined.');
             }

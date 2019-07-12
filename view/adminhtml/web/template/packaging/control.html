@@ -1,16 +1,16 @@
 <div class="package-action-buttons top-buttons" id="dhl-package-buttons">
-    <button id="new_package" title="New package" type="button"
+    <button id="new_package" type="button"
             class="scalable ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
             data-ui-id="page-actions-toolbar-new-package-button" role="button"
-            data-bind="attr: { disabled: allItemsPackaged, 'aria-disabled': allItemsPackaged }, click: newPackage, css: {disabled: allItemsPackaged}">
+            data-bind="attr: { disabled: allItemsPackaged, 'aria-disabled': allItemsPackaged, title: $('New Package') }, click: newPackage, css: {disabled: allItemsPackaged}">
     <span class="ui-button-text">
         <span data-bind="i18n: 'New Package'"></span>
     </span>
     </button>
-    <button id="save" title="Create Shipping Label" type="button"
+    <button id="save" type="button"
             class="action-default scalable save primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
             data-ui-id="page-actions-toolbar-save-button" role="button" aria-disabled="false"
-            data-bind="click: submitPackages">
+            data-bind="attr: {title: $t('Create Shipping Label') }, click: submitPackages">
         <span class="ui-button-text">
             <span data-bind="i18n: 'Create Shipping Label'"></span>
         </span>
@@ -18,23 +18,21 @@
 </div>
 <div id="grid_tab" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
     <ul class="tabs-horiz ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist"
-        data-bind="foreach: { data: packages, as: 'package' }">
+        data-bind="visible: packages().length > 1, foreach: { data: packages, as: 'package' }">
         <li class="ui-corner-top ui-state-default"
             data-bind="attr: {tabindex: id, class: $parent.getStateClass($data) }
                 "
             role="tab">
             <div class="tab-anchor-group">
-                <a data-bind="attr: {title: 'Package ' + package.id}, text:'Package ' + id, click: $parent.selectPackage"
+                <a data-bind="attr: {title: $t('Package %1').replace('%1', package.id)}, text: $t('Package %1').replace('%1', package.id) , click: $parent.selectPackage"
                    class="ui-tabs-anchor select-package" data-tab-type=""
                    role="presentation" tabindex="-1">
                 </a>
-                <a data-bind="attr: {title: 'Package ' + package.id}, click: $parent.deletePackage"
+                <a data-bind="attr: {title: $t('Package %1').replace('%1', package.id) }, click: $parent.deletePackage"
                    class="ui-tabs-anchor delete-package" data-tab-type=""
                    role="presentation" tabindex="-1">
                 </a>
             </div>
-
-
         </li>
     </ul>
     <each args="data: elems, as: 'element'">

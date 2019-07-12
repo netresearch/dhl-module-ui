@@ -9,7 +9,8 @@ define([
     'mage/translate',
     'Dhl_Ui/js/packaging/model/shipment-data',
     'Dhl_Ui/js/packaging/action/submit',
-], function (ko, _, Component, packageState, selections, layout, utils, $t, shipmentData, submit) {
+    "Dhl_Ui/js/action/shipping-option/validation/validate-selection"
+], function (ko, _, Component, packageState, selections, layout, utils, $t, shipmentData, submit, validate) {
     var self;
     return Component.extend({
         defaults: {
@@ -56,8 +57,10 @@ define([
             var fieldsets = [
                 self.generateItemSelectionFieldset(),
                 self.generateFieldset('package', $t('Package Options'), self.packageOptions),
-                self.generateFieldset('service', $t('Service Options'), self.serviceOptions)
             ];
+            if (self.serviceOptions.length > 0) {
+                fieldsets.push(self.generateFieldset('service', $t('Service Options'), self.serviceOptions));
+            }
             layout(fieldsets);
         },
 
@@ -94,15 +97,16 @@ define([
 
         submitPackages: function () {
             var data = selections.getAll();
-
-            submit(this.submitUrl, data)
-                .done(function (response) {
-                    if (response.error) {
-                        window.packaging.messages.show().innerHTML = response.message;
-                    } else if (response.ok) {
-                        window.location.href = self.successRedirect;
-                    }
-                });
+            if (validate()) {
+                submit(this.submitUrl, data)
+                    .done(function (response) {
+                        if (response.error) {
+                            window.packaging.messages.show().innerHTML = response.message;
+                        } else if (response.ok) {
+                            window.location.href = self.successRedirect;
+                        }
+                    });
+            }
         },
 
         newPackage: function () {

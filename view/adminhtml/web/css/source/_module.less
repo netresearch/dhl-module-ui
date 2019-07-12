@@ -3,6 +3,7 @@
 @wrapper-background: @color-gray-light2;
 @indent_xl_dhl: @indent__xl * 1.5;
 @indent_s_dhl: @indent__base /1.5;
+@indent_s_dhl_static: 0.6rem;
 @base-border-radius: 1rem;
 @button__padding-vertical__l: .6875em;
 @button_lg_font_size: 1.6;
@@ -204,6 +205,11 @@
 
                 .admin__collapsible-block-wrapper {
                     margin: 0;
+                }
+
+                span.static {
+                    padding: @indent_s_dhl_static @indent__s @indent_s_dhl_static;
+                    display: block;
                 }
             }
         }

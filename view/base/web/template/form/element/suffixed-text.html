@@ -1,0 +1,18 @@
+<div class="admin__control-addon">
+    <input class="admin__control-text" type="text"
+       data-bind="
+            event: {change: userChanges},
+            value: value,
+            hasFocus: focused,
+            valueUpdate: valueUpdate,
+            css: additionalClasses,
+            attr: {
+                name: inputName,
+                placeholder: placeholder,
+                'aria-describedby': noticeId,
+                id: uid,
+                disabled: disabled,
+       }"
+    />
+    <label class="admin__addon-suffix" data-bind="attr: { for: uid }"><span data-bind="text: comment.content || ''"></span></label>
+</div>

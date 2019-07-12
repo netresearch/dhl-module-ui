@@ -13,7 +13,7 @@ define([
      * Creates a new package with unfilled data and switches current selections to it
      */
     var newPackage = function () {
-        var new_id = _.max(packages(),(item) => item.id).id + 1;
+        var new_id = _.max(packages(), (item) => item.id).id + 1;
         packages.push({"id": new_id});
         switchPackage(new_id)
     };
@@ -88,7 +88,9 @@ define([
             var packageSelection = allSelections.find((selection) => selection.packageId === currentPackage());
             for (var itemId in packageSelection['items']) {
                 var inputElement = registry.get('inputCode = qty, itemId = ' + itemId);
-                packageSelection['items'][itemId]['details']['qty'] = Number(inputElement.value());
+                if (inputElement) {
+                    packageSelection['items'][itemId]['details']['qty'] = Number(inputElement.value());
+                }
             }
             allSelections.splice(allSelections.findIndex((selection) => selection.packageId === currentPackage()), 1, packageSelection);
         }
