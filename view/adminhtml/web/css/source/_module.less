@@ -132,7 +132,6 @@
     /* sticky footer */
     .package-action-buttons {
         padding: @indent__m;
-        text-align: right;
         z-index: 20;
 
         &.top-buttons {
@@ -142,12 +141,6 @@
             border-top: @border_dhl;
             border-bottom: @border_dhl;
             background: #f8f8f8;
-        }
-
-        &.bottom-buttons {
-            position: relative;
-            bottom: 0;
-            margin: 0 @indent__s 0 0;
         }
     }
 
@@ -294,12 +287,29 @@
                 padding: @indent__s;
             }
         }
+        .package-action-buttons {
+            text-align: center;
+            img {
+                position: relative;
+                margin-bottom: @indent__m;
+            }
+        }
     }
 }
 
 .media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
     .dhl-packaging-popup {
 
+        .package-action-buttons {
+            text-align: right;
+            img {
+                position: absolute;
+                left: @indent__m;
+                top: 50%;
+                transform: translateY(-50%);
+                max-width: 25%;
+            }
+        }
         .fieldset-wrapper {
 
             &.dhl-fieldset {

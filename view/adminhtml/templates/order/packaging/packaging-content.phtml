@@ -19,7 +19,8 @@ $viewModel = $block->getPopupViewModel();
                             "packageOptions": <?= json_encode($viewModel->getPackageOptions()) ?>,
                             "serviceOptions": <?= json_encode($viewModel->getServiceOptions()) ?>,
                             "submitUrl": "<?= $viewModel->getSubmitUrl() ?>",
-                            "successRedirect": "<?= $viewModel->getSuccessRedirectUrl() ?>"
+                            "successRedirect": "<?= $viewModel->getSuccessRedirectUrl() ?>",
+                            "image": "<?= $viewModel->getLogoImageUrl() ?>"
                         }
                     }
                 }

@@ -222,4 +222,16 @@ class Popup implements ArgumentInterface
 
         return $successUrl;
     }
+
+    /**
+     * Get image url from provided meta data
+     *
+     * @return string
+     */
+    public function getLogoImageUrl(): string
+    {
+        $data = $this->getProvidedData();
+
+        return $data['metadata']['image_url'] ?? '';
+    }
 }

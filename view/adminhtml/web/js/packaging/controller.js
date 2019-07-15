@@ -20,7 +20,8 @@ define([
             packageOptions: [],
             serviceOptions: [],
             submitUrl: '',
-            successRedirect: ''
+            successRedirect: '',
+            image: ''
         },
         fieldsetTemplate: {
             component: 'Dhl_Ui/js/packaging/view/fieldset',
