@@ -80,7 +80,6 @@ define([
             this.updateFootnotes();
             selections.get().subscribe(this.updateFootnotes.bind(this));
 
-            this.destroyChildren();
             generateShippingOptions(carrierData.service_options, this.name);
             this.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
 
