@@ -72,6 +72,7 @@ define([
      *     sort_order: int,
      *     tooltip: string,
      *     validation_rules: {name: string, params: string[]}[],
+     *     disabled: bool,
      * }} DhlInput
      *
      * @typedef {{

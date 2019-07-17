@@ -31,7 +31,8 @@ define([
             placeholder: '${ $.shippingOptionInput.placeholder }',
             itemId: false,
             additionalClasses: '${ $.shippingOptionInput.code }',
-            section: ''
+            section: '',
+            disabled: '${ $.shippingOptionInput.disabled }'
         },
 
         initialize: function () {

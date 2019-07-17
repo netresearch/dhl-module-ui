@@ -95,7 +95,6 @@
     }
 
     .tab-anchor-group {
-
         .ui-tabs-anchor {
             display: inline-block;
             &:hover {
@@ -168,7 +167,6 @@
         &.dhl-fieldset {
             border: @border_dhl;
 
-
             >.fieldset-wrapper-title {
                 padding: 0 0 0 @indent__m;
                 border: none;
@@ -179,6 +177,7 @@
                     font-weight: inherit;
                 }
             }
+
             >.admin__fieldset-wrapper-content {
                 padding: 0 @indent__l;
                 background-color: @color-white;
@@ -199,6 +198,7 @@
                 background: @color-gray-light01;
             }
         }
+
         &.package,
         &.service {
             >.fieldset-wrapper-title {
@@ -220,7 +220,6 @@
             }
 
             .field {
-
                 .label {
                     font-weight: @font-weight__semibold;
                     line-height: @field-label__font-size;
@@ -229,6 +228,7 @@
                     text-align: left;
                     width: auto;
                 }
+
                 &:not(.dhl-checkbox) {
                     display: block;
                 }
@@ -243,12 +243,19 @@
         }
 
         &.dhl-fieldset.service {
+            .shipping-option-wrapper {
+                .field {
+                    width: 100%;
+                }
+            }
+
             .field-note,
             .admin__field-tooltip {
                 display: none;
             }
         }
     }
+
     .field-error {
         color: @error__color;
     }
@@ -256,11 +263,8 @@
 
 .media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
     .dhl-packaging-popup {
-
         .fieldset-wrapper {
-
             &.dhl-fieldset {
-
                 >.fieldset-wrapper-title {
                     text-align: center;
                 }
@@ -278,6 +282,7 @@
                         }
                     }
                 }
+
                 span.static {
                     text-align: left;
                 }
@@ -293,11 +298,11 @@
         }
 
         .tab-anchor-group {
-
             .ui-tabs-anchor {
                 padding: @indent__s;
             }
         }
+
         .package-action-buttons {
             text-align: center;
             img {
@@ -310,7 +315,6 @@
 
 .media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
     .dhl-packaging-popup {
-
         .package-action-buttons {
             text-align: right;
             img {
@@ -321,10 +325,9 @@
                 max-width: 25%;
             }
         }
+
         .fieldset-wrapper {
-
             &.dhl-fieldset {
-
                 &.admin__collapsible-block-wrapper._show {
                     .flexbox();
 
@@ -370,13 +373,10 @@
                 .admin__fieldset-wrapper-content {
                     width: 100%;
                 }
-            }
-            &.dhl-fieldset {
 
                 &.items,
                 &.package{
                     .shipping-option-content-wrapper {
-
                         .field:not(.hidden){
                             margin: @indent__m 0 0 @indent__m;
                         }
@@ -390,8 +390,8 @@
                         padding: 0 @indent__m 0 0;
                         min-width: 33%;
                     }
-                    .shipping-option-content-wrapper {
 
+                    .shipping-option-content-wrapper {
                         .field {
                             margin: @indent__s 0 0 @indent__m;
 
@@ -412,7 +412,6 @@
         }
 
         .package-action-buttons {
-
             button {
                 padding: @button__padding-vertical__l @button__padding-vertical__l*1.3;
                 font-size: @font-size__l;

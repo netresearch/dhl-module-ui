@@ -70,6 +70,7 @@ define([
                     validation: buildValidationData(shippingOptionInput),
                     itemId: itemId,
                     name: shippingOptionInput.code,
+                    disabled: shippingOptionInput.disabled
                 };
             }
         );
