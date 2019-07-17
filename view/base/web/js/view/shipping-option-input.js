@@ -30,16 +30,25 @@ define([
             autocomplete: '${ $.shippingOptionInput.code }',
             placeholder: '${ $.shippingOptionInput.placeholder }',
             itemId: false,
-            additionalClasses: '${ $.shippingOptionInput.code }'
+            additionalClasses: '${ $.shippingOptionInput.code }',
+            section: ''
         },
 
         initialize: function () {
             this._super();
-            var value = selections.getShippingOptionValue(this.shippingOption.code, this.shippingOptionInput.code, this.itemId);
+            /**
+             * In the packaging popup we want all inputs to save their selections into their section separately.
+             * We can evaluate the component names for that and fetch the first containers name after the root container.
+             */
+            this.section = this.parent.match(new RegExp(this.ns + '\.(.*)\.' + this.shippingOptionCode))[1];
+            if (this.itemId) {
+                this.section = this.section.replace('.' + this.itemId, '');
+            }
+            var value = selections.getShippingOptionValue(this.section, this.shippingOption.code, this.shippingOptionInput.code, this.itemId);
             if (value !== null) {
                 this.value(value);
             } else if (this.value() !== '') {
-                selections.addSelection(this.shippingOption.code, this.shippingOptionInput.code, this.itemId, this.value());
+                selections.addSelection(this.section, this.shippingOption.code, this.shippingOptionInput.code, this.itemId, this.value());
             }
         },
 
@@ -54,9 +63,9 @@ define([
             this._super();
 
             if (newValue) {
-                selections.addSelection(this.shippingOption.code, this.shippingOptionInput.code, this.itemId, newValue);
+                selections.addSelection(this.section, this.shippingOption.code, this.shippingOptionInput.code, this.itemId, newValue);
             } else {
-                selections.removeSelection(this.shippingOption.code, this.shippingOptionInput.code, this.itemId);
+                selections.removeSelection(this.section, this.shippingOption.code, this.shippingOptionInput.code, this.itemId);
             }
             enforceCompatibility();
         },

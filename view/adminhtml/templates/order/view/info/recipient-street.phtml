@@ -9,7 +9,7 @@ $orderId = $block->getData('order_id');
 /** @var \Dhl\Ui\ViewModel\Order\Info\RecipientStreet $viewModel */
 $viewModel = $block->getData('viewModel');
 ?>
-<?php if ($recipientStreet): ?>
+<?php if ($recipientStreet) : ?>
     <section class="admin__page-section order-addresses dhl-recipient-address">
         <div class="admin__page-section-content">
             <div class="admin__page-section-item order-shipping-address">

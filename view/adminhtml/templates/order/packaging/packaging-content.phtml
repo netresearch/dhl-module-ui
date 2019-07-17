@@ -3,10 +3,12 @@
  * See LICENSE.md for license details.
  */
 declare(strict_types=1);
+/** @var \Magento\Backend\Block\Template $block */
 /** @var Dhl\Ui\ViewModel\Order\Packaging\Popup $viewModel */
 $viewModel = $block->getPopupViewModel();
 ?>
-<script type="text/x-magento-init">
+<div id="packaging-content" class="dhl-packaging-popup" data-bind="scope: 'dhl-packaging-popup'">
+    <script type="text/x-magento-init">
     {
         "#packaging-content": {
             "Magento_Ui/js/core/app": {
@@ -14,13 +16,13 @@ $viewModel = $block->getPopupViewModel();
                     "dhl-packaging-popup": {
                         "component": "Dhl_Ui/js/packaging/controller",
                         "config": {
-                            "items": <?= json_encode($viewModel->getItemData()) ?>,
-                            "itemOptions": <?= json_encode($viewModel->getItemOptions()) ?>,
-                            "packageOptions": <?= json_encode($viewModel->getPackageOptions()) ?>,
-                            "serviceOptions": <?= json_encode($viewModel->getServiceOptions()) ?>,
-                            "submitUrl": "<?= $viewModel->getSubmitUrl() ?>",
-                            "successRedirect": "<?= $viewModel->getSuccessRedirectUrl() ?>",
-                            "image": "<?= $viewModel->getLogoImageUrl() ?>"
+                            "items": <?= /** @noEscape */ json_encode($viewModel->getItemData()) ?>,
+                            "itemOptions": <?= /** @noEscape */  json_encode($viewModel->getItemOptions()) ?>,
+                            "packageOptions": <?= /** @noEscape */  json_encode($viewModel->getPackageOptions()) ?>,
+                            "serviceOptions": <?= /** @noEscape */  json_encode($viewModel->getServiceOptions()) ?>,
+                            "submitUrl": "<?= $block->escapeUrl($viewModel->getSubmitUrl()) ?>",
+                            "successRedirect": "<?= $block->escapeUrl($viewModel->getSuccessRedirectUrl()) ?>",
+                            "image": "<?= $block->escapeUrl($viewModel->getLogoImageUrl()) ?>"
                         }
                     }
                 }
@@ -29,6 +31,5 @@ $viewModel = $block->getPopupViewModel();
     }
 
 </script>
-<div id="packaging-content" class="dhl-packaging-popup" data-bind="scope: 'dhl-packaging-popup'">
     <!-- ko template: getTemplate() --><!-- /ko -->
 </div>

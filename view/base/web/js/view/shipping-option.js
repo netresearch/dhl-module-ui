@@ -22,7 +22,8 @@ define([
             label: '${ $.shippingOption.label }',
             validateWholeGroup: false,
             visible: true,
-            itemId: false
+            itemId: false,
+            section: ''
         },
 
         /**

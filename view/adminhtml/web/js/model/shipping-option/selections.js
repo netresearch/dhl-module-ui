@@ -30,26 +30,32 @@ define([
          *
          * ShippingOption values are stored separately by carrier.
          *
+         * @param {string} section
          * @param {string} shippingOptionCode
          * @param {string} [inputCode]
          * @param {integer|false} itemId
          * @return {string|string[]|null} Shipping option input value(s) or null if shipping option not found
          */
-        getShippingOptionValue: function (shippingOptionCode, inputCode, itemId) {
+        getShippingOptionValue: function (section, shippingOptionCode, inputCode, itemId) {
             var packageData = currentSelection();
             if (!packageData) {
                 return null
             }
-            if (itemId === false) {
-                if (!(shippingOptionCode in packageData)) {
-                    return null
-                }
-                var selection = packageData[shippingOptionCode];
+            if (section !== '' && !(section in packageData)) {
+                return null;
             } else {
-                if (!(itemId in packageData['items']) || !(shippingOptionCode in packageData['items'][itemId])) {
+                var selection = packageData[section];
+            }
+            if (itemId === false) {
+                if (!(shippingOptionCode in selection)) {
                     return null
                 }
-                var selection = packageData['items'][itemId][shippingOptionCode];
+                selection = selection[shippingOptionCode];
+            } else {
+                if (!(itemId in selection) || !(shippingOptionCode in selection[itemId])) {
+                    return null
+                }
+                selection = selection[itemId][shippingOptionCode];
             }
             if (!inputCode) {
                 return selection;
@@ -80,50 +86,73 @@ define([
         /**
          * Add a shipping option value. Values are stored separately by carrier.
          *
+         * @param {string} section
          * @param {string} shippingOptionCode
          * @param {string} inputCode
          * @param {integer|false} itemId
          * @param {*} inputValue
          */
-        addSelection: function (shippingOptionCode, inputCode, itemId, inputValue) {
+        addSelection: function (section, shippingOptionCode, inputCode, itemId, inputValue) {
             var workingCopy = currentSelection();
-            if (itemId === false) {
-                if (workingCopy[shippingOptionCode] === undefined) {
-                    workingCopy[shippingOptionCode] = {};
-                }
-                workingCopy[shippingOptionCode][inputCode] = inputValue;
+            if (section === '') {
+                var selection = workingCopy;
             } else {
-                if (workingCopy['items'][itemId] === undefined) {
-                    workingCopy['items'][itemId] = {};
+                if (workingCopy[section] === undefined) {
+                    workingCopy[section] = {};
                 }
-                if (workingCopy['items'][itemId][shippingOptionCode] === undefined) {
-                    workingCopy['items'][itemId][shippingOptionCode] = {};
-                }
-                workingCopy['items'][itemId][shippingOptionCode][inputCode] = inputValue;
+                var selection = workingCopy[section];
             }
-
+            if (itemId === false) {
+                if (selection[shippingOptionCode] === undefined) {
+                    selection[shippingOptionCode] = {};
+                }
+                selection[shippingOptionCode][inputCode] = inputValue;
+            } else {
+                if (selection[itemId] === undefined) {
+                    selection[itemId] = {};
+                }
+                if (selection[itemId][shippingOptionCode] === undefined) {
+                    selection[itemId][shippingOptionCode] = {};
+                }
+                selection[itemId][shippingOptionCode][inputCode] = inputValue;
+            }
+            if (section !== '') {
+                workingCopy[section] = selection;
+            }
             this.set(workingCopy);
         },
 
         /**
          * Remove a shipping option selection. Values are stored separately by carrier.
          *
+         * @param {string} section
          * @param {string} shippingOptionCode
          * @param {integer|false} itemId
          * @param {string} inputCode
          */
-        removeSelection: function (shippingOptionCode, inputCode, itemId) {
+        removeSelection: function (section, shippingOptionCode, inputCode, itemId) {
             var workingCopy = currentSelection();
+            if (section === '') {
+                var selection = workingCopy;
+            } else {
+                if (workingCopy[section] === undefined) {
+                    workingCopy[section] = {};
+                }
+                var selection = workingCopy[section];
+            }
             if (itemId === false) {
-                delete workingCopy[shippingOptionCode][inputCode];
-                if (_.isEmpty(workingCopy[shippingOptionCode])) {
-                    delete workingCopy[shippingOptionCode];
+                delete selection[shippingOptionCode][inputCode];
+                if (_.isEmpty(selection[shippingOptionCode])) {
+                    delete selection[shippingOptionCode];
                 }
             } else {
-                delete workingCopy['items'][itemId][shippingOptionCode][inputCode];
-                if (_.isEmpty(workingCopy['items'][itemId][shippingOptionCode])) {
-                    delete workingCopy['items'][itemId][shippingOptionCode];
+                delete selection[itemId][shippingOptionCode][inputCode];
+                if (_.isEmpty(selection[itemId][shippingOptionCode])) {
+                    delete selection[itemId][shippingOptionCode];
                 }
+            }
+            if (section !== '') {
+                workingCopy[section] = selection;
             }
 
             this.set(workingCopy);

@@ -66,7 +66,7 @@ define([
         },
 
         generateItemSelectionFieldset: function () {
-            var baseFieldset = self.generateFieldset('item', $t('Package Items'), self.itemOptions);
+            var baseFieldset = self.generateFieldset('items', $t('Package Items'), self.itemOptions);
             baseFieldset.config.opened = false;
             baseFieldset.items = self.items;
             baseFieldset.component = 'Dhl_Ui/js/packaging/view/item-controller';

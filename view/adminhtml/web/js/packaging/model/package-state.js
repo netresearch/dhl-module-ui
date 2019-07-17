@@ -15,6 +15,7 @@ define([
     var newPackage = function () {
         var new_id = _.max(packages(), (item) => item.id).id + 1;
         packages.push({"id": new_id});
+        createPackage(new_id);
         switchPackage(new_id)
     };
 
@@ -42,6 +43,36 @@ define([
     };
 
     /**
+     * Create a new package in the selection data structure and prefill it with available items
+     *
+     * @param id
+     */
+    var createPackage = function (id) {
+        var allSelections = selections.getAll();
+        var availableItems = getAvailableItems(true);
+        // @TODO: fill in additional initial package values, preferably via hook
+        var packageSelection = {
+            packageId: id,
+            items: {},
+            package: {
+                packageDetails: {
+                    weight: _.reduce(availableItems, (carry, item) => carry + Number(item.qty) * Number(item.weight), 0)
+                },
+                packageCustoms: {
+                    customsValue: _.reduce(availableItems, (carry, item) => carry + Number(item.qty) * Number(item.price), 0)
+                }
+            }
+        };
+        _.each(availableItems, function (item) {
+            if (Number(item.qty) > 0) {
+                packageSelection['items'][item.id] = {'details': {'qty': item.qty}};
+            }
+        });
+        allSelections.push(packageSelection);
+        selections.setAll(allSelections);
+        allItemsPackaged(true);
+    };
+    /**
      * Handle switching selection data for package
      *
      * @param id {int}
@@ -49,20 +80,6 @@ define([
     var switchPackage = function (id) {
         var allSelections = selections.getAll();
         var packageSelection = allSelections.find((selection) => selection.packageId === id);
-        if (!packageSelection) {
-            /**
-             * If the package id requested is not yet available, create a new selections object for it and add it
-             * to the selections data
-             */
-            var availableItems = getAvailableItems(true);
-            packageSelection = {packageId: id, items: {}};
-            _.each(availableItems, function (item) {
-                packageSelection['items'][item.id] = {'details': {'qty': item.qty}};
-            });
-            // @TODO: fill in initial package values, preferably via hook
-            allSelections.push(packageSelection);
-            allItemsPackaged(true);
-        }
         selections.setAll(allSelections);
         selections.set(packageSelection);
         currentPackage(id);

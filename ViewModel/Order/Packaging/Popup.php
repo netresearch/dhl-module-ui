@@ -134,7 +134,9 @@ class Popup implements ArgumentInterface
                 $carry[] = [
                     'id' => $item->getOrderItemId(),
                     'qty' => $item->getQty(),
-                    'productName' => $item->getName()
+                    'productName' => $item->getName(),
+                    'weight' => $item->getWeight(),
+                    'price' => $item->getPrice()
                 ];
 
                 return $carry;

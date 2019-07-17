@@ -1,6 +1,7 @@
 define([
+    'underscore',
     'Dhl_Ui/js/packaging/model/shipment-data'
-], function (shipmentData) {
+], function (_, shipmentData) {
     /**
      * Reads through the given selections to find items that are not yet packaged
      *
@@ -15,7 +16,7 @@ define([
                 var itemSelection = selection['items'][item.id];
                 return carry + Number(itemSelection ? itemSelection['details']['qty'] : 0);
             }, 0);
-            availableItems.push({id: item.id, qty: item.qty - qtyPacked})
+            availableItems.push(_.extend({},item, {qty: item.qty - qtyPacked}));
         });
 
         return availableItems;
