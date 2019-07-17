@@ -8,7 +8,7 @@
            class="checkbox"
            style="width: auto"
            data-bind="
-           checked: value,
+           checked: !!Number(value()),
            attr: {
                 id: uid,
                 disabled: disabled,
