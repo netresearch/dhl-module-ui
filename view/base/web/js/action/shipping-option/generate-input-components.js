@@ -27,22 +27,27 @@ define([
     /**
      * Load default shipping option input value either from cache or from Input model.
      *
+     * @param {string} section
      * @param {DhlShippingOption} shippingOption
      * @param {DhlInput} shippingOptionInput
      * @param {integer|false} itemId
-     * @return {string}
+     * @return {string|boolean}
      */
-    var getDefaultValue = function (shippingOption, shippingOptionInput, itemId) {
-        var cachedValue = selections.getShippingOptionValue(
+    var getDefaultValue = function (section, shippingOption, shippingOptionInput, itemId) {
+        var result = selections.getShippingOptionValue(
+            section,
             shippingOption.code,
             shippingOptionInput.code,
             itemId
         );
-        if (cachedValue !== null) {
-            return cachedValue;
+        if (result === null) {
+            result = shippingOptionInput.default_value;
         }
 
-        return shippingOptionInput.default_value;
+        if (shippingOptionInput.input_type === 'checkbox') {
+            return !!Number(result);
+        }
+        return result;
     };
 
     /**
@@ -51,6 +56,11 @@ define([
      * @param {integer|false} itemId
      */
     return function (shippingOption, parentName, itemId) {
+        /**
+         * In the packaging popup we want all inputs to save their selections into their section separately.
+         * We can evaluate the component names for that and fetch the first containers name after the root container.
+         */
+        var section = parentName.match(new RegExp('([a-z]+)(\\.[0-9]+)?\\.' + shippingOption.code))[1] || '';
         var shippingOptionInputLayout = _.map(
             shippingOption.inputs,
             /** @type {DhlInput} */
@@ -66,11 +76,12 @@ define([
                     tooltip: shippingOptionInput.tooltip ? {description: shippingOptionInput.tooltip} : false,
                     comment: shippingOptionInput.comment,
                     elementTmpl: inputTemplates.get(shippingOptionInput.input_type),
-                    value: getDefaultValue(shippingOption, shippingOptionInput, itemId),
+                    value: getDefaultValue(section, shippingOption, shippingOptionInput, itemId),
                     validation: buildValidationData(shippingOptionInput),
                     itemId: itemId,
                     name: shippingOptionInput.code,
-                    disabled: shippingOptionInput.disabled
+                    disabled: shippingOptionInput.disabled,
+                    section: section,
                 };
             }
         );

@@ -11,6 +11,8 @@ define([
     'Dhl_Ui/js/packaging/action/submit',
     "Dhl_Ui/js/action/shipping-option/validation/validate-selection"
 ], function (ko, _, Component, packageState, selections, layout, utils, $t, shipmentData, submit, validate) {
+    'use strict';
+
     var self;
     return Component.extend({
         defaults: {
@@ -42,9 +44,17 @@ define([
         initialize: function () {
             self = this;
             self._super();
-            shipmentData.setItems(this.items);
+            window.packaging.open.subscribe(self.popupStateChanged.bind(self));
             self.initChildComponents();
             return self;
+        },
+
+        initShipmentItems: function () {
+            var itemSelection = Array.from(document.querySelectorAll('#ship_items_container input.qty-item'))
+                .map((item) => {
+                    return {id: item.name.replace(/[^0-9]+/g, ''), qty: item.value}
+                });
+            shipmentData.setItems(self.items.map((item) => _.extend(item, itemSelection.find((selected) => Number(selected.id) === Number(item.id)))));
         },
 
         initChildComponents: function () {
@@ -63,6 +73,7 @@ define([
                 fieldsets.push(self.generateFieldset('service', $t('Service Options'), self.serviceOptions));
             }
             layout(fieldsets);
+            self.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
         },
 
         generateItemSelectionFieldset: function () {
@@ -88,11 +99,10 @@ define([
             return fieldset;
         },
 
-        selectPackage: function (package) {
-            if (package.id !== packageState.currentPackage()) {
-                packageState.switchPackage(package.id);
+        selectPackage: function (selectedPackage) {
+            if (selectedPackage.id !== packageState.currentPackage()) {
+                packageState.switchPackage(selectedPackage.id);
                 self.reset();
-                self.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
             }
         },
 
@@ -114,23 +124,42 @@ define([
             if (packageState.allItemsPackaged() === false) {
                 packageState.newPackage();
                 self.reset();
-                self.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
             }
         },
 
-
-        deletePackage: function (package) {
+        deletePackage: function (packageToDelete) {
             if (packageState.packages().length > 1) {
-                var id = packageState.deletePackage(package);
+                var id = packageState.deletePackage(packageToDelete);
                 self.selectPackage({id: id});
             }
         },
 
-        getStateClass: function (package) {
-            if (package.id === packageState.currentPackage()) {
+        getStateClass: function (packageModel) {
+            if (packageModel.id === packageState.currentPackage()) {
                 return 'ui-corner-top ui-tabs-active ui-state-default tab-active';
             }
             return 'ui-corner-top ui-state-default'
+        },
+
+        /**
+         * Handle opening and closing the popup
+         * @param popupOpen
+         */
+        popupStateChanged: function (popupOpen) {
+            if (popupOpen) {
+                /**
+                 * If opened, reinitialize rendering and create a new package with all available items
+                 */
+                self.initShipmentItems();
+                packageState.newPackage();
+                self.reset();
+            } else {
+                /**
+                 * If closed, remove all previous data selections, as qtys of the items to ship can change
+                 */
+                packageState.reset();
+                selections.reset();
+            }
         }
     });
 });

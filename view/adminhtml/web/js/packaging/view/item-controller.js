@@ -14,10 +14,12 @@ define([
     var getItemsToDisplay = function () {
         var currentSelection = selections.get()();
         var availableItems = packageState.getAvailableItems(false);
-        _.each(currentSelection.items, function (itemSelection, itemId) {
-            var item = availableItems.find((item) => item.id === itemId);
-            item.qty += Number(itemSelection.details.qty);
-        });
+        if (!_.isEmpty(currentSelection)) {
+            _.each(currentSelection.items, function (itemSelection, itemId) {
+                var item = availableItems.find((item) => item.id === itemId);
+                item.qty += Number(itemSelection.details.qty);
+            });
+        }
         return availableItems.filter((item) => Number(item.qty) > 0).map((item) => Number(item.id));
     };
 
@@ -52,11 +54,13 @@ define([
             this._super();
             var itemFieldsets = [],
                 itemsToDisplay = getItemsToDisplay();
+            /**
+             * Filter the item options with the availability data of all previously taken selections,
+             * so only items that are available/part of the current selection are listed
+             */
             _.each(this.shippingOptions.filter((itemSet) => _.contains(itemsToDisplay, itemSet.item_id)), function (itemOptionSet) {
                 var items = shipmentData.getItems(),
                     itemData = items.find((item) => Number(item.id) === itemOptionSet.item_id),
-                    itemCount = itemsToDisplay.length,
-                    collapse = itemCount > 1,
                     fieldset = utils.template(this.fieldsetTemplate, {
                         parent: this.name,
                         id: itemOptionSet.item_id,
@@ -65,7 +69,7 @@ define([
                 fieldset.config = {
                     shippingOptions: itemOptionSet.shipping_options,
                     itemId: itemOptionSet.item_id,
-                    collapsible: collapse
+                    collapsible: itemsToDisplay.length > 1
                 };
                 itemFieldsets.push(fieldset);
             }, this);

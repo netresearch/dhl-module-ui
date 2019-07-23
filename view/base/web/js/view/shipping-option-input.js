@@ -37,14 +37,7 @@ define([
 
         initialize: function () {
             this._super();
-            /**
-             * In the packaging popup we want all inputs to save their selections into their section separately.
-             * We can evaluate the component names for that and fetch the first containers name after the root container.
-             */
-            this.section = this.parent.match(new RegExp(this.ns + '\.(.*)\.' + this.shippingOptionCode))[1];
-            if (this.itemId) {
-                this.section = this.section.replace('.' + this.itemId, '');
-            }
+
             var value = selections.getShippingOptionValue(this.section, this.shippingOption.code, this.shippingOptionInput.code, this.itemId);
             if (value !== null) {
                 this.value(value);
@@ -58,12 +51,12 @@ define([
          * Automatically executed when this.value changes.
          *
          * @protected
-         * @param {string} newValue
+         * @param {string|boolean} newValue
          */
         onUpdate: function (newValue) {
             this._super();
 
-            if (newValue) {
+            if (newValue || newValue === false) {
                 selections.addSelection(this.section, this.shippingOption.code, this.shippingOptionInput.code, this.itemId, newValue);
             } else {
                 selections.removeSelection(this.section, this.shippingOption.code, this.shippingOptionInput.code, this.itemId);

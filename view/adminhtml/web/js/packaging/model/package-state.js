@@ -5,15 +5,26 @@ define([
     'Dhl_Ui/js/packaging/action/get-unpacked-items',
     'uiRegistry'
 ], function (_, ko, selections, getUnpackedItems, registry) {
-    var packages = ko.observableArray([{"id": 1}]);
-    var currentPackage = ko.observable(1);
-    var allItemsPackaged = ko.observable(true);
+    'use strict';
+
+    var packages = ko.observableArray([]),
+        currentPackage = ko.observable(0),
+        allItemsPackaged = ko.observable(false);
+
+    /**
+     * Resets the whole package state, dismissing all existent data.
+     */
+    var reset = function () {
+        packages([]);
+        currentPackage(0);
+        allItemsPackaged(false);
+    };
 
     /**
      * Creates a new package with unfilled data and switches current selections to it
      */
     var newPackage = function () {
-        var new_id = _.max(packages(), (item) => item.id).id + 1;
+        var new_id = (_.max(packages(), (item) => item.id).id || 0) + 1;
         packages.push({"id": new_id});
         createPackage(new_id);
         switchPackage(new_id)
@@ -22,11 +33,11 @@ define([
     /**
      * Remove a packages data presentation and switch the currently displayed data if necessary
      *
-     * @param {{id: int}} package
+     * @param {{id: int}} selectedPackage
      * @return int package to switch to
      */
-    var deletePackage = function (package) {
-        packages(packages().filter((item) => item.id !== package.id));
+    var deletePackage = function (selectedPackage) {
+        packages(packages().filter((item) => item.id !== selectedPackage.id));
 
         /**
          * Filter all selections to actual packages (to prevent dangling entities)
@@ -35,7 +46,7 @@ define([
         var allSelections = selections.getAll().filter((selection) => _.contains(packageIds, selection.packageId));
         selections.setAll(allSelections);
         updateItemAvailability(false);
-        if (currentPackage() === package.id) {
+        if (currentPackage() === selectedPackage.id) {
             return packages().find(() => true).id;
         }
 
@@ -49,7 +60,7 @@ define([
      */
     var createPackage = function (id) {
         var allSelections = selections.getAll();
-        var availableItems = getAvailableItems(true);
+        var availableItems = getAvailableItems(false);
         // @TODO: fill in additional initial package values, preferably via hook
         var packageSelection = {
             packageId: id,
@@ -65,13 +76,14 @@ define([
         };
         _.each(availableItems, function (item) {
             if (Number(item.qty) > 0) {
-                packageSelection['items'][item.id] = {'details': {'qty': item.qty}};
+                packageSelection['items'][item.id] = {'details': {'qty': item.qty, 'qtyToShip': item.qtyToShip}};
             }
         });
         allSelections.push(packageSelection);
         selections.setAll(allSelections);
         allItemsPackaged(true);
     };
+
     /**
      * Handle switching selection data for package
      *
@@ -85,9 +97,8 @@ define([
         currentPackage(id);
     };
 
-
     /**
-     * Goes through all selection data and extracts the unpackaged items
+     * Goes through all selection data and extracts the unpacked items
      *
      * @param readFromDom {boolean|undefined}  - if true the selections will be read from the actual input components
      * @returns {{{id: int, qty: float}}}
@@ -115,6 +126,11 @@ define([
         return getUnpackedItems(allSelections);
     };
 
+    /**
+     * Updates the allItemsPackaged observable depending on the current availability of items
+     *
+     * @param readFromDom - forces the availability to read qtys from the current input fields, only necessary in edge cases
+     */
     var updateItemAvailability = function (readFromDom) {
         allItemsPackaged(getAvailableItems(readFromDom).filter((item) => item.qty > 0).length === 0);
     };
@@ -127,6 +143,7 @@ define([
         deletePackage: deletePackage,
         getAvailableItems: getAvailableItems,
         updateItemAvailability: updateItemAvailability,
-        allItemsPackaged: allItemsPackaged
+        allItemsPackaged: allItemsPackaged,
+        reset: reset
     }
 });

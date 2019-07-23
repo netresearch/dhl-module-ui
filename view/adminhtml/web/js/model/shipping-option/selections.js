@@ -4,7 +4,6 @@ define([
 ], function (_, ko) {
     'use strict';
 
-
     /**
      * @callback DhlShippingOptionSelectionObservable
      * @param {*[][][]} [value]
@@ -12,9 +11,9 @@ define([
      *
      * @property DhlShippingOptionSelectionObservable
      */
-    var selections = [{packageId: 1, items: {}}];
+    var selections = [];
 
-    var currentSelection = ko.observable({packageId: 1, items: {}});
+    var currentSelection = ko.observable({});
 
 
     return {
@@ -172,8 +171,7 @@ define([
          * @return {[DhlShippingOptionSelectionObservable]}
          */
         getAll: function () {
-
-            var index = selections.findIndex((selection) => selection.packageId === currentSelection().packageId);
+            var index = selections.findIndex((selection) => selection.packageId === (currentSelection().packageId || false));
             if (index >= 0) {
                 /**
                  * Update selection list with latest status of the current selection so everything is up to date
@@ -186,6 +184,11 @@ define([
 
         setAll: function (newSelections) {
             selections = newSelections;
+        },
+
+        reset: function () {
+            selections = [];
+            currentSelection = ko.observable({});
         }
     };
 });
