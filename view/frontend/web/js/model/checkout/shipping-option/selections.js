@@ -2,7 +2,7 @@ define([
     'underscore',
     'ko',
     'Magento_Checkout/js/model/quote',
-    'Dhl_Ui/js/model/checkout/storage'
+    'Dhl_Ui/js/model/checkout/storage',
 ], function (_, ko, quote, storage) {
     'use strict';
 
@@ -12,7 +12,7 @@ define([
      * @return {string}
      */
     var getCurrentCarrier = function () {
-        return quote.shippingMethod().carrier_code;
+        return quote.shippingMethod() ? quote.shippingMethod().carrier_code : '';
     };
 
     /**
@@ -57,7 +57,7 @@ define([
         getShippingOptionValue: function (shippingOptionCode, inputCode) {
             var carrierData = this.getByCarrier();
             if (!carrierData || !(shippingOptionCode in carrierData)) {
-                return null
+                return null;
             }
 
             var selection = carrierData[shippingOptionCode];
@@ -81,7 +81,7 @@ define([
                 selectedCodes.push(shippingOptionCode);
                 _.each(values, function (value, inputCode) {
                     selectedCodes.push([shippingOptionCode, inputCode].join('.'))
-                })
+                });
             });
 
             return selectedCodes;

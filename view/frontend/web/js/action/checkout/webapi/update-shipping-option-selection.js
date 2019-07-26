@@ -30,6 +30,7 @@ define([
         payload = {
             shippingOptionSelections: [],
         };
+
         /** Only submit service selections for the current carrier */
         if (selections) {
             _.each(selections, function (selection, serviceCode) {
@@ -50,7 +51,7 @@ define([
             serviceUrl,
             JSON.stringify(payload)
         ).fail(
-            function (response) {
+            function () {
                 console.warn('Shipping option selections could not be saved');
             }
         );

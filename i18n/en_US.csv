@@ -7,6 +7,7 @@
 "Estimated Delivery","Estimated Delivery"
 "Failed","Failed"
 "New Package","New Package"
+"No","No"
 "Not Available","Not Available"
 "Package %1", "Package %1"
 "Package Items","Package Items"
@@ -20,5 +21,7 @@
 "Street Number","Street Number"
 "Street","Street"
 "Supplement","Supplement"
+"Yes","Yes"
 "You must not refer to a packing station, postal office, or similar.","You must not refer to a packing station, postal office, or similar."
 "Your input must not include one of the following: ","Your input must not include one of the following: "
+
