@@ -13,6 +13,7 @@ define([
     'Dhl_Ui/js/action/shipping-option/validation/validate-compatibility',
     'Dhl_Ui/js/action/shipping-option/validation/enforce-compatibility',
     'Dhl_Ui/js/packaging/model/item-quantity',
+    'Dhl_Ui/js/packaging/model/item-combination-rules',
 ], function (
     _,
     Component,
@@ -27,7 +28,8 @@ define([
     validateSelection,
     validateCompatibility,
     enforceCompatibility,
-    itemQuantity
+    itemQuantity,
+    itemCombinationRules
 ) {
     'use strict';
 
@@ -126,6 +128,7 @@ define([
             selections.get().subscribe(function (selectionObject) {
                 if (selectionObject) {
                     itemQuantity(selectionObject);
+                    itemCombinationRules.apply(selectionObject, self.shippingSettings.carriers[0].package_options);
                 }
             });
         },
