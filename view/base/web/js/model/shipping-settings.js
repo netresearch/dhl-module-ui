@@ -71,7 +71,13 @@ define([
      *     sort_order: int,
      *     tooltip: string,
      *     validation_rules: {name: string, params: mixed}[],
+     *     item_combination_rule: DhlItemCombinationRule
      * }} DhlInput
+     *
+     * @typedef {{
+     *     source_item_input_code: string,
+     *     action: string,
+     * }} DhlItemCombinationRule
      *
      * @typedef {{
      *     content: string,
