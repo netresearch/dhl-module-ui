@@ -5,18 +5,36 @@ define([
     'use strict';
 
     /**
-     * @property array
+     * @typedef {{
+     *     package: {},
+     *     items: {}
+     *     packageId: int
+     * }} DhlCurrentSelection
+     *
+     * @property DhlCurrentSelection[]
      */
     var selections = [];
 
+
     /**
      * @callback DhlShippingOptionSelectionObservable
-     * @param {*[][][]} [value]
-     * @return {*[][][]}
+     * @param {DhlCurrentSelection} [value]
+     * @return {DhlCurrentSelection}
      *
      * @property DhlShippingOptionSelectionObservable
      */
     var currentSelection = ko.observable({}).extend({rateLimit: {timeout: 50, method: 'notifyWhenChangesStop'}});
+
+    /**
+     * Item selection data only, for when you only want to be notified of selection changes to item inputs.
+     *
+     * @callback DhlSelectionItemsObservable
+     * @param {*} [value]
+     * @return {*}
+     *
+     * @property DhlSelectionItemsObservable
+     */
+    var currentItems = ko.observable({}).extend({rateLimit: {timeout: 50, method: 'notifyWhenChangesStop'}});
 
     return {
         /**
@@ -24,6 +42,14 @@ define([
          */
         get: function () {
             return currentSelection;
+        },
+
+        /**
+         *
+         * @return {DhlSelectionItemsObservable}
+         */
+        getCurrentItems: function () {
+            return currentItems;
         },
 
         /**
@@ -96,6 +122,7 @@ define([
          */
         getSelectionValuesInCompoundFormat: function () {
             var selectionObjects = [];
+
             _.each(this.get()().package, function (shippingOption, shippingOptionCode) {
                 _.each(shippingOption, function (inputValue, inputCode) {
                     if (inputValue) {
@@ -189,18 +216,30 @@ define([
             this.set(workingCopy);
         },
 
-        set: function (newSelections) {
-            if (newSelections.packageId !== currentSelection().packageId) {
+        /**
+         * @param {DhlCurrentSelection} newSelection
+         */
+        set: function (newSelection) {
+            if (newSelection.packageId !== currentSelection().packageId) {
                 /**
                  * Transfer current working state into selection list to avoid data loss on package switch
                  */
                 selections = this.getAll();
             }
-            currentSelection(newSelections);
+            if (newSelection.items && !_.isEqual(newSelection.items, currentItems())) {
+                    /**
+                     * Isolate and update currentItems property separately.
+                     *
+                     * Make sure to pass items by value, not by reference.
+                     * Otherwise, item values will change in the observable without notifying subscribers.
+                     **/
+                    currentItems(JSON.parse(JSON.stringify(newSelection.items)));
+            }
+            currentSelection(newSelection);
         },
 
         /**
-         * @return {[DhlShippingOptionSelectionObservable]}
+         * @return {DhlCurrentSelection[]}
          */
         getAll: function () {
             var index = selections.findIndex(function (selection) {
@@ -217,12 +256,19 @@ define([
             return selections;
         },
 
+        /**
+         *
+         * @param {DhlCurrentSelection[]} newSelections
+         */
         setAll: function (newSelections) {
             selections = newSelections;
         },
 
         reset: function () {
             selections = [];
+            if (currentItems() !== {}) {
+                currentItems = ko.observable({});
+            }
             currentSelection = ko.observable({});
         }
     };

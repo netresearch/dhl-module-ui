@@ -125,10 +125,18 @@ define([
             layout(fieldsets);
 
             /** Keep item qty options updated */
-            selections.get().subscribe(function (selectionObject) {
-                if (selectionObject) {
-                    itemQuantity(selectionObject);
-                    itemCombinationRules.apply(selectionObject, self.shippingSettings.carriers[0].package_options);
+            selections.get().subscribe(
+                /** @param {DhlCurrentSelection} selectionObject **/ function ( selectionObject) {
+                    if (selectionObject) {
+                        itemQuantity(selectionObject);
+                    }
+                }
+            );
+
+            /** Apply item combination rules on changes to item inputs */
+            selections.getCurrentItems().subscribe(function (selectionItems) {
+                if (selectionItems) {
+                    itemCombinationRules.apply(selectionItems, self.shippingSettings.carriers[0].package_options);
                 }
             });
         },
