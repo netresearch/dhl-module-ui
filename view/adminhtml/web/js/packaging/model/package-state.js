@@ -12,7 +12,7 @@ define([
         allItemsPackaged = ko.observable(false);
 
     /**
-     * Resets the whole package state, dismissing all existent data.
+     * Resets the whole package state, dismissing all existing data.
      */
     var reset = function () {
         packages([]);
@@ -21,36 +21,58 @@ define([
     };
 
     /**
-     * Creates a new package with unfilled data and switches current selections to it
+     * Goes through all selection data and extracts the unpacked items
+     *
+     * @param readFromDom {boolean|undefined}  - if true the selections will be read from the actual input components
+     * @returns {{{id: int, qty: float}}}
      */
-    var newPackage = function () {
-        var new_id = (_.max(packages(), (item) => item.id).id || 0) + 1;
-        packages.push({"id": new_id});
-        createPackage(new_id);
-        switchPackage(new_id)
+    var getAvailableItems = function (readFromDom) {
+        /**
+         * We need a deep clone here, to avoid weird behaviour in intermediate
+         * states (switching, deleting, creating packages)
+         */
+        var allSelections = JSON.parse(JSON.stringify(selections.getAll()));
+
+        if (readFromDom) {
+            /**
+             * We are most likely in an update loop here, where we can unfortunately not rely
+             * on the selection.get() data, as the values are not yet available there.
+             * Therefore we need to pull the updated values from the input components themselves.
+             */
+            var packageSelection = allSelections.find(function (selection) {
+                return selection.packageId === currentPackage();
+            });
+
+            _.each(Object.keys(packageSelection['items']), function (itemId) {
+                var inputElement = registry.get({inputCode: 'qty', itemId: itemId});
+
+                if (inputElement) {
+                    packageSelection['items'][itemId]['details']['qty'] = Number(inputElement.value());
+                }
+            });
+
+            allSelections.splice(
+                allSelections.findIndex(function (selection) {
+                    return selection.packageId === currentPackage();
+                }),
+                1,
+                packageSelection
+            );
+        }
+
+        return getUnpackedItems(allSelections);
     };
 
     /**
-     * Remove a packages data presentation and switch the currently displayed data if necessary
+     * Updates the allItemsPackaged observable depending on the current availability of items
      *
-     * @param {{id: int}} selectedPackage
-     * @return int package to switch to
+     * @param readFromDom - forces the availability to read qtys from the current input fields,
+     *                      only necessary in edge cases
      */
-    var deletePackage = function (selectedPackage) {
-        packages(packages().filter((item) => item.id !== selectedPackage.id));
-
-        /**
-         * Filter all selections to actual packages (to prevent dangling entities)
-         */
-        var packageIds = packages().map((item) => item.id);
-        var allSelections = selections.getAll().filter((selection) => _.contains(packageIds, selection.packageId));
-        selections.setAll(allSelections);
-        updateItemAvailability(false);
-        if (currentPackage() === selectedPackage.id) {
-            return packages().find(() => true).id;
-        }
-
-        return currentPackage();
+    var updateItemAvailability = function (readFromDom) {
+        allItemsPackaged(getAvailableItems(readFromDom).filter(function (item) {
+            return item.qty > 0;
+        }).length === 0);
     };
 
     /**
@@ -67,21 +89,59 @@ define([
             items: {},
             package: {
                 packageDetails: {
-                    weight: _.reduce(availableItems, (carry, item) => carry + Number(item.qty) * Number(item.weight), 0)
+                    weight: _.reduce(availableItems, function (carry, item) {
+                        return carry + Number(item.qty) * Number(item.weight);
+                    }, 0)
                 },
                 packageCustoms: {
-                    customsValue: _.reduce(availableItems, (carry, item) => carry + Number(item.qty) * Number(item.price), 0)
+                    customsValue: _.reduce(availableItems, function (carry, item) {
+                        return carry + Number(item.qty) * Number(item.price);
+                    }, 0)
                 }
             }
         };
+
         _.each(availableItems, function (item) {
             if (Number(item.qty) > 0) {
-                packageSelection['items'][item.id] = {'details': {'qty': item.qty, 'qtyToShip': item.qtyToShip}};
+                packageSelection['items'][item.id] = {
+                    'details': {
+                        'qty': item.qty,
+                        'qtyToShip': item.qtyToShip
+                    }
+                };
             }
         });
         allSelections.push(packageSelection);
         selections.setAll(allSelections);
         allItemsPackaged(true);
+    };
+
+    /**
+     * Remove a packages data presentation and switch the currently displayed data if necessary
+     *
+     * @param {{id: int}} selectedPackage
+     * @return int package to switch to
+     */
+    var deletePackage = function (selectedPackage) {
+        packages(packages().filter(function (item) {
+            return item.id !== selectedPackage.id;
+        }));
+
+        /**
+         * Filter all selections to actual packages (to prevent dangling entities)
+         */
+        var packageIds = packages().map(function (item) {return item.id;}),
+            allSelections = selections.getAll().filter(function (selection) {
+            return _.contains(packageIds, selection.packageId);
+        });
+
+        selections.setAll(allSelections);
+        updateItemAvailability(false);
+        if (currentPackage() === selectedPackage.id) {
+            return packages().find(function () {return true}).id;
+        }
+
+        return currentPackage();
     };
 
     /**
@@ -91,48 +151,26 @@ define([
      */
     var switchPackage = function (id) {
         var allSelections = selections.getAll();
-        var packageSelection = allSelections.find((selection) => selection.packageId === id);
+        var packageSelection = allSelections.find(function (selection) {
+            return selection.packageId === id;
+        });
+
         selections.setAll(allSelections);
         selections.set(packageSelection);
         currentPackage(id);
     };
 
     /**
-     * Goes through all selection data and extracts the unpacked items
-     *
-     * @param readFromDom {boolean|undefined}  - if true the selections will be read from the actual input components
-     * @returns {{{id: int, qty: float}}}
+     * Creates a new package with unfilled data and switches current selections to it
      */
-    var getAvailableItems = function (readFromDom) {
-        /**
-         * We need a deep clone here, to avoid weird behaviour in intermediate states (switching, deleting, creating packages)
-         */
-        var allSelections = JSON.parse(JSON.stringify(selections.getAll()));
-        if (readFromDom) {
-            /**
-             * We are most likely in an update loop here, where we can unfortunately not rely on the selection.get() data, as the
-             * values are not yet available there. Therefore we need to pull the updated values from the input components themselves
-             */
-            var packageSelection = allSelections.find((selection) => selection.packageId === currentPackage());
-            for (var itemId in packageSelection['items']) {
-                var inputElement = registry.get('inputCode = qty, itemId = ' + itemId);
-                if (inputElement) {
-                    packageSelection['items'][itemId]['details']['qty'] = Number(inputElement.value());
-                }
-            }
-            allSelections.splice(allSelections.findIndex((selection) => selection.packageId === currentPackage()), 1, packageSelection);
-        }
+    var newPackage = function () {
+        var newId = (_.max(packages(), function (item) {
+            return item.id;
+        }).id || 0) + 1;
 
-        return getUnpackedItems(allSelections);
-    };
-
-    /**
-     * Updates the allItemsPackaged observable depending on the current availability of items
-     *
-     * @param readFromDom - forces the availability to read qtys from the current input fields, only necessary in edge cases
-     */
-    var updateItemAvailability = function (readFromDom) {
-        allItemsPackaged(getAvailableItems(readFromDom).filter((item) => item.qty > 0).length === 0);
+        packages.push({"id": newId});
+        createPackage(newId);
+        switchPackage(newId);
     };
 
     return {
@@ -145,5 +183,5 @@ define([
         updateItemAvailability: updateItemAvailability,
         allItemsPackaged: allItemsPackaged,
         reset: reset
-    }
+    };
 });

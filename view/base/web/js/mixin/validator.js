@@ -1,8 +1,7 @@
 define([
     'underscore',
-    'Magento_Checkout/js/model/quote',
     'mage/translate'
-], function (_, quote, $t) {
+], function (_, $t) {
     'use strict';
 
     /**
@@ -13,9 +12,9 @@ define([
          * @type {string[]}
          */
         var packingStationWords = [
-            'paketbox', 'packstation', 'paketshop', 'postfach', 'postfiliale', 'filiale', 'paketkasten', 'dhlpaketstation',
-            'parcelshop', 'pakcstation', 'paackstation', 'pakstation', 'backstation', 'bakstation', 'wunschfiliale',
-            'deutsche post'
+            'paketbox', 'packstation', 'paketshop', 'postfach', 'postfiliale', 'filiale', 'paketkasten',
+            'dhlpaketstation', 'parcelshop', 'pakcstation', 'paackstation', 'pakstation', 'backstation',
+            'bakstation', 'wunschfiliale', 'deutsche post'
         ];
 
         /**
@@ -31,7 +30,7 @@ define([
         var isOnBlacklist = function (value, blacklist) {
                 return undefined !== _.find(blacklist, function (blacklistItem) {
                     return value.toLowerCase().indexOf(blacklistItem) !== -1;
-                })
+                });
         };
 
         /**
@@ -39,7 +38,7 @@ define([
          */
         validator.addRule(
             'dhl_filter_packing_station',
-            function (value, params) {
+            function (value) {
                 return !isOnBlacklist(value, packingStationWords);
             },
             $t('You must not refer to a packing station, postal office, or similar.')
@@ -50,7 +49,7 @@ define([
          */
         validator.addRule(
             'dhl_filter_special_chars',
-            function (value, params) {
+            function (value) {
                 return !isOnBlacklist(value, specialChars);
             },
             $t('Your input must not include one of the following: ') + specialChars.join(' ')

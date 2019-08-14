@@ -29,6 +29,7 @@ define([
             inputName: '${ $.shippingOptionInput.code }',
             autocomplete: '${ $.shippingOptionInput.code }',
             placeholder: '${ $.shippingOptionInput.placeholder }',
+            options: [],
             itemId: false,
             additionalClasses: '${ $.shippingOptionInput.code }',
             section: '',
@@ -36,14 +37,34 @@ define([
         },
 
         initialize: function () {
-            this._super();
+            var value;
 
-            var value = selections.getShippingOptionValue(this.section, this.shippingOption.code, this.shippingOptionInput.code, this.itemId);
+            this._super();
+            value = selections.getShippingOptionValue(
+                this.section,
+                this.shippingOption.code,
+                this.shippingOptionInput.code,
+                this.itemId
+            );
             if (value !== null) {
                 this.value(value);
             } else if (this.value() !== '') {
-                selections.addSelection(this.section, this.shippingOption.code, this.shippingOptionInput.code, this.itemId, this.value());
+                selections.addSelection(
+                    this.section,
+                    this.shippingOption.code,
+                    this.shippingOptionInput.code,
+                    this.itemId,
+                    this.value()
+                );
             }
+        },
+
+        initObservable: function () {
+            this._super();
+            this.observe('options');
+            this.value.extend({rateLimit: {timeout: 50, method: 'notifyWhenChangesStop'}});
+
+            return this;
         },
 
         /**
@@ -57,9 +78,20 @@ define([
             this._super();
 
             if (newValue || newValue === false) {
-                selections.addSelection(this.section, this.shippingOption.code, this.shippingOptionInput.code, this.itemId, newValue);
+                selections.addSelection(
+                    this.section,
+                    this.shippingOption.code,
+                    this.shippingOptionInput.code,
+                    this.itemId,
+                    newValue
+                );
             } else {
-                selections.removeSelection(this.section, this.shippingOption.code, this.shippingOptionInput.code, this.itemId);
+                selections.removeSelection(
+                    this.section,
+                    this.shippingOption.code,
+                    this.shippingOptionInput.code,
+                    this.itemId
+                );
             }
             enforceCompatibility();
         },

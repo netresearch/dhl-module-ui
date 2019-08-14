@@ -91,36 +91,6 @@ class Popup implements ArgumentInterface
     /**
      * @return string[][]
      */
-    public function getPackageOptions(): array
-    {
-        $data = $this->getProvidedData();
-
-        return $data['package_options'] ?? [];
-    }
-
-    /**
-     * @return string[][]
-     */
-    public function getItemOptions(): array
-    {
-        $data = $this->getProvidedData();
-
-        return $data['item_options'] ?? [];
-    }
-
-    /**
-     * @return string[][]
-     */
-    public function getServiceOptions(): array
-    {
-        $data = $this->getProvidedData();
-
-        return $data['service_options'] ?? [];
-    }
-
-    /**
-     * @return string[][]
-     */
     public function getItemData(): array
     {
         $result = array_reduce(
@@ -150,29 +120,17 @@ class Popup implements ArgumentInterface
     /**
      * Fetch data from PackagingDataProvider
      *
-     * @return string[][]
+     * @return mixed[]
+     * @throws LocalizedException If something is wrong with the shipping options configuration
      * @see \Dhl\ShippingCore\Model\Packaging\PackagingDataProvider
      */
-    private function getProvidedData(): array
+    public function getShippingSettings(): array
     {
         if (empty($this->data)) {
-            try {
-                $this->data = $this->hydrator->toArray($this->packageDataProvider->getData($this->getShipment()));
-            } catch (LocalizedException $e) {
-                $this->data = [];
-            }
+            $this->data = $this->hydrator->toArray($this->packageDataProvider->getData($this->getShipment()));
         }
-        $orderCarrier = strtok((string) $this->getShipment()->getOrder()->getShippingMethod(), '_');
 
-        $carrierData = array_filter(
-            $this->data['carriers'] ?? [],
-            static function ($carrierData) use ($orderCarrier) {
-                return ($carrierData['code'] ?? '') === $orderCarrier;
-            }
-        );
-
-        /** fall back to empty array, if no carrier data is provided */
-        return array_pop($carrierData) ?? [];
+        return $this->data;
     }
 
     /**
@@ -232,7 +190,7 @@ class Popup implements ArgumentInterface
      */
     public function getLogoImageUrl(): string
     {
-        $data = $this->getProvidedData();
+        $data = $this->getShippingSettings();
 
         return $data['metadata']['image_url'] ?? '';
     }

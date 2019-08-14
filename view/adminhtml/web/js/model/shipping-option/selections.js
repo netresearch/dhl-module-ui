@@ -5,16 +5,18 @@ define([
     'use strict';
 
     /**
+     * @property array
+     */
+    var selections = [];
+
+    /**
      * @callback DhlShippingOptionSelectionObservable
      * @param {*[][][]} [value]
      * @return {*[][][]}
      *
      * @property DhlShippingOptionSelectionObservable
      */
-    var selections = [];
-
-    var currentSelection = ko.observable({});
-
+    var currentSelection = ko.observable({}).extend({rateLimit: {timeout: 50, method: 'notifyWhenChangesStop'}});
 
     return {
         /**
@@ -36,50 +38,76 @@ define([
          * @return {string|string[]|null} Shipping option input value(s) or null if shipping option not found
          */
         getShippingOptionValue: function (section, shippingOptionCode, inputCode, itemId) {
-            var packageData = currentSelection();
+            var packageData = currentSelection(),
+                selection;
+
             if (!packageData) {
-                return null
+                return null;
             }
             if (section !== '' && !(section in packageData)) {
                 return null;
-            } else {
-                var selection = packageData[section];
             }
+
+            selection = packageData[section];
+
             if (itemId === false) {
                 if (!(shippingOptionCode in selection)) {
-                    return null
+                    return null;
                 }
                 selection = selection[shippingOptionCode];
             } else {
                 if (!(itemId in selection) || !(shippingOptionCode in selection[itemId])) {
-                    return null
+                    return null;
                 }
                 selection = selection[itemId][shippingOptionCode];
             }
             if (!inputCode) {
                 return selection;
             } else if (inputCode in selection) {
-                return selection[inputCode]
+                return selection[inputCode];
             }
 
             return null;
         },
 
         /**
-         * Collect all selected shipping option values in dot-separated format.
+         * Collect all selected shipping option codes (without values) in dot-separated format.
          *
          * @return {string[]}
          */
         getSelectionsInCompoundFormat: function () {
             var selectedCodes = [];
+
             _.each(currentSelection(), function (values, shippingOptionCode) {
                 selectedCodes.push(shippingOptionCode);
                 _.each(values, function (value, inputCode) {
-                    selectedCodes.push([shippingOptionCode, inputCode].join('.'))
-                })
+                    selectedCodes.push([shippingOptionCode, inputCode].join('.'));
+                });
             });
 
             return selectedCodes;
+        },
+
+
+        /**
+         * Collect the stored selection values in a flat format.
+         *
+         * @return {{code: string, value: string}[]}
+         */
+        getSelectionValuesInCompoundFormat: function () {
+            var selectionObjects = [];
+            _.each(this.get()().package, function (shippingOption, shippingOptionCode) {
+                _.each(shippingOption, function (inputValue, inputCode) {
+                    if (inputValue) {
+                        selectionObjects.push({
+                            code: [shippingOptionCode, inputCode].join('.'),
+                            value: inputValue === true ? '1' : String(inputValue),
+                        });
+                    }
+                });
+            });
+
+            return selectionObjects;
         },
 
         /**
@@ -92,14 +120,16 @@ define([
          * @param {*} inputValue
          */
         addSelection: function (section, shippingOptionCode, inputCode, itemId, inputValue) {
-            var workingCopy = currentSelection();
+            var workingCopy = currentSelection(),
+                selection;
+
             if (section === '') {
-                var selection = workingCopy;
+                selection = workingCopy;
             } else {
                 if (workingCopy[section] === undefined) {
                     workingCopy[section] = {};
                 }
-                var selection = workingCopy[section];
+                selection = workingCopy[section];
             }
             if (itemId === false) {
                 if (selection[shippingOptionCode] === undefined) {
@@ -130,14 +160,16 @@ define([
          * @param {string} inputCode
          */
         removeSelection: function (section, shippingOptionCode, inputCode, itemId) {
-            var workingCopy = currentSelection();
+            var workingCopy = currentSelection(),
+                selection;
+
             if (section === '') {
-                var selection = workingCopy;
+                selection = workingCopy;
             } else {
                 if (workingCopy[section] === undefined) {
                     workingCopy[section] = {};
                 }
-                var selection = workingCopy[section];
+                selection = workingCopy[section];
             }
             if (itemId === false) {
                 delete selection[shippingOptionCode][inputCode];
@@ -171,11 +203,14 @@ define([
          * @return {[DhlShippingOptionSelectionObservable]}
          */
         getAll: function () {
-            var index = selections.findIndex((selection) => selection.packageId === (currentSelection().packageId || false));
+            var index = selections.findIndex(function (selection) {
+                return selection.packageId === (currentSelection().packageId || false);
+            });
+
             if (index >= 0) {
                 /**
                  * Update selection list with latest status of the current selection so everything is up to date
-                 * Check if the current selection is not belonging to a deleted package
+                 * Check if the current selection does not belong to a deleted package
                  */
                 selections.splice(index, 1, currentSelection());
             }

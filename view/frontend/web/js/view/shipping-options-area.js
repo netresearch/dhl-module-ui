@@ -3,11 +3,11 @@ define([
     'uiCollection',
     'Magento_Checkout/js/model/quote',
     'Dhl_Ui/js/model/checkout/checkout-data-refresh',
-    'Dhl_Ui/js/action/checkout/shipping-option/generate-components',
+    'Dhl_Ui/js/action/shipping-option/generate-components',
     'Dhl_Ui/js/action/checkout/webapi/get-checkout-data',
-    'Dhl_Ui/js/action/checkout/shipping-option/validation/enforce-compatibility',
-    'Dhl_Ui/js/model/checkout-data',
-    'Dhl_Ui/js/model/checkout/shipping-option/selections',
+    'Dhl_Ui/js/action/shipping-option/validation/enforce-compatibility',
+    'Dhl_Ui/js/model/shipping-settings',
+    'Dhl_Ui/js/model/shipping-option/selections',
     'Dhl_Ui/js/model/checkout/footnotes',
 
 ], function (
@@ -38,12 +38,14 @@ define([
             commentsBefore: [],
             commentsAfter: [],
             footnotes: [],
-            visible: false
+            visible: false,
+            shippingSettingsController: true,
         },
 
         initObservable: function () {
             this._super();
             this.observe('errors image title commentsBefore commentsAfter footnotes visible');
+            this.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
 
             checkoutData.get().subscribe(this.refresh, this);
             quote.shippingMethod.subscribe(this.refresh, this);
@@ -82,7 +84,6 @@ define([
 
             this.destroyChildren();
             generateShippingOptions(carrierData.service_options, this.name);
-            this.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
 
             enforceCompatibility();
         },

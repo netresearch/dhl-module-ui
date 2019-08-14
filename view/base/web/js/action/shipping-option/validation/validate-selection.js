@@ -15,6 +15,7 @@ define([
 
         _.each(inputs, function (input) {
             var validationResult = input.validate();
+
             if (!validationResult.valid) {
                 result = false;
             }

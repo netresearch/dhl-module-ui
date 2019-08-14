@@ -22,8 +22,8 @@ define([
             label: '${ $.shippingOption.label }',
             validateWholeGroup: false,
             visible: true,
-            itemId: false,
-            section: ''
+            itemId: false, // only available in packaging
+            section: '' // only available in packaging
         },
 
         /**
@@ -67,6 +67,7 @@ define([
                     return input.visible();
                 }
             );
+
             this.visible(visibleInputFound);
         }
     });

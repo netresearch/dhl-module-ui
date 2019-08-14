@@ -1,3 +1,4 @@
+"Add Another Package","Add Another Package"
 "Back","Back"
 "Create Shipments","Create Shipments"
 "Create Shipping Label","Create Shipping Label"
@@ -17,6 +18,8 @@
 "Recipient Street","Recipient Street"
 "Save","Save"
 "Service Options","Service Options"
+"Shipment Setup","Shipment Setup"
+"Some items are not assigned to a package. Please assign every item to a package.","Some items are not assigned to a package. Please assign every item to a package."
 "Street Name","Street Name"
 "Street Number","Street Number"
 "Street","Street"
@@ -24,4 +27,3 @@
 "Yes","Yes"
 "You must not refer to a packing station, postal office, or similar.","You must not refer to a packing station, postal office, or similar."
 "Your input must not include one of the following: ","Your input must not include one of the following: "
-

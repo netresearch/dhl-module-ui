@@ -13,10 +13,13 @@ declare(strict_types=1);
                 "name": "packaging-popup-modal",
                 "target": "#packaging-window",
                 "options": {
-                    "title": "Shipment Setup",
+                    "title": "<?= __('Shipment Setup') ?>",
                     "type": "slide",
                     "buttons": []
-                }
+                },
+                "carrierCode": "<?= $block->escapeHtml(
+                    $block->getShipment()->getOrder()->getShippingMethod(true)->getCarrierCode()
+                ) ?>"
             }
         }
     }

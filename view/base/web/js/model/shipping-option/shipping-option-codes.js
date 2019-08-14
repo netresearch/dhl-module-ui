@@ -1,8 +1,9 @@
 define([
     'underscore',
     'ko',
-    'Dhl_Ui/js/model/settings',
-], function (_, ko, settings) {
+    'Dhl_Ui/js/model/current-carrier',
+    'Dhl_Ui/js/model/shipping-settings',
+], function (_, ko, currentCarrier, shippingSettings) {
     'use strict';
 
     return {
@@ -22,23 +23,39 @@ define([
          * @return {string[]}
          */
         convertToCompoundCodes: function (code) {
+            var result = [],
+                shippingData,
+                shippingOption,
+                inputCodes;
+
+            /**
+             * Handle arrays recursively.
+             */
             if (_.isArray(code)) {
-                var result = [];
-                _.each(code, function (code) {
-                    result = result.concat(this.convertToCompoundCodes(code));
+                _.each(code, function (singleCode) {
+                    result = result.concat(this.convertToCompoundCodes(singleCode));
                 }.bind(this));
 
-                return result
+                return result;
             }
+
             if (this.isCompoundCode(code)) {
-                return [code];
+                result.push(code);
+
+                return result;
             }
-            var shippingData = settings.get();
-            var shippingOption = _.findWhere(shippingData.shipping_options, {'code': code});
-            var inputCodes = _.pluck(shippingOption.inputs, 'code');
-            return _.map(inputCodes, function (inputCode) {
-                return [code, inputCode].join('.');
-            });
+
+            shippingData = shippingSettings.getByCarrier(currentCarrier.get());
+            shippingOption = _.findWhere(shippingData.service_options, {'code': code});
+
+            if (shippingOption) {
+                inputCodes = _.pluck(shippingOption.inputs, 'code');
+                result = _.map(inputCodes, function (inputCode) {
+                    return [code, inputCode].join('.');
+                });
+            }
+
+            return result;
 
         },
 

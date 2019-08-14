@@ -12,15 +12,23 @@ define([
     'use strict';
 
     var getItemsToDisplay = function () {
-        var currentSelection = selections.get()();
-        var availableItems = packageState.getAvailableItems(false);
+        var currentSelection = selections.get()(),
+            availableItems = packageState.getAvailableItems(false);
+
         if (!_.isEmpty(currentSelection)) {
             _.each(currentSelection.items, function (itemSelection, itemId) {
-                var item = availableItems.find((item) => item.id === itemId);
+                var item = availableItems.find(function (item) {
+                    return item.id === itemId;
+                });
+
                 item.qty += Number(itemSelection.details.qty);
             });
         }
-        return availableItems.filter((item) => Number(item.qty) > 0).map((item) => Number(item.id));
+        return availableItems.filter(function (item) {
+            return Number(item.qty) > 0;
+        }).map(function (item) {
+            return Number(item.id);
+        });
     };
 
     return Component.extend({
@@ -40,7 +48,7 @@ define([
             additionalClasses: 'item-options',
             config: {
                 shippingOptions: [],
-                activeFieldset: ''
+                activeFieldset: '',
             }
         },
 
@@ -54,18 +62,24 @@ define([
             this._super();
             var itemFieldsets = [],
                 itemsToDisplay = getItemsToDisplay();
+
             /**
              * Filter the item options with the availability data of all previously taken selections,
              * so only items that are available/part of the current selection are listed
              */
-            _.each(this.shippingOptions.filter((itemSet) => _.contains(itemsToDisplay, itemSet.item_id)), function (itemOptionSet) {
+            _.each(this.shippingOptions.filter(function (itemSet) {
+                return _.contains(itemsToDisplay, itemSet.item_id);
+            }), function (itemOptionSet) {
                 var items = shipmentData.getItems(),
-                    itemData = items.find((item) => Number(item.id) === itemOptionSet.item_id),
+                    itemData = items.find(function (item) {
+                        return Number(item.id) === itemOptionSet.item_id;
+                    }),
                     fieldset = utils.template(this.fieldsetTemplate, {
                         parent: this.name,
                         id: itemOptionSet.item_id,
                         itemName: itemData.productName
                     });
+
                 fieldset.config = {
                     shippingOptions: itemOptionSet.shipping_options,
                     itemId: itemOptionSet.item_id,

@@ -1,19 +1,12 @@
 define([
     'underscore',
     'ko',
-    'Magento_Checkout/js/model/quote',
     'Dhl_Ui/js/model/checkout/storage',
-], function (_, ko, quote, storage) {
+    'Dhl_Ui/js/model/current-carrier'
+], function (_, ko, storage, currentCarrier) {
     'use strict';
 
     var CACHE_KEY = 'cachedShippingOptionSelections';
-
-    /**
-     * @return {string}
-     */
-    var getCurrentCarrier = function () {
-        return quote.shippingMethod() ? quote.shippingMethod().carrier_code : '';
-    };
 
     /**
      * @callback DhlShippingOptionSelectionObservable
@@ -37,12 +30,11 @@ define([
         /**
          * @return {*[][][]|null}
          */
-        getByCarrier: function () {
-            var carrier = getCurrentCarrier();
-            if (!(carrier in selections())) {
+        getByCarrier: function (carrierCode) {
+            if (!(carrierCode in selections())) {
                 return null;
             }
-            return selections()[carrier];
+            return selections()[carrierCode];
         },
 
         /**
@@ -55,19 +47,42 @@ define([
          * @return {string|string[]|null} Shipping option input value(s) or null if shipping option not found
          */
         getShippingOptionValue: function (shippingOptionCode, inputCode) {
-            var carrierData = this.getByCarrier();
+            var carrierData = this.getByCarrier(currentCarrier.get()),
+                selection;
+
             if (!carrierData || !(shippingOptionCode in carrierData)) {
                 return null;
             }
-
-            var selection = carrierData[shippingOptionCode];
+            selection = carrierData[shippingOptionCode];
             if (!inputCode) {
                 return selection;
             } else if (inputCode in selection) {
-                return selection[inputCode]
-            } else {
-                return null;
+                return selection[inputCode];
             }
+
+            return null;
+        },
+
+        /**
+         * Collect the stored selection values in a flat format.
+         *
+         * @return {{code: string, value: string}[]}
+         */
+        getSelectionValuesInCompoundFormat: function () {
+            var selectionObjects = [];
+
+            _.each(this.getByCarrier(currentCarrier.get()), function (values, shippingOptionCode) {
+                _.each(values, function (inputValue, inputCode) {
+                    if (inputValue) {
+                        selectionObjects.push({
+                            code: [shippingOptionCode, inputCode].join('.'),
+                            value: inputValue === true ? '1' : String(inputValue),
+                        });
+                    }
+                });
+            });
+
+            return selectionObjects;
         },
 
         /**
@@ -77,10 +92,11 @@ define([
          */
         getSelectionsInCompoundFormat: function () {
             var selectedCodes = [];
-            _.each(this.getByCarrier(), function (values, shippingOptionCode) {
+
+            _.each(this.getByCarrier(currentCarrier.get()), function (values, shippingOptionCode) {
                 selectedCodes.push(shippingOptionCode);
                 _.each(values, function (value, inputCode) {
-                    selectedCodes.push([shippingOptionCode, inputCode].join('.'))
+                    selectedCodes.push([shippingOptionCode, inputCode].join('.'));
                 });
             });
 
@@ -95,8 +111,9 @@ define([
          * @param {*} inputValue
          */
         addSelection: function (shippingOptionCode, inputCode, inputValue) {
-            var carrier = getCurrentCarrier(),
+            var carrier = currentCarrier.get(),
                 workingCopy = selections();
+
             if (workingCopy[carrier] == undefined) {
                 workingCopy[carrier] = {};
             }
@@ -116,7 +133,7 @@ define([
          * @param {string} inputCode
          */
         removeSelection: function (shippingOptionCode, inputCode) {
-            var carrier = getCurrentCarrier(),
+            var carrier = currentCarrier.get(),
                 workingCopy = selections();
 
             if (workingCopy[carrier]) {

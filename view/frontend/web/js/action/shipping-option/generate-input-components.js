@@ -1,9 +1,9 @@
 define([
     'underscore',
     'uiLayout',
-    'Dhl_Ui/js/model/checkout/shipping-option/validation-map',
-    'Dhl_Ui/js/model/checkout/shipping-option/selections',
-    'Dhl_Ui/js/model/checkout/shipping-option/input-templates'
+    'Dhl_Ui/js/model/shipping-option/validation-map',
+    'Dhl_Ui/js/model/shipping-option/selections',
+    'Dhl_Ui/js/model/shipping-option/input-templates'
 ], function (_, layout, validationMap, selections, inputTemplates) {
     'use strict';
 
@@ -55,7 +55,7 @@ define([
             shippingOption.inputs,
             function (/** @type {DhlInput} */ shippingOptionInput) {
                 return {
-                    component: 'Dhl_Ui/js/view/checkout/shipping-option-input',
+                    component: 'Dhl_Ui/js/view/shipping-option-input',
                     parent: parentName,
                     shippingOptionInput: shippingOptionInput,
                     shippingOption: shippingOption,

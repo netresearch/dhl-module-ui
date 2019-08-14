@@ -4,7 +4,7 @@ define([
     'Magento_Checkout/js/model/quote',
     'Magento_Checkout/js/model/shipping-service',
     'Dhl_Ui/js/model/checkout/storage',
-    'Dhl_Ui/js/model/checkout-data'
+    'Dhl_Ui/js/model/shipping-settings'
 ], function (
     urlBuilder,
     request,

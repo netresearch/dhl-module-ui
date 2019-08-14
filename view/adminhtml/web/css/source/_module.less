@@ -67,6 +67,7 @@
     -moz-position: sticky;
     -ms-position: sticky;
     -o-position: sticky;
+    position: -webkit-sticky;
     position: sticky;
 }
 
@@ -258,6 +259,16 @@
 
     .field-error {
         color: @error__color;
+    }
+
+    /**
+     * Restore "required" markings
+     */
+    .shipping-option-wrapper .field._required label:after {
+        content: '*';
+        color: @error__color;
+        font-size: 1.2rem;
+        margin: 0 0 0 5px;
     }
 }
 

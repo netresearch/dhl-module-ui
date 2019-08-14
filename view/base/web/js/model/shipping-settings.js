@@ -8,13 +8,13 @@ define([
      * @param {DhlShippingSettings} [value]
      * @return {DhlShippingSettings}
      *
-     * @var {DhlShippingSettingsObservable} checkoutData
+     * @var {DhlShippingSettingsObservable} settings
      */
-    var checkoutData = ko.observable({});
+    var settings = ko.observable({});
 
     /**
      * Here come the type definitions of the DhlShippingSettings coming from the Magento REST endpoint.
-     * They are defined in PHP at Dhl\ShippingCore\Api\Data\ShippingDataInterface
+     * They are defined in PHP at Dhl\ShippingCore\Api\Data\Checkout\CheckoutDataInterface
      *
      * @typedef {{carriers: DhlCarrier[]}} DhlShippingSettings
      *
@@ -22,6 +22,8 @@ define([
      *     code: string,
      *     compatibility_data: DhlCompatibility[],
      *     service_options: DhlShippingOption[],
+     *     package_options: DhlShippingOption[],
+     *     item_options: {item_id: int, shippingOptions: DhlShippingOption[]}[],
      *     metadata: {
      *         comments_after: DhlComment[],
      *         comments_before: DhlComment[],
@@ -43,8 +45,8 @@ define([
      *     subjects: string[],
      *     error_message: string,
      *     masters: string[],
-     *     incompatibility_rule: boolean,
-     *     hide_subjects: boolean,
+     *     trigger_value: string,
+     *     action: string
      * }} DhlCompatibility
      *
      * @typedef {{
@@ -60,15 +62,15 @@ define([
      *     code: string,
      *     comment: DhlComment,
      *     default_value: string,
-     *     disabled: boolean,
      *     input_type: string,
      *     label: string,
       *    label_visible: bool,
      *     options: {label: string, value: string, disabled: boolean}
+     *     disabled: boolean,
      *     placeholder: string,
      *     sort_order: int,
      *     tooltip: string,
-     *     validation_rules: {name: string, param: mixed}[],
+     *     validation_rules: {name: string, params: mixed}[],
      * }} DhlInput
      *
      * @typedef {{
@@ -82,14 +84,14 @@ define([
          * @return {DhlShippingSettingsObservable}
          */
         get: function () {
-            return checkoutData;
+            return settings;
         },
 
         /**
          * @param {DhlShippingSettings} data
          */
         set: function (data) {
-            checkoutData(data)
+            settings(data);
         },
 
         /**
@@ -97,14 +99,17 @@ define([
          * @return {DhlCarrier|boolean}
          */
         getByCarrier: function (carrierName) {
-            if ('carriers' in checkoutData() === false) {
+            var carrierData;
+
+            if ('carriers' in settings() === false) {
                 return false;
             }
-            var carrier = checkoutData().carriers.find(function (carrier) {
+
+            carrierData = settings().carriers.find(function (carrier) {
                 return carrier.code === carrierName;
             });
 
-            return carrier ? carrier : false;
+            return carrierData ? carrierData : false;
         }
     };
 });

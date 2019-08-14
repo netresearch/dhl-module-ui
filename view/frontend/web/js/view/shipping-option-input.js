@@ -1,8 +1,8 @@
 define([
     'Magento_Ui/js/form/element/abstract',
     'Dhl_Ui/js/model/checkout/footnotes',
-    'Dhl_Ui/js/model/checkout/shipping-option/selections',
-    'Dhl_Ui/js/action/checkout/shipping-option/validation/enforce-compatibility',
+    'Dhl_Ui/js/model/shipping-option/selections',
+    'Dhl_Ui/js/action/shipping-option/validation/enforce-compatibility',
 ], function (Component, footnotes, selections, enforceCompatibility) {
     'use strict';
 
@@ -18,7 +18,7 @@ define([
         shippingOptionInput: {},
 
         defaults: {
-            template: 'Dhl_Ui/checkout/form/field',
+            template: 'Dhl_Ui/form/field',
             shippingOptionCode: '',
             inputCode: '${ $.shippingOptionInput.code }',
             elementTmpl: '',
@@ -31,6 +31,13 @@ define([
             inputName: '${ $.shippingOptionInput.code }',
             autocomplete: '${ $.shippingOptionInput.code }',
             placeholder: '${ $.shippingOptionInput.placeholder }',
+        },
+
+        initObservable: function () {
+            this._super();
+            this.value.extend({rateLimit: {timeout: 50, method: 'notifyWhenChangesStop'}});
+
+            return this;
         },
 
         /**
@@ -49,6 +56,7 @@ define([
                 selections.removeSelection(this.shippingOption.code, this.shippingOptionInput.code);
             }
             enforceCompatibility();
+
         },
 
         /**

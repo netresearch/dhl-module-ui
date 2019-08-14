@@ -6,7 +6,7 @@ define([
     var rulesMap = {
         'maxLength': 'max_text_length',
         'minLength': 'min_text_length',
-        'required': 'required_entry'
+        'required': 'required-entry',
     };
 
     return {

@@ -2,8 +2,8 @@ define([
     'mage/translate',
     'mage/utils/wrapper',
     'uiRegistry',
-    'Dhl_Ui/js/action/checkout/shipping-option/validation/validate-selection',
-    'Dhl_Ui/js/action/checkout/shipping-option/validation/validate-compatibility',
+    'Dhl_Ui/js/action/shipping-option/validation/validate-selection',
+    'Dhl_Ui/js/action/shipping-option/validation/validate-compatibility',
     'Dhl_Ui/js/action/checkout/webapi/update-shipping-option-selection',
 ], function ($t, wrapper, registry, validateSelection, validateCompatibility, updateSelection) {
     'use strict';

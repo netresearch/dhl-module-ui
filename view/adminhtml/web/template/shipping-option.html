@@ -1,0 +1,8 @@
+<div class="shipping-option-wrapper">
+    <h4 class="shipping-option-label" text="label" data-bind="visible: visible"/>
+    <div class="shipping-option-content-wrapper">
+        <each args="data: elems, as: 'element'">
+            <render if="hasTemplate()"/>
+        </each>
+    </div>
+</div>

@@ -4,8 +4,9 @@ define([
     'Magento_Customer/js/model/customer',
     'mage/storage',
     'Magento_Checkout/js/model/quote',
-    'Dhl_Ui/js/model/checkout/shipping-option/selections',
-], function (_, urlBuilder, customer, storage, quote, selection) {
+    'Dhl_Ui/js/model/shipping-option/selections',
+    'Dhl_Ui/js/model/current-carrier',
+], function (_, urlBuilder, customer, storage, quote, selection, currentCarrier) {
     'use strict';
 
     /**
@@ -16,7 +17,7 @@ define([
             urlParams,
             serviceUrl,
             payload,
-            selections = selection.getByCarrier();
+            selections = selection.getByCarrier(currentCarrier.get());
 
         if (customer.isLoggedIn()) {
             url = '/carts/mine/dhl/shipping-option/selection/update';

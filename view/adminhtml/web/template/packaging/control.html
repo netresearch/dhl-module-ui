@@ -5,21 +5,40 @@
         <button id="new_package" type="button"
                 class="scalable ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
                 data-ui-id="page-actions-toolbar-new-package-button" role="button"
-                data-bind="attr: { disabled: allItemsPackaged, 'aria-disabled': allItemsPackaged, title: $('New Package') }, click: newPackage, css: {disabled: allItemsPackaged}">
+                data-bind="
+                    attr: {
+                        disabled: disableAddPackage,
+                        'aria-disabled': disableAddPackage,
+                        title: $('New Package')
+                    },
+                    click: newPackage,
+                    css: {disabled: disableAddPackage}">
             <span class="ui-button-text">
-                <span data-bind="i18n: 'New Package'"></span>
+                <span data-bind="i18n: 'Add Another Package'"></span>
             </span>
         </button>
         <button id="save" type="button"
                 class="action-default scalable save primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
-                data-ui-id="page-actions-toolbar-save-button" role="button" aria-disabled="false"
-                data-bind="attr: {title: $t('Create Shipping Label') }, click: submitPackages">
+                data-ui-id="page-actions-toolbar-save-button" role="button"
+                data-bind="
+                    attr: {
+                        disabled: disableSave(),
+                        'aria-disabled': disableSave(),
+                        title: $t('Create Shipping Label')
+                    },
+                    click: submitPackages,
+                    css: {disabled: disableSave()}">
             <span class="ui-button-text">
                 <span data-bind="i18n: 'Create Shipping Label'"></span>
             </span>
         </button>
     </div>
     <div class="message message-warning" style="display: none"></div>
+    <!-- ko if: errors()-->
+    <!-- ko foreach: { data: errors, as: 'error' } -->
+    <div class="message error" text="error"/>
+    <!-- /ko -->
+    <!-- /ko -->
 </div>
 <div id="grid_tab" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
     <ul class="tabs-horiz ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist"

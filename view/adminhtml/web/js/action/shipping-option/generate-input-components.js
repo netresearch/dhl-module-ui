@@ -12,8 +12,10 @@ define([
      */
     var buildValidationData = function (shippingOptionInput) {
         var validationData = {};
+
         _.each(shippingOptionInput.validation_rules, function (rule) {
             var validatorName = validationMap.getValidatorName(rule.name);
+
             if (validatorName) {
                 validationData[validatorName] = rule.param ? rule.param : true;
             } else {
@@ -40,6 +42,7 @@ define([
             shippingOptionInput.code,
             itemId
         );
+
         if (result === null) {
             result = shippingOptionInput.default_value;
         }
@@ -63,8 +66,7 @@ define([
         var section = parentName.match(new RegExp('([a-z]+)(\\.[0-9]+)?\\.' + shippingOption.code))[1] || '';
         var shippingOptionInputLayout = _.map(
             shippingOption.inputs,
-            /** @type {DhlInput} */
-            function (shippingOptionInput) {
+            function (/** @type {DhlInput} */ shippingOptionInput) {
                 return {
                     component: 'Dhl_Ui/js/view/shipping-option-input',
                     parent: parentName,
@@ -73,6 +75,7 @@ define([
                     shippingOptionCode: shippingOption.code,
                     inputCode: shippingOptionInput.code,
                     inputType: shippingOptionInput.input_type,
+                    options: shippingOptionInput.options,
                     tooltip: shippingOptionInput.tooltip ? {description: shippingOptionInput.tooltip} : false,
                     comment: shippingOptionInput.comment,
                     elementTmpl: inputTemplates.get(shippingOptionInput.input_type),
@@ -87,5 +90,5 @@ define([
         );
 
         layout(shippingOptionInputLayout);
-    }
+    };
 });

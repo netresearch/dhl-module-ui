@@ -17,9 +17,7 @@ $viewModel = $block->getPopupViewModel();
                         "component": "Dhl_Ui/js/packaging/controller",
                         "config": {
                             "items": <?= /** @noEscape */ json_encode($viewModel->getItemData()) ?>,
-                            "itemOptions": <?= /** @noEscape */  json_encode($viewModel->getItemOptions()) ?>,
-                            "packageOptions": <?= /** @noEscape */  json_encode($viewModel->getPackageOptions()) ?>,
-                            "serviceOptions": <?= /** @noEscape */  json_encode($viewModel->getServiceOptions()) ?>,
+                            "shippingSettings": <?= /** @noEscape */json_encode($viewModel->getShippingSettings()) ?>,
                             "submitUrl": "<?= $block->escapeUrl($viewModel->getSubmitUrl()) ?>",
                             "successRedirect": "<?= $block->escapeUrl($viewModel->getSuccessRedirectUrl()) ?>",
                             "image": "<?= $block->escapeUrl($viewModel->getLogoImageUrl()) ?>"
@@ -29,7 +27,6 @@ $viewModel = $block->getPopupViewModel();
             }
         }
     }
-
-</script>
+    </script>
     <!-- ko template: getTemplate() --><!-- /ko -->
 </div>

@@ -1,11 +1,21 @@
 define([
     'underscore',
     'uiRegistry',
+    'Dhl_Ui/js/model/current-carrier',
     'Dhl_Ui/js/model/shipping-option/selections',
-    'Dhl_Ui/js/model/settings',
+    'Dhl_Ui/js/model/shipping-settings',
     'Dhl_Ui/js/model/shipping-option/shipping-option-codes',
-], function (_, registry, shippingOptionSelections, shippingSettings, shippingOptionCodes) {
+], function (_, registry, currentCarrier, selections, shippingSettings, shippingOptionCodes) {
     'use strict';
+
+    var oppositeRuleMap = {
+        'hide': 'show',
+        'show': 'hide',
+        'disable': 'enable',
+        'enable': 'disable',
+        'require': 'unrequire',
+        'unrequire': 'require',
+    };
 
     /**
      * @param {string} code
@@ -14,9 +24,8 @@ define([
     var doActionOnInputComponents = function (code, action) {
         if (!shippingOptionCodes.isCompoundCode(code)) {
             /** Unwrap shippingOptionCode into compound codes. */
-            var codes = shippingOptionCodes.convertToCompoundCodes(code);
-            _.each(codes, function (code) {
-                doActionOnInputComponents(code, action);
+            _.each(shippingOptionCodes.convertToCompoundCodes(code), function (compoundCode) {
+                doActionOnInputComponents(compoundCode, action);
             });
         } else {
             /** Modify specific input defined by compound code */
@@ -32,64 +41,45 @@ define([
      * @param {DhlCompatibility} rule
      * @param {ActionLists} actionLists
      */
-    var processIncompatibility = function (rule, actionLists) {
-        var affectedOptions = rule.subjects,
-            selectedOptions = _.intersection(
-                _.union(rule.subjects, rule.masters),
-                shippingOptionSelections.getSelectionsInCompoundFormat()
-            );
+    var processRule = function (rule, actionLists) {
+        var masters,
+            subjects,
+            selectedMasters = [],
+            list;
 
-        if (selectedOptions.length) {
-            affectedOptions = _.difference(
-                rule.subjects,
-                selectedOptions
-            );
-        }
-        var list = rule.hide_subjects
-            ? (selectedOptions.length ? 'hide' : 'show')
-            : (selectedOptions.length ? 'disable' : 'enable');
-
-        actionLists[list] = _.union(actionLists[list], affectedOptions);
-    };
-
-    /**
-     *
-     * @param {DhlCompatibility} rule
-     * @param {ActionLists} actionLists
-     */
-    var processCompatibility = function (rule, actionLists) {
         if (!rule.masters.length) {
-            // Compatibility rule has no masters set; skipping. It will still be evaluated on submission.
+            // rule has no masters set; skipping. It will still be evaluated on submission.
             return;
         }
+
         /** Masters must not be part of subjects as well */
-        var masters = shippingOptionCodes.convertToCompoundCodes(rule.masters),
-            subjects = _.difference(
-                shippingOptionCodes.convertToCompoundCodes(rule.subjects),
-                masters
-            );
-
-        var selectedMasters = _.intersection(
-            masters,
-            shippingOptionSelections.getSelectionsInCompoundFormat()
+        masters = shippingOptionCodes.convertToCompoundCodes(rule.masters);
+        subjects = _.difference(
+            shippingOptionCodes.convertToCompoundCodes(rule.subjects),
+            masters
         );
-        var list = rule.hide_subjects
-            ? (selectedMasters.length ? 'show' : 'hide')
-            : (selectedMasters.length ? 'enable' : 'disable');
 
+        _.each(
+            selections.getSelectionValuesInCompoundFormat(),
+            function (selection) {
+                var selectionIsMaster = masters.indexOf(selection.code) !== -1,
+                    valuesMatch = function () {
+                        if (rule.trigger_value === '*') {
+                            // The '*' value matches any "truthy" value
+                            return !!selection.value;
+                        }
+                        // Otherwise, we need an exact match */
+                        return selection.value === rule.trigger_value;
+                    }();
+
+                if (selectionIsMaster && valuesMatch) {
+                    selectedMasters.push(selection);
+                }
+            }
+        );
+
+        list = selectedMasters.length ? rule.action : oppositeRuleMap[rule.action];
         actionLists[list] = _.union(actionLists[list], subjects);
-    };
-
-    /**
-     * @param {DhlCompatibility} rule
-     * @param {ActionLists} actionLists
-     */
-    var processRule = function (rule, actionLists) {
-        if (rule.incompatibility_rule) {
-            processIncompatibility(rule, actionLists);
-        } else {
-            processCompatibility(rule, actionLists)
-        }
     };
 
     /**
@@ -119,14 +109,18 @@ define([
     };
 
     var enforceShippingOptionCompatibility = function () {
-        var carrierData = shippingSettings.get();
+        console.warn('Enforcing shipping option selection compatibility ...');
+        var carrierData = shippingSettings.getByCarrier(currentCarrier.get()),
+            actionLists,
+            valuesHaveChanged = false;
+
         if (carrierData) {
-            var actionLists = processRules(carrierData.compatibility_data),
-                valuesHaveChanged = false;
+            actionLists = processRules(carrierData.compatibility_data);
 
             /** Don't enable/show shipping options that another rule will disable/hide */
             actionLists.enable = _.difference(actionLists.enable, actionLists.disable);
             actionLists.show = _.difference(actionLists.show, actionLists.hide);
+
 
             /** Set disabled/visible status of individual shipping option inputs */
             _.each(_.uniq(actionLists.enable), function (shippingOptionCode) {
@@ -136,19 +130,23 @@ define([
             });
             _.each(_.uniq(actionLists.disable), function (shippingOptionCode) {
                 doActionOnInputComponents(shippingOptionCode, function (input) {
-                    input.disabled(true);
-                    if (input.value() !== '') {
-                        input.value('');
-                        valuesHaveChanged = true;
+                    if (!input.disabled()) {
+                        input.disabled(true);
+                        if (input.value() !== '') {
+                            input.value('');
+                            valuesHaveChanged = true;
+                        }
                     }
                 });
             });
             _.each(_.uniq(actionLists.hide), function (shippingOptionCode) {
                 doActionOnInputComponents(shippingOptionCode, function (input) {
-                    input.visible(false);
-                    if (input.value() !== '') {
-                        input.value('');
-                        valuesHaveChanged = true;
+                    if (input.visible()) {
+                        input.visible(false);
+                        if (input.value() !== '') {
+                            input.value('');
+                            valuesHaveChanged = true;
+                        }
                     }
                 });
             });

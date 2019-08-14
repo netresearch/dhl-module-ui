@@ -1,8 +1,8 @@
 define([
     'underscore',
     'Magento_Checkout/js/model/quote',
-    'Dhl_Ui/js/model/checkout/shipping-option/selections',
-    'Dhl_Ui/js/model/checkout-data',
+    'Dhl_Ui/js/model/shipping-option/selections',
+    'Dhl_Ui/js/model/shipping-settings',
 ], function (_, quote, selections, checkoutData) {
     'use strict';
 

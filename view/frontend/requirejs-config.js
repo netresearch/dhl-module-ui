@@ -7,9 +7,6 @@ var config = {
             'Magento_Checkout/js/view/shipping-information': {
                 'Dhl_Ui/js/mixin/checkout/shipping-information': true
             },
-            'Magento_Ui/js/lib/validation/validator': {
-                'Dhl_Ui/js/mixin/checkout/validator': true
-            },
             'Magento_Checkout/js/action/place-order': {
                 'Dhl_Ui/js/mixin/checkout/place-order': true
             }

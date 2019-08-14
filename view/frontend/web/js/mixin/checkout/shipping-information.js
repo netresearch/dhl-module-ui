@@ -2,8 +2,8 @@ define([
     'underscore',
     'mage/translate',
     'Magento_Checkout/js/model/quote',
-    'Dhl_Ui/js/model/checkout/shipping-option/selections',
-    'Dhl_Ui/js/model/checkout-data'
+    'Dhl_Ui/js/model/shipping-option/selections',
+    'Dhl_Ui/js/model/shipping-settings'
 ], function (_, $t, quote, selections, checkoutData) {
     'use strict';
 
@@ -81,7 +81,7 @@ define([
                 success = false;
 
             if (shippingMethod && fullCheckoutData && fullSelectionData) {
-                carrierSelections = selections.getByCarrier();
+                carrierSelections = selections.getByCarrier(shippingMethod.carrier_code);
                 carrierCheckoutData = checkoutData.getByCarrier(shippingMethod.carrier_code);
                 if (carrierSelections && carrierCheckoutData) {
                     this.displayTitle(carrierCheckoutData.metadata.title);

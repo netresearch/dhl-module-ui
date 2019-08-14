@@ -1,7 +1,7 @@
 define([
-    "ko",
     'underscore',
-    "uiCollection",
+    'uiCollection',
+    'Dhl_Ui/js/model/shipping-settings',
     'Dhl_Ui/js/packaging/model/package-state',
     'Dhl_Ui/js/model/shipping-option/selections',
     'uiLayout',
@@ -9,21 +9,41 @@ define([
     'mage/translate',
     'Dhl_Ui/js/packaging/model/shipment-data',
     'Dhl_Ui/js/packaging/action/submit',
-    "Dhl_Ui/js/action/shipping-option/validation/validate-selection"
-], function (ko, _, Component, packageState, selections, layout, utils, $t, shipmentData, submit, validate) {
+    'Dhl_Ui/js/action/shipping-option/validation/validate-selection',
+    'Dhl_Ui/js/action/shipping-option/validation/validate-compatibility',
+    'Dhl_Ui/js/action/shipping-option/validation/enforce-compatibility',
+    'Dhl_Ui/js/packaging/model/item-quantity',
+], function (
+    _,
+    Component,
+    shippingSettings,
+    packageState,
+    selections,
+    layout,
+    utils,
+    $t,
+    shipmentData,
+    submit,
+    validateSelection,
+    validateCompatibility,
+    enforceCompatibility,
+    itemQuantity
+) {
     'use strict';
 
     var self;
+
+    /** @property {DhlShippingSettings} shippingSettings **/
+
     return Component.extend({
         defaults: {
             template: 'Dhl_Ui/packaging/control',
             items: [],
-            itemOptions: [],
-            packageOptions: [],
-            serviceOptions: [],
+            errors: [],
             submitUrl: '',
             successRedirect: '',
-            image: ''
+            image: '',
+            shippingSettingsController: true,
         },
         fieldsetTemplate: {
             component: 'Dhl_Ui/js/packaging/view/fieldset',
@@ -39,26 +59,46 @@ define([
 
         packages: packageState.packages,
         currentPackage: packageState.currentPackage,
-        allItemsPackaged: packageState.allItemsPackaged,
+        disableAddPackage: packageState.allItemsPackaged,
+        disableSave: function() {
+            /** Using a computed observable to invert the value of allItemsPackaged */
+            return !packageState.allItemsPackaged();
+        },
 
         initialize: function () {
             self = this;
             self._super();
+            shippingSettings.set(self.shippingSettings);
             window.packaging.open.subscribe(self.popupStateChanged.bind(self));
             self.initChildComponents();
+
+            return self;
+        },
+
+        initObservable: function () {
+            self._super();
+            self.observe('errors');
+            self.elems.extend({rateLimit: {timeout: 50, method: 'notifyWhenChangesStop'}});
+
             return self;
         },
 
         initShipmentItems: function () {
             var itemSelection = Array.from(document.querySelectorAll('#ship_items_container input.qty-item'))
-                .map((item) => {
-                    return {id: item.name.replace(/[^0-9]+/g, ''), qty: item.value}
+                .map(function (item) {
+                    return {id: item.name.replace(/[^0-9]+/g, ''), qty: item.value};
                 });
-            shipmentData.setItems(self.items.map((item) => _.extend(item, itemSelection.find((selected) => Number(selected.id) === Number(item.id)))));
+
+            shipmentData.setItems(self.items.map(function (item) {
+                return _.extend(item, itemSelection.find(function (selected) {
+                    return Number(selected.id) === Number(item.id);
+                }));
+            }));
         },
 
         initChildComponents: function () {
             self._super();
+            self.elems.subscribe(enforceCompatibility);
             self.reset();
         },
 
@@ -67,18 +107,37 @@ define([
 
             var fieldsets = [
                 self.generateItemSelectionFieldset(),
-                self.generateFieldset('package', $t('Package Options'), self.packageOptions),
+                self.generateFieldset(
+                    'package',
+                    $t('Package Options'),
+                    self.shippingSettings.carriers[0].package_options
+                ),
             ];
-            if (self.serviceOptions.length > 0) {
-                fieldsets.push(self.generateFieldset('service', $t('Service Options'), self.serviceOptions));
+            if (self.shippingSettings.carriers[0].service_options.length > 0) {
+                fieldsets.push(self.generateFieldset(
+                    'service',
+                    $t('Service Options'),
+                    self.shippingSettings.carriers[0].service_options
+                ));
             }
             layout(fieldsets);
-            self.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
+
+            /** Keep item qty options updated */
+            selections.get().subscribe(function (selectionObject) {
+                if (selectionObject) {
+                    itemQuantity(selectionObject);
+                }
+            });
         },
 
         generateItemSelectionFieldset: function () {
-            var baseFieldset = self.generateFieldset('items', $t('Package Items'), self.itemOptions);
-            baseFieldset.config.opened = false;
+            var baseFieldset = self.generateFieldset(
+                'items',
+                $t('Package Items'),
+                self.shippingSettings.carriers[0].item_options
+            );
+
+            baseFieldset.config.opened = true;
             baseFieldset.items = self.items;
             baseFieldset.component = 'Dhl_Ui/js/packaging/view/item-controller';
             return baseFieldset;
@@ -90,6 +149,7 @@ define([
                 label: label,
                 parent: self.name,
             });
+
             fieldset.config = {
                 shippingOptions: options,
                 itemId: false,
@@ -108,8 +168,15 @@ define([
 
         submitPackages: function () {
             var data = selections.getAll();
-            if (validate()) {
-                submit(this.submitUrl, data)
+
+            if (!packageState.allItemsPackaged()) {
+                window.packaging.messages.show().innerHTML =
+                    $t('Some items are not assigned to a package. Please assign every item to a package.');
+                return;
+            }
+
+            if (validateSelection() && validateCompatibility()) {
+                submit(self.submitUrl, data)
                     .done(function (response) {
                         if (response.error) {
                             window.packaging.messages.show().innerHTML = response.message;
@@ -130,6 +197,7 @@ define([
         deletePackage: function (packageToDelete) {
             if (packageState.packages().length > 1) {
                 var id = packageState.deletePackage(packageToDelete);
+
                 self.selectPackage({id: id});
             }
         },
@@ -160,6 +228,6 @@ define([
                 packageState.reset();
                 selections.reset();
             }
-        }
+        },
     });
 });
