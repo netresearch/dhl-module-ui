@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Dhl\Ui\ViewModel\Order\Info;
 
-use Dhl\ShippingCore\Api\RecipientStreetInterface;
+use Dhl\ShippingCore\Api\Data\RecipientStreetInterface;
 use Magento\Framework\AuthorizationInterface;
 use Magento\Framework\Escaper;
 use Magento\Framework\UrlInterface;
