@@ -11,5 +11,12 @@
                 </arguments>
             </block>
         </referenceBlock>
+        <referenceBlock name="order_additional_info">
+            <block name="dhl_shipping_services" class="Magento\Backend\Block\Template" template="Dhl_Ui::order/view/info/shipping-services.phtml">
+                <arguments>
+                    <argument name="viewModel" xsi:type="object">Dhl\Ui\ViewModel\Order\Info\ShippingServices</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
     </body>
 </page>
