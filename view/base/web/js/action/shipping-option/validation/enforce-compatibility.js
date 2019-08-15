@@ -42,27 +42,13 @@ define([
      * @param {ActionLists} actionLists
      */
     var processRule = function (rule, actionLists) {
-        var masters,
-            subjects,
-            selectedMasters = [],
+        var selectedMasters = [],
             list;
-
-        if (!rule.masters.length) {
-            // rule has no masters set; skipping. It will still be evaluated on submission.
-            return;
-        }
-
-        /** Masters must not be part of subjects as well */
-        masters = shippingOptionCodes.convertToCompoundCodes(rule.masters);
-        subjects = _.difference(
-            shippingOptionCodes.convertToCompoundCodes(rule.subjects),
-            masters
-        );
 
         _.each(
             selections.getSelectionValuesInCompoundFormat(),
             function (selection) {
-                var selectionIsMaster = masters.indexOf(selection.code) !== -1,
+                var selectionIsMaster = rule.masters.indexOf(selection.code) !== -1,
                     valuesMatch = function () {
                         if (rule.trigger_value === '*') {
                             // The '*' value matches any "truthy" value
@@ -79,11 +65,10 @@ define([
         );
 
         list = selectedMasters.length ? rule.action : oppositeRuleMap[rule.action];
-        actionLists[list] = _.union(actionLists[list], subjects);
+        actionLists[list] = _.union(actionLists[list], rule.subjects);
     };
 
     /**
-     *
      * @param {DhlCompatibility[]} rules
      * @return {ActionLists}
      */
@@ -108,14 +93,60 @@ define([
         return actionLists;
     };
 
+    /**
+     * Rules without masters should be treated as if there are multiple rules
+     * where one of the subjects is the master. This method splits up the rules
+     * accordingly (This is much easier to do than to handle master-less rules
+     * in the processRule method).
+     *
+     * It also converts all codes into compound codes and makes sure there is
+     * no master that is also a subject (which would lead to strange behaviour).
+     *
+     * @param {DhlCompatibility[]} rules
+     * @return {DhlCompatibility[]}
+     */
+    var preprocessRules = function (rules) {
+        var processedRules = [];
+
+        _.each(rules, /** @param {DhlCompatibility} rule */ function (rule) {
+
+            /** Convert to compound code and remove masters from subjects. */
+            rule.masters = shippingOptionCodes.convertToCompoundCodes(rule.masters);
+            rule.subjects = _.difference(
+                shippingOptionCodes.convertToCompoundCodes(rule.subjects),
+                rule.masters
+            );
+
+            if (!rule.masters.length) {
+                /** Split up master-less rule */
+                _.each(rule.subjects, function (subjectCode) {
+                    processedRules.push({
+                        subjects: _.without(rule.subjects, subjectCode),
+                        error_message: rule.error_message,
+                        masters: [subjectCode],
+                        trigger_value: rule.trigger_value,
+                        action: rule.action,
+                    });
+                });
+            } else {
+                processedRules.push(rule);
+            }
+        });
+
+        return processedRules;
+    };
+
     var enforceShippingOptionCompatibility = function () {
-        console.warn('Enforcing shipping option selection compatibility ...');
         var carrierData = shippingSettings.getByCarrier(currentCarrier.get()),
             actionLists,
             valuesHaveChanged = false;
 
+        console.warn('Enforcing shipping option selection compatibility ...');
+
         if (carrierData) {
-            actionLists = processRules(carrierData.compatibility_data);
+            actionLists = processRules(
+                preprocessRules(carrierData.compatibility_data)
+            );
 
             /** Don't enable/show shipping options that another rule will disable/hide */
             actionLists.enable = _.difference(actionLists.enable, actionLists.disable);
