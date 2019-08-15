@@ -93,11 +93,16 @@ define([
         _.each(compatibilityInfo, function (compatibility) {
             if (compatibility.masters.length === 0
                 || _.intersection(selectedServiceCodes, compatibility.masters).length) {
-                var serviceDifference = _.difference(compatibility.subjects, selectedServiceCodes).length;
+                var serviceDifference = _.difference(compatibility.subjects, selectedServiceCodes).length,
+                    errorMessage;
+
                 if (isIncompatibleServiceCombination(compatibility, serviceDifference)
                     || isMissingRequiredServices(compatibility, serviceDifference)
                 ) {
-                    shippingSettingsView.errors.push(buildErrorMessage(compatibility));
+                    errorMessage = buildErrorMessage(compatibility);
+                    if (errorMessage) {
+                        shippingSettingsView.errors.push();
+                    }
                     markRelatedInputsWithError(compatibility);
                 }
             }
