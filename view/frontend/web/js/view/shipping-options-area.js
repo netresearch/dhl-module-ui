@@ -40,6 +40,7 @@ define([
             footnotes: [],
             visible: false,
             shippingSettingsController: true,
+            lastCarrierCode: ''
         },
 
         initObservable: function () {
@@ -67,6 +68,9 @@ define([
             if (!shippingMethod) {
                 return;
             }
+            if (shippingMethod.carrier_code === this.lastCarrierCode && this.visible()) {
+                return;
+            }
 
             carrierData = checkoutData.getByCarrier(shippingMethod.carrier_code);
             if (!carrierData) {
@@ -77,7 +81,9 @@ define([
             this.title(carrierData.metadata.title);
             this.commentsBefore(carrierData.metadata.comments_before);
             this.commentsAfter(carrierData.metadata.comments_after);
+            // set visible and memorize current carrier
             this.visible(true);
+            this.lastCarrierCode = shippingMethod.carrier_code;
 
             this.updateFootnotes();
             selections.get().subscribe(this.updateFootnotes.bind(this));
