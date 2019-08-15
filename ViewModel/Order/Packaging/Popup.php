@@ -106,7 +106,7 @@ class Popup implements ArgumentInterface
                     'qty' => $item->getQty(),
                     'productName' => $item->getName(),
                     'weight' => $item->getWeight(),
-                    'price' => $item->getPrice()
+                    'price' => $item->getPrice(),
                 ];
 
                 return $carry;
@@ -181,17 +181,5 @@ class Popup implements ArgumentInterface
         }
 
         return $successUrl;
-    }
-
-    /**
-     * Get image url from provided meta data
-     *
-     * @return string
-     */
-    public function getLogoImageUrl(): string
-    {
-        $data = $this->getShippingSettings();
-
-        return $data['metadata']['image_url'] ?? '';
     }
 }

@@ -19,8 +19,7 @@ $viewModel = $block->getPopupViewModel();
                             "items": <?= /** @noEscape */ json_encode($viewModel->getItemData()) ?>,
                             "shippingSettings": <?= /** @noEscape */json_encode($viewModel->getShippingSettings()) ?>,
                             "submitUrl": "<?= $block->escapeUrl($viewModel->getSubmitUrl()) ?>",
-                            "successRedirect": "<?= $block->escapeUrl($viewModel->getSuccessRedirectUrl()) ?>",
-                            "image": "<?= $block->escapeUrl($viewModel->getLogoImageUrl()) ?>"
+                            "successRedirect": "<?= $block->escapeUrl($viewModel->getSuccessRedirectUrl()) ?>"
                         }
                     }
                 }

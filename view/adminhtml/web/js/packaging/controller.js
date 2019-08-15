@@ -44,7 +44,6 @@ define([
             errors: [],
             submitUrl: '',
             successRedirect: '',
-            image: '',
             shippingSettingsController: true,
         },
         fieldsetTemplate: {
@@ -62,7 +61,7 @@ define([
         packages: packageState.packages,
         currentPackage: packageState.currentPackage,
         disableAddPackage: packageState.allItemsPackaged,
-        disableSave: function() {
+        disableSave: function () {
             /** Using a computed observable to invert the value of allItemsPackaged */
             return !packageState.allItemsPackaged();
         },
@@ -126,7 +125,7 @@ define([
 
             /** Keep item qty options updated */
             selections.get().subscribe(
-                /** @param {DhlCurrentSelection} selectionObject **/ function ( selectionObject) {
+                /** @param {DhlCurrentSelection} selectionObject **/ function (selectionObject) {
                     if (selectionObject) {
                         itemQuantity(selectionObject);
                     }
@@ -240,5 +239,19 @@ define([
                 selections.reset();
             }
         },
+
+        /**
+         * @return {string}
+         */
+        getImage: function () {
+            return self.shippingSettings.carriers[0].metadata.image_url;
+        },
+
+        /**
+         * @return {boolean}
+         */
+        hasImage: function () {
+            return Boolean(self.shippingSettings.carriers[0].metadata.image_url);
+        }
     });
 });

@@ -1,6 +1,6 @@
 <div class="package-action-buttons top-buttons" id="dhl-package-buttons">
 
-    <img data-bind="attr: {src: image}" if="image"/>
+    <img data-bind="attr: {src: getImage()}" if="hasImage"/>
     <div class="action-button-container">
         <button id="new_package" type="button"
                 class="scalable ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
