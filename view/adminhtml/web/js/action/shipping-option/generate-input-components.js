@@ -22,7 +22,6 @@ define([
                 console.warn('DHL shipping option validation rule ' + rule.name + ' is not defined.');
             }
         });
-
         return validationData;
     };
 

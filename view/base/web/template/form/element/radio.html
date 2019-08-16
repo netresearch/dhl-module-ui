@@ -4,21 +4,41 @@
     }
 </style>
 <div class="dhl-radioset">
-<!-- ko foreach: { data: shippingOptionInput.options, as: 'option' } -->
+
+    <!-- ko if: shippingOptionInput.options.length > 1 -->
+    <!-- ko foreach: { data: shippingOptionInput.options, as: 'option' } -->
     <div class="admin__field admin__field-option">
         <input type="radio"
                class="admin__control-radio"
                style="width: auto"
-               data-bind="checkedValue: option.value, checked: $parent.value"
-               attr="
-               id: $parent.inputCode + option.value,
-               name: $parent.inputCode + option.value,
-               disabled: option.disabled || $parent.disabled"
+               data-bind="checkedValue: option.value, checked: $parent.value,
+               class: {'hidden': $parent.shippingOptionInput.options.length === 1},
+               attr: {
+                   id: $parent.inputCode + option.value,
+                   name: $parent.inputCode + option.value,
+                   disabled: option.disabled || $parent.disabled
+               }"
         />
         <label class="admin__field-label"
                attr="for: $parent.inputCode + option.value">
             <span data-bind="text: option.label"></span>
         </label>
     </div>
-<!-- /ko -->
+    <!-- /ko -->
+    <!-- /ko -->
+    <!-- ko if: shippingOptionInput.options.length === 1 -->
+    <div class="admin__field admin__field-option">
+        <input type="hidden"
+               data-bind="value: shippingOptionInput.options[0].value,
+               attr: {
+                   id: inputCode + shippingOptionInput.options[0].value,
+                   name: inputCode + shippingOptionInput.options[0].value,
+               }"
+        />
+        <label class="admin__field-label"
+               attr="for: inputCode + shippingOptionInput.options[0].value">
+            <span data-bind="text: shippingOptionInput.options[0].label"></span>
+        </label>
+    </div>
+    <!-- /ko -->
 </div>

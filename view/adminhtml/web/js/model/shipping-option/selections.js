@@ -123,14 +123,16 @@ define([
         getSelectionValuesInCompoundFormat: function () {
             var selectionObjects = [];
 
-            _.each(this.get()().package, function (shippingOption, shippingOptionCode) {
-                _.each(shippingOption, function (inputValue, inputCode) {
-                    if (inputValue) {
-                        selectionObjects.push({
-                            code: [shippingOptionCode, inputCode].join('.'),
-                            value: inputValue === true ? '1' : String(inputValue),
-                        });
-                    }
+            _.each(this.get()(), function (data, section) {
+                _.each(data, function (shippingOption, shippingOptionCode) {
+                    _.each(shippingOption, function (inputValue, inputCode) {
+                        if (inputValue) {
+                            selectionObjects.push({
+                                code: [shippingOptionCode, inputCode].join('.'),
+                                value: inputValue === true ? '1' : String(inputValue),
+                            });
+                        }
+                    });
                 });
             });
 
