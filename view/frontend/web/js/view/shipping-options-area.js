@@ -8,8 +8,7 @@ define([
     'Dhl_Ui/js/action/shipping-option/validation/enforce-compatibility',
     'Dhl_Ui/js/model/shipping-settings',
     'Dhl_Ui/js/model/shipping-option/selections',
-    'Dhl_Ui/js/model/checkout/footnotes',
-
+    'Dhl_Ui/js/model/checkout/footnotes'
 ], function (
     _,
     UiCollection,
@@ -45,8 +44,14 @@ define([
 
         initObservable: function () {
             this._super();
-            this.observe('errors image title commentsBefore commentsAfter footnotes visible');
+            this.observe('errors image title commentsBefore commentsAfter footnotes visible isLoading');
             this.elems.extend({rateLimit: {timeout: 50, method: "notifyWhenChangesStop"}});
+
+            return this;
+        },
+
+        initialize: function () {
+            this._super();
 
             checkoutData.get().subscribe(this.refresh, this);
             quote.shippingMethod.subscribe(this.refresh, this);
@@ -65,6 +70,7 @@ define([
          */
         refresh: function () {
             var shippingMethod = quote.shippingMethod();
+
             if (!shippingMethod) {
                 return;
             }

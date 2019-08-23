@@ -2,14 +2,12 @@ define([
     'Magento_Checkout/js/model/url-builder',
     'mage/storage',
     'Magento_Checkout/js/model/quote',
-    'Magento_Checkout/js/model/shipping-service',
     'Dhl_Ui/js/model/checkout/storage',
     'Dhl_Ui/js/model/shipping-settings'
 ], function (
     urlBuilder,
     request,
     quote,
-    shippingService,
     storage,
     checkoutData
 ) {
@@ -22,17 +20,16 @@ define([
      * @param {string} postalCode
      */
     return function (countryId, postalCode) {
-        var fromCache = storage.get(countryId + postalCode);
+        var fromCache = storage.get(countryId + postalCode),
+            serviceUrl = urlBuilder.createUrl('/dhl/checkout-data/get', {}),
+            payload = {countryId: countryId, postalCode: postalCode};
+
         if (fromCache) {
             console.warn('DHL checkout data cache disabled');
             //checkoutData.set(fromCache);
             //return;
         }
 
-        var serviceUrl = urlBuilder.createUrl('/dhl/checkout-data/get', {}),
-            payload = {countryId: countryId, postalCode: postalCode};
-
-        shippingService.isLoading(true);
         request.post(
             serviceUrl,
             JSON.stringify(payload)
@@ -40,10 +37,6 @@ define([
             function (response) {
                 storage.set(countryId + postalCode, response);
                 checkoutData.set(response);
-            }
-        ).always(
-            function () {
-                shippingService.isLoading(false);
             }
         );
     }
