@@ -16,14 +16,18 @@ See LICENSE.md for license details.
             </filterSelect>
         </filters>
         <massaction name="listing_massaction">
-            <action name="dhlgw_autocreate">
-                <argument name="data" xsi:type="array">
-                    <item name="config" xsi:type="array">
-                        <item name="type" xsi:type="string">autocreate</item>
-                        <item name="label" xsi:type="string" translate="true">Create Shipments</item>
-                        <item name="url" xsi:type="url" path="dhl/shipment/autocreate"/>
-                    </item>
-                </argument>
+            <action name="dhlgw_orderactions">
+                <settings>
+                    <type>autocreate</type>
+                    <label translate="true">DHL Shipping Solutions</label>
+                    <actions>
+                        <action name="0">
+                            <type>dhlgw_autocreate</type>
+                            <label translate="true">Create Shipments</label>
+                            <url path="dhl/shipment/autocreate"/>
+                        </action>
+                    </actions>
+                </settings>
             </action>
         </massaction>
     </listingToolbar>
