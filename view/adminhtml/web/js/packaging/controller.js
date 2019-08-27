@@ -205,10 +205,17 @@ define([
         },
 
         deletePackage: function (packageToDelete) {
-            if (packageState.packages().length > 1) {
-                var id = packageState.deletePackage(packageToDelete);
+            var packageToSwitchTo;
 
-                self.selectPackage({id: id});
+            if (packageState.packages().length > 1) {
+                packageToSwitchTo = packageState.deletePackage(packageToDelete);
+
+                /*
+                 * Do not call self.selectPackage() since we want to reset
+                 * even if we are already on the packageToSwitchTo.
+                 */
+                packageState.switchPackage(packageToSwitchTo);
+                self.reset();
             }
         },
 
@@ -216,7 +223,8 @@ define([
             if (packageModel.id === packageState.currentPackage()) {
                 return 'ui-corner-top ui-tabs-active ui-state-default tab-active';
             }
-            return 'ui-corner-top ui-state-default'
+
+            return 'ui-corner-top ui-state-default';
         },
 
         /**
