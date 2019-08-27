@@ -7,6 +7,7 @@
 "Edit","Edit"
 "Estimated Delivery","Estimated Delivery"
 "Failed","Failed"
+"Item quantity must be between {0} and {1}.","Item quantity must be between {0} and {1}."
 "New Package","New Package"
 "No","No"
 "Not Available","Not Available"

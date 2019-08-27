@@ -7,6 +7,7 @@
 "Edit","Bearbeiten"
 "Estimated Delivery","Voraussichtliche Lieferung"
 "Failed","Fehlgeschlagen"
+"Item quantity must be between {0} and {1}.","Artikelmenge muss zwischen {0} und {1} liegen."
 "New Package","Neues Paket"
 "No","Nein"
 "Not Available","Nicht verfügbar"

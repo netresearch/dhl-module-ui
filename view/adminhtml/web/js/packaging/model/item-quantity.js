@@ -39,18 +39,18 @@ define([
      * Determine if the itemId is the only one in this package
      *
      * @param {{packageId: int, items: {}, package: {}}} selections
-     * @param {string} itemId
+     * @param {int} itemId
      *
      * @return {boolean}
      */
     var isLastItemInPackage = function (selections, itemId) {
         var onlyCurrentItemInPackage = Object.keys(selections.items).length === 1
-            && Object.keys(selections.items)[0] === itemId,
+            && Object.keys(selections.items)[0] === String(itemId),
             otherItemsQty = 0;
 
         if (!onlyCurrentItemInPackage) {
             otherItemsQty = _.reduce(selections.items, function (memo, item, key) {
-                if (key !== itemId) {
+                if (Number(key) !== itemId) {
                     return memo + Number(item.details.qty);
                 }
                 return memo;
@@ -66,28 +66,12 @@ define([
      * @param {{}} component
      * @param {int} itemId
      */
-    var updateOptions = function(selections, component, itemId) {
+    var updateValidation = function(selections, component, itemId) {
         var maxQty = getRemainingShippableQty(selections, itemId),
-            isLastItem = isLastItemInPackage(selections, itemId),
-            options;
+            minQty = isLastItemInPackage(selections, itemId) ? 1 : 0;
 
-        /** Generate options for the available range of values **/
-        options = _.map(_.range(maxQty + 1), function (value) {
-                return {
-                    id: String(value),
-                    value: String(value),
-                    label: String(value),
-                };
-            });
-
-        options = _.filter(options, function (option) {
-            /** For the last item in a package, we don't allow a qty of 0 */
-            return !(isLastItem && option.value === '0');
-        });
-
-        component.options(options);
-
-
+        component.validation['dhl_validate_qty_range'] = [minQty, maxQty];
+        component.validate();
     };
 
     /**
@@ -105,7 +89,7 @@ define([
                 inputCode: 'qty',
                 itemId: itemId
             }, function (component) {
-                updateOptions(selections, component, itemId);
+                updateValidation(selections, component, itemId);
             });
         });
     };
