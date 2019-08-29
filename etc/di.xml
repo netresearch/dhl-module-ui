@@ -7,4 +7,10 @@
             <argument name="coreRegistry" xsi:type="object">Magento\Framework\Registry\Proxy</argument>
         </arguments>
     </type>
+    <type name="Dhl\Ui\ViewModel\Order\Info\ShippingServices">
+        <arguments>
+            <argument name="packagingDataProvider" xsi:type="object">Dhl\ShippingCore\Model\Packaging\PackagingDataProvider\Proxy</argument>
+            <argument name="shipmentFactory" xsi:type="object">Magento\Sales\Model\Order\ShipmentDocumentFactory\Proxy</argument>
+        </arguments>
+    </type>
 </config>

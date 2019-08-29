@@ -7,13 +7,12 @@ declare(strict_types=1);
 namespace Dhl\Ui\ViewModel\Order\Info;
 
 use Dhl\ShippingCore\Api\Data\ShippingOption\InputInterface;
+use Dhl\ShippingCore\Api\Data\ShippingOption\OptionInterface;
 use Dhl\ShippingCore\Api\Data\ShippingOption\Selection\AssignedSelectionInterface;
 use Dhl\ShippingCore\Api\Data\ShippingOption\Selection\SelectionInterface;
-use Dhl\ShippingCore\Api\Data\ShippingOption\ShippingOptionInterface;
 use Dhl\ShippingCore\Model\Packaging\PackagingDataProvider;
 use Dhl\ShippingCore\Model\ShippingOption\Selection\OrderSelectionRepository;
-use Magento\Framework\Api\FilterBuilder;
-use Magento\Framework\Api\Search\SearchCriteriaBuilderFactory;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
@@ -45,14 +44,9 @@ class ShippingServices implements ArgumentInterface
     private $shipmentFactory;
 
     /**
-     * @var FilterBuilder
+     * @var SearchCriteriaBuilder
      */
-    private $filterBuilder;
-
-    /**
-     * @var SearchCriteriaBuilderFactory
-     */
-    private $searchCriteriaBuilderFactory;
+    private $searchCriteriaBuilder;
 
     /**
      * @var OrderSelectionRepository
@@ -61,29 +55,26 @@ class ShippingServices implements ArgumentInterface
 
     /**
      * ShippingServices constructor.
+     *
      * @param Registry $registry
      * @param PackagingDataProvider $packagingDataProvider
      * @param ShipmentDocumentFactory $shipmentFactory
-     * @param FilterBuilder $filterBuilder
-     * @param SearchCriteriaBuilderFactory $searchCriteriaBuilderFactory
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param OrderSelectionRepository $selectionRepository
      */
     public function __construct(
         Registry $registry,
         PackagingDataProvider $packagingDataProvider,
         ShipmentDocumentFactory $shipmentFactory,
-        FilterBuilder $filterBuilder,
-        SearchCriteriaBuilderFactory $searchCriteriaBuilderFactory,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
         OrderSelectionRepository $selectionRepository
     ) {
         $this->registry = $registry;
         $this->packagingDataProvider = $packagingDataProvider;
         $this->shipmentFactory = $shipmentFactory;
-        $this->filterBuilder = $filterBuilder;
-        $this->searchCriteriaBuilderFactory = $searchCriteriaBuilderFactory;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->selectionRepository = $selectionRepository;
     }
-
 
     /**
      * @return string[]
@@ -99,6 +90,12 @@ class ShippingServices implements ArgumentInterface
         if ($shippingAddress && !$shippingAddress->getId()) {
             return [];
         }
+        $selections = $this->loadSelections($shippingAddress);
+
+        if (empty($selections)) {
+            // no selections present, either because there were none or the carrier is not compatible
+            return [];
+        }
 
         /** need to create a tmp shipment for packagingDataProvider */
         try {
@@ -109,10 +106,15 @@ class ShippingServices implements ArgumentInterface
             return [];
         }
 
-        $selections = $this->loadSelections($shippingAddress);
-        $carrierCode = strtok((string)$order->getShippingMethod(), '_');
-        $serviceOptions = $packagingData->getCarriers()[$carrierCode]->getServiceOptions() ?? [];
+        $carrierCode = strtok((string) $order->getShippingMethod(), '_');
+        $carrierData = $packagingData->getCarriers();
 
+        // no carrier data for given carrier code - so we can exit here.
+        if (!isset($carrierData[$carrierCode])) {
+            return [];
+        }
+
+        $serviceOptions = $carrierData[$carrierCode]->getServiceOptions() ?? [];
         $result = [];
         foreach ($selections as $selection) {
             $shippingOptionCode = $selection->getShippingOptionCode();
@@ -140,14 +142,11 @@ class ShippingServices implements ArgumentInterface
      */
     private function loadSelections(Order\Address $shippingAddress): array
     {
-        $addressFilter = $this->filterBuilder
-            ->setField(AssignedSelectionInterface::PARENT_ID)
-            ->setValue($shippingAddress->getId())
-            ->setConditionType('eq')
-            ->create();
-
-        $searchCriteriaBuilder = $this->searchCriteriaBuilderFactory->create();
-        $searchCriteria = $searchCriteriaBuilder->addFilter($addressFilter)->create();
+        $searchCriteria = $this->searchCriteriaBuilder
+            ->addFilter(
+                AssignedSelectionInterface::PARENT_ID,
+                $shippingAddress->getId()
+            )->create();
 
         return $this->selectionRepository->getList($searchCriteria)->getItems();
     }
@@ -161,7 +160,9 @@ class ShippingServices implements ArgumentInterface
         InputInterface $input,
         $existingValue
     ) {
-        $displayValue = $input->getInputType() === 'radio' ? $input->getLabel() : $input->getDefaultValue();
+        $displayValue = $input->getInputType() === 'radio' ? $this->getRadioOptionLabel(
+            $input->getOptions()
+        ) : $input->getDefaultValue();
 
         $displayValue = $displayValue === '1' ? __('Yes') : $displayValue;
 
@@ -171,6 +172,27 @@ class ShippingServices implements ArgumentInterface
         if ($existingValue) {
             $displayValue = implode(', ', [$existingValue, $displayValue]);
         }
+
         return $displayValue;
+    }
+
+    /**
+     * Gets the last option label from the available options
+     *
+     * @param OptionInterface[] $getOptions
+     * @return string
+     */
+    private function getRadioOptionLabel(array $getOptions): string
+    {
+        /** @var string $label */
+        $label = array_reduce(
+            $getOptions,
+            function (string $carry, OptionInterface $option) {
+                return $option->getLabel();
+            },
+            ''
+        );
+
+        return $label;
     }
 }
