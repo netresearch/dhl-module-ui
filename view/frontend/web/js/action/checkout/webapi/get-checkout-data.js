@@ -2,12 +2,16 @@ define([
     'Magento_Checkout/js/model/url-builder',
     'mage/storage',
     'Magento_Checkout/js/model/quote',
+    'Magento_Checkout/js/model/shipping-service',
+    'Magento_Checkout/js/model/full-screen-loader',
     'Dhl_Ui/js/model/checkout/storage',
     'Dhl_Ui/js/model/shipping-settings'
 ], function (
     urlBuilder,
     request,
     quote,
+    shippingService,
+    fullScreenLoader,
     storage,
     checkoutData
 ) {
@@ -30,6 +34,8 @@ define([
             //return;
         }
 
+        fullScreenLoader.startLoader();
+        shippingService.isLoading(true);
         request.post(
             serviceUrl,
             JSON.stringify(payload)
@@ -38,6 +44,11 @@ define([
                 storage.set(countryId + postalCode, response);
                 checkoutData.set(response);
             }
+        ).always(
+            function () {
+                fullScreenLoader.stopLoader();
+                shippingService.isLoading(false);
+            }
         );
-    }
+    };
 });

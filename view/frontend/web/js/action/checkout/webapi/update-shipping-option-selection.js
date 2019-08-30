@@ -1,12 +1,14 @@
 define([
     'underscore',
+    'mage/storage',
     'Magento_Checkout/js/model/url-builder',
     'Magento_Customer/js/model/customer',
-    'mage/storage',
     'Magento_Checkout/js/model/quote',
+    'Magento_Checkout/js/model/shipping-service',
+    'Magento_Checkout/js/model/full-screen-loader',
     'Dhl_Ui/js/model/shipping-option/selections',
     'Dhl_Ui/js/model/current-carrier',
-], function (_, urlBuilder, customer, storage, quote, selection, currentCarrier) {
+], function (_, storage, urlBuilder, customer, quote, shippingService, fullScreenLoader, selectionsModel, currentCarrier) {
     'use strict';
 
     /**
@@ -17,7 +19,7 @@ define([
             urlParams,
             serviceUrl,
             payload,
-            selections = selection.getByCarrier(currentCarrier.get());
+            selections = selectionsModel.getByCarrier(currentCarrier.get());
 
         if (customer.isLoggedIn()) {
             url = '/carts/mine/dhl/shipping-option/selection/update';
@@ -47,13 +49,22 @@ define([
             });
         }
 
+
         serviceUrl = urlBuilder.createUrl(url, urlParams);
+
+        fullScreenLoader.startLoader();
+        shippingService.isLoading(true);
         return storage.post(
             serviceUrl,
             JSON.stringify(payload)
         ).fail(
             function () {
                 console.warn('Shipping option selections could not be saved');
+            }
+        ).always(
+            function () {
+                fullScreenLoader.stopLoader();
+                shippingService.isLoading(false);
             }
         );
     };

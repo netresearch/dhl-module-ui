@@ -1,9 +1,11 @@
 define([
+    'jquery',
     'mage/storage'
-], function (storage) {
+], function ($, storage) {
     'use strict';
 
     return function (submitUrl, data) {
+        $('body').trigger('processStart');
         return storage.post(
             submitUrl,
             {
@@ -11,6 +13,8 @@ define([
             },
             true,
             'application/x-www-form-urlencoded'
-        );
-    }
+        ).fail(function () {
+            $('body').trigger('processStop');
+        });
+    };
 });
