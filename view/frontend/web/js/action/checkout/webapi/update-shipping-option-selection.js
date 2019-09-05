@@ -52,7 +52,6 @@ define([
 
         serviceUrl = urlBuilder.createUrl(url, urlParams);
 
-        fullScreenLoader.startLoader();
         shippingService.isLoading(true);
         return storage.post(
             serviceUrl,
@@ -63,7 +62,6 @@ define([
             }
         ).always(
             function () {
-                fullScreenLoader.stopLoader();
                 shippingService.isLoading(false);
             }
         );

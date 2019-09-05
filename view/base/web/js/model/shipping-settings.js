@@ -1,8 +1,8 @@
 define([
     'ko',
-], function (ko) {
+    'Dhl_Ui/js/action/util/hash'
+], function (ko, hash) {
     'use strict';
-
     /**
      * @callback DhlShippingSettingsObservable
      * @param {DhlShippingSettings} [value]
@@ -116,6 +116,15 @@ define([
             });
 
             return carrierData ? carrierData : false;
+        },
+
+        /**
+         * Generates a numeric hash from the JSON string of the available data
+         * @return {number}
+         */
+        getHash: function () {
+            var jsonString = JSON.stringify(settings());
+            return hash(jsonString);
         }
     };
 });

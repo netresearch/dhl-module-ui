@@ -111,17 +111,17 @@ define([
         _.each(rules, /** @param {DhlCompatibility} rule */ function (rule) {
 
             /** Convert to compound code and remove masters from subjects. */
-            rule.masters = shippingOptionCodes.convertToCompoundCodes(rule.masters);
-            rule.subjects = _.difference(
+            var convertedMasters = shippingOptionCodes.convertToCompoundCodes(rule.masters);
+            var filteredSubjects = _.difference(
                 shippingOptionCodes.convertToCompoundCodes(rule.subjects),
-                rule.masters
+                convertedMasters
             );
 
-            if (!rule.masters.length) {
+            if (!convertedMasters.length) {
                 /** Split up master-less rule */
-                _.each(rule.subjects, function (subjectCode) {
+                _.each(filteredSubjects, function (subjectCode) {
                     processedRules.push({
-                        subjects: _.without(rule.subjects, subjectCode),
+                        subjects: _.without(filteredSubjects, subjectCode),
                         error_message: rule.error_message,
                         masters: [subjectCode],
                         trigger_value: rule.trigger_value,

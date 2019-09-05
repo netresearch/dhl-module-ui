@@ -34,7 +34,6 @@ define([
             //return;
         }
 
-        fullScreenLoader.startLoader();
         shippingService.isLoading(true);
         request.post(
             serviceUrl,
@@ -44,9 +43,8 @@ define([
                 storage.set(countryId + postalCode, response);
                 checkoutData.set(response);
             }
-        ).always(
+        ).fail(
             function () {
-                fullScreenLoader.stopLoader();
                 shippingService.isLoading(false);
             }
         );

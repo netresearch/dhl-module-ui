@@ -13,7 +13,7 @@ define([
             },
             true,
             'application/x-www-form-urlencoded'
-        ).fail(function () {
+        ).always(function () {
             $('body').trigger('processStop');
         });
     };

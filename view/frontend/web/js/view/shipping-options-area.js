@@ -1,6 +1,7 @@
 define([
     'underscore',
     'uiCollection',
+    'Dhl_Ui/js/model/checkout/storage',
     'Magento_Checkout/js/model/quote',
     'Dhl_Ui/js/model/checkout/checkout-data-refresh',
     'Dhl_Ui/js/action/shipping-option/generate-components',
@@ -12,6 +13,7 @@ define([
 ], function (
     _,
     UiCollection,
+    storage,
     quote,
     dataRefresh,
     generateShippingOptions,
@@ -22,7 +24,7 @@ define([
     footnotes
 ) {
     'use strict';
-
+    var SHIPPING_OPTION_CACHE_KEY = 'dhlShippingOptionSettingsHash';
     /**
      * @param {DhlCarrier} carrierData
      */
@@ -39,7 +41,8 @@ define([
             footnotes: [],
             visible: false,
             shippingSettingsController: true,
-            lastCarrierCode: ''
+            lastCarrierCode: '',
+            lastDataHash: 0
         },
 
         initObservable: function () {
@@ -52,7 +55,7 @@ define([
 
         initialize: function () {
             this._super();
-
+            this.lastDataHash = storage.get(SHIPPING_OPTION_CACHE_KEY);
             checkoutData.get().subscribe(this.refresh, this);
             quote.shippingMethod.subscribe(this.refresh, this);
 
@@ -74,8 +77,17 @@ define([
             if (!shippingMethod) {
                 return;
             }
-            if (shippingMethod.carrier_code === this.lastCarrierCode && this.visible()) {
+            if (
+                shippingMethod.carrier_code === this.lastCarrierCode
+                && this.visible()
+                && this.lastDataHash === checkoutData.getHash()
+            ) {
                 return;
+            }
+
+            if (this.lastDataHash !== checkoutData.getHash()) {
+                // reset selections if the shipping option settings have changed
+                selections.reset();
             }
 
             carrierData = checkoutData.getByCarrier(shippingMethod.carrier_code);
@@ -83,6 +95,7 @@ define([
                 this.visible(false);
                 return;
             }
+
             this.image(carrierData.metadata.image_url);
             this.title(carrierData.metadata.title);
             this.commentsBefore(carrierData.metadata.comments_before);
@@ -90,6 +103,8 @@ define([
             // set visible and memorize current carrier
             this.visible(true);
             this.lastCarrierCode = shippingMethod.carrier_code;
+            this.lastDataHash = checkoutData.getHash();
+            storage.set(SHIPPING_OPTION_CACHE_KEY, this.lastDataHash);
 
             this.updateFootnotes();
             selections.get().subscribe(this.updateFootnotes.bind(this));

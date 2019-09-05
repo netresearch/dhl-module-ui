@@ -20,6 +20,14 @@ define([
         : ko.observable({});
 
     return {
+
+        /**
+         * Reset all selections and storage in local cache
+         */
+        reset: function () {
+            selections({});
+            storage.set(CACHE_KEY, {});
+        },
         /**
          * @return {DhlShippingOptionSelectionObservable}
          */
