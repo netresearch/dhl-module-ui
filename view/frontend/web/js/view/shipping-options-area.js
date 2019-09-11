@@ -91,7 +91,7 @@ define([
             }
 
             carrierData = checkoutData.getByCarrier(shippingMethod.carrier_code);
-            if (!carrierData) {
+            if (!carrierData || carrierData.service_options.length === 0) {
                 this.visible(false);
                 return;
             }
