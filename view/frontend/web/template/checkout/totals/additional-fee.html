@@ -1,0 +1,11 @@
+<!--
+* See LICENSE.md for license details.
+-->
+<!-- ko if: getValue() -->
+<tr class="totals shipping excl">
+    <th class="mark" colspan="1" scope="row" data-bind="text: getTitle()"></th>
+    <td class="amount">
+        <span class="price" data-bind="text: getFormattedPrice(getValue())"></span>
+    </td>
+</tr>
+<!-- /ko -->

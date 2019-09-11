@@ -19,7 +19,7 @@
     ]
   },
   "require": {
-    "dhl/module-shipping-core": "^0.5.0",
+    "dhl/module-shipping-core": "^0.5.4",
     "magento/framework": "^101.0.0|^102.0.0",
     "magento/module-backend": "^100.2.0|^101.0.0",
     "magento/module-checkout": "^100.2.0",
