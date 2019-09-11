@@ -117,19 +117,33 @@ define([
                 convertedMasters
             );
 
-            if (!convertedMasters.length) {
+            /**
+             * We check if there are no masters in the rule.
+             * The convertedMasters list is no good indication
+             * for a master-less rule since convertToCompoundCodes
+             * filters out unavailable services during runtime.
+             */
+            if (!rule.masters.length) {
                 /** Split up master-less rule */
                 _.each(filteredSubjects, function (subjectCode) {
                     processedRules.push({
+                        masters: [subjectCode],
                         subjects: _.without(filteredSubjects, subjectCode),
                         error_message: rule.error_message,
-                        masters: [subjectCode],
                         trigger_value: rule.trigger_value,
                         action: rule.action,
                     });
                 });
             } else {
-                processedRules.push(rule);
+                processedRules.push(
+                    {
+                        masters: convertedMasters,
+                        subjects: filteredSubjects,
+                        error_message: rule.error_message,
+                        trigger_value: rule.trigger_value,
+                        action: rule.action,
+                    }
+                );
             }
         });
 
