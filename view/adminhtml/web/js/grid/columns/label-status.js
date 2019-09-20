@@ -32,6 +32,15 @@ define([
          */
         getFailedIconUrl: function () {
             return require.toUrl('Dhl_Ui/images/icon_failed.png');
+        },
+
+        /**
+         * Obtain icon url for orders with label status "Partial".
+         *
+         * @returns {String}
+         */
+        getPartialIconUrl: function () {
+            return require.toUrl('Dhl_Ui/images/icon_partial.png');
         }
     });
 });

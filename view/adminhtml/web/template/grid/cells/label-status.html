@@ -13,4 +13,7 @@ See LICENSE.md for license details.
     <img if="$row()[$col.index] === 'failed'" data-bind="
         attr: {alt: $t('Failed'), title: $t('Failed'), src: getFailedIconUrl()}
     "/>
+    <img if="$row()[$col.index] === 'partial'" data-bind="
+        attr: {alt: $t('Partial'), title: $t('Partial'), src: getPartialIconUrl()}
+    "/>
 </div>

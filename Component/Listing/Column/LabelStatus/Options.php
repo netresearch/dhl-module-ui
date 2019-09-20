@@ -31,6 +31,10 @@ class Options implements OptionSourceInterface
                 'label' => __('Pending'),
             ],
             [
+                'value' => LabelStatusManagementInterface::LABEL_STATUS_PARTIAL,
+                'label' => __('Partial'),
+            ],
+            [
                 'value' => LabelStatusManagementInterface::LABEL_STATUS_PROCESSED,
                 'label' => __('Processed'),
             ],
