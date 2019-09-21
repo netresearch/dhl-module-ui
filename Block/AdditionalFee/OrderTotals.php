@@ -65,10 +65,14 @@ class OrderTotals extends Template
         $parentBlock = $this->getParentBlock();
         $order = $parentBlock->getOrder();
 
-        $parentBlock->addTotalBefore(
-            $this->total->createTotalDisplayObject($order),
-            'grand_total'
-        );
+        $displayObject = $this->total->createTotalDisplayObject($order);
+        if ($displayObject) {
+            $parentBlock->addTotalBefore(
+                $displayObject,
+                'grand_total'
+            );
+        }
+
 
         return $this;
     }

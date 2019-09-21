@@ -57,10 +57,13 @@ class InvoiceTotals extends Template
             return $this;
         }
 
-        $parentBlock->addTotalBefore(
-            $this->total->createTotalDisplayObject($invoice),
-            'grand_total'
-        );
+        $displayObject = $this->total->createTotalDisplayObject($invoice);
+        if ($displayObject) {
+            $parentBlock->addTotalBefore(
+                $displayObject,
+                'grand_total'
+            );
+        }
 
         return $this;
     }

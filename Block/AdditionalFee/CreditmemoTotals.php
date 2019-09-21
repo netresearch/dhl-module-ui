@@ -53,11 +53,13 @@ class CreditmemoTotals extends Template
         $parentBlock = $this->getParentBlock();
         $creditmemo = $parentBlock->getCreditmemo();
 
-        $parentBlock->addTotalBefore(
-            $this->total->createTotalDisplayObject($creditmemo),
-            'grand_total'
-        );
-
+        $displayObject = $this->total->createTotalDisplayObject($creditmemo);
+        if ($displayObject) {
+            $parentBlock->addTotalBefore(
+                $displayObject,
+                'grand_total'
+            );
+        }
         return $this;
     }
 }
