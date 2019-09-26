@@ -73,7 +73,6 @@ class OrderTotals extends Template
             );
         }
 
-
         return $this;
     }
 }
