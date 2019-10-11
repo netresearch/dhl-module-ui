@@ -5,7 +5,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="order_info">
-            <block name="dhl_recipient_street"  class="Magento\Backend\Block\Template" template="Dhl_Ui::order/view/info/recipient-street.phtml">
+            <block name="dhl_recipient_street" class="Magento\Backend\Block\Template" template="Dhl_Ui::order/view/info/recipient-street.phtml">
                 <arguments>
                     <argument name="viewModel" xsi:type="object">Dhl\Ui\ViewModel\Order\Info\RecipientStreet</argument>
                 </arguments>
@@ -19,7 +19,7 @@
             </block>
         </referenceBlock>
         <referenceContainer name="order_totals">
-            <block class="Dhl\Ui\Block\AdditionalFee\OrderTotals" name="dhl_order_additional_fee"/>
+            <block class="Dhl\Ui\Block\AdditionalFee\Total" name="dhl_order_additional_fee" before="tax"/>
         </referenceContainer>
     </body>
 </page>

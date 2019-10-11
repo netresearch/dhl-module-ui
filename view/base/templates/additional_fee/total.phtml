@@ -1,0 +1,48 @@
+<!--
+  See LICENSE.md for license details.
+-->
+<?php
+use Dhl\Ui\Block\AdditionalFee\Total;
+use Dhl\Ui\ViewModel\Order\Totals\AdditionalFee;
+
+/** @var Total $block */
+/** @var AdditionalFee $viewModel */
+$viewModel = $block->getViewModel();
+$source = $block->getParentBlock()->getSource();
+?>
+<?php if ($viewModel->displayBoth($source)) : ?>
+    <tr class="row-totals">
+        <td <?= /* @noEscape */ $block->getLabelProperties() ?> scope="row">
+            <?= $block->escapeHtml($viewModel->getLabel($source) . ' ' . /** @noEscape */ __('(Excl.Tax)')) ?>
+        </td>
+        <td <?= /* @noEscape */ $block->getValueProperties() ?>>
+            <?= $block->escapeHtml($viewModel->getPriceExclTax($source), ['span']) ?>
+        </td>
+    </tr>
+    <tr class="row-totals">
+        <td <?= /* @noEscape */ $block->getLabelProperties() ?> scope="row">
+            <?= $block->escapeHtml($viewModel->getLabel($source)) . ' ' . /** @noEscape */ __('(Incl.Tax)') ?>
+        </td>
+        <td <?= /* @noEscape */ $block->getValueProperties() ?>>
+            <?= $block->escapeHtml($viewModel->getPriceInclTax($source), ['span']) ?>
+        </td>
+    </tr>
+<?php elseif ($viewModel->displayIncludeTax($source)) : ?>
+    <tr>
+        <td <?= /* @noEscape */ $block->getLabelProperties() ?> scope="row">
+            <?= $block->escapeHtml($viewModel->getLabel($source)) ?>
+        </td>
+        <td <?= /* @noEscape */ $block->getValueProperties() ?>>
+            <?= $block->escapeHtml($viewModel->getPriceInclTax($source), ['span']) ?>
+        </td>
+    </tr>
+<?php else : ?>
+    <tr class="row-totals">
+        <td <?= /* @noEscape */ $block->getLabelProperties() ?> scope="row">
+            <?= $block->escapeHtml($viewModel->getLabel($source)) ?>
+        </td>
+        <td <?= /* @noEscape */ $block->getValueProperties() ?>>
+            <?= $block->escapeHtml($viewModel->getPriceExclTax($source), ['span']) ?>
+        </td>
+    </tr>
+<?php endif; ?>

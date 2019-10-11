@@ -12,6 +12,8 @@
                                     <item name="sortOrder" xsi:type="string">90</item>
                                     <item name="config" xsi:type="array">
                                         <item name="template" xsi:type="string">Dhl_Ui/checkout/totals/additional-fee</item>
+                                        <item name="excludingTaxMessage" xsi:type="string" translate="true">(Excl. Tax)</item>
+                                        <item name="includingTaxMessage" xsi:type="string" translate="true">(Incl. Tax)</item>
                                     </item>
                                 </item>
                             </item>

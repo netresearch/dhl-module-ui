@@ -1,11 +1,48 @@
 <!--
 * See LICENSE.md for license details.
 -->
-<!-- ko if: getValue() -->
-<tr class="totals shipping excl">
-    <th class="mark" colspan="1" scope="row" data-bind="text: getTitle()"></th>
+<!-- ko if: isCalculated() && quoteIsVirtual == 0 && getValue() > 0 -->
+<!-- ko if: isBothPricesDisplayed() -->
+<tr class="totals dhlgw-fee excl">
+    <th class="mark" scope="row">
+        <span class="label" data-bind="text: getTitle() + ' ' + excludingTaxMessage"></span>
+    </th>
     <td class="amount">
-        <span class="price" data-bind="text: getFormattedPrice(getValue())"></span>
+            <span class="price"
+                  data-bind="text: getExcludingValue(), attr: {'data-th': excludingTaxMessage}"></span>
+    </td>
+</tr>
+<tr class="totals dhlgw-fee incl">
+    <th class="mark" scope="row">
+        <span class="label" data-bind="text: getTitle() + ' ' + includingTaxMessage"></span>
+    </th>
+    <td class="amount">
+            <span class="price"
+                  data-bind="text: getIncludingValue(), attr: {'data-th': getTitle() + ' ' + excludingTaxMessage}"></span>
     </td>
 </tr>
 <!-- /ko -->
+<!-- ko if: isIncludingDisplayed() -->
+<tr class="totals dhlgw-fee incl">
+    <th class="mark" scope="row">
+        <span class="label" data-bind="i18n: getTitle"></span>
+    </th>
+    <td class="amount">
+            <span class="price"
+                  data-bind="text: getIncludingValue(), attr: {'data-th': getTitle()}"></span>
+    </td>
+</tr>
+<!-- /ko -->
+<!-- ko if: isExcludingDisplayed() -->
+<tr class="totals dhlgw-fee excl">
+    <th class="mark" scope="row">
+        <span class="label" data-bind="i18n: getTitle()"></span>
+    </th>
+    <td class="amount">
+            <span class="price"
+                  data-bind="text: getExcludingValue(), attr: {'data-th': getTitle()}"></span>
+    </td>
+</tr>
+<!-- /ko -->
+<!-- /ko -->
+

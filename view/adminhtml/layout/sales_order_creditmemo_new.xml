@@ -5,7 +5,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="creditmemo_totals">
-            <block class="Dhl\Ui\Block\AdditionalFee\CreditmemoTotals" name="dhl_creditmemo_additional_fee"/>
+            <block class="Dhl\Ui\Block\AdditionalFee\Total" name="dhl_creditmemo_additional_fee" before="tax"/>
         </referenceBlock>
     </body>
 </page>
