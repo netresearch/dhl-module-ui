@@ -57,6 +57,10 @@ define([], function () {
         static: {
             template: 'Dhl_Ui/form/element/static',
             component: 'Dhl_Ui/js/view/shipping-option-input'
+        },
+        shopfinder: {
+            template: 'Dhl_Ui/form/element/shopfinder',
+            component: 'Dhl_Ui/js/view/input/shopfinder'
         }
     };
 
