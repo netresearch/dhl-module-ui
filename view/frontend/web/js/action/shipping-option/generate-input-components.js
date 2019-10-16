@@ -3,8 +3,8 @@ define([
     'uiLayout',
     'Dhl_Ui/js/model/shipping-option/validation-map',
     'Dhl_Ui/js/model/shipping-option/selections',
-    'Dhl_Ui/js/model/shipping-option/input-templates'
-], function (_, layout, validationMap, selections, inputTemplates) {
+    'Dhl_Ui/js/model/shipping-option/input-types'
+], function (_, layout, validationMap, selections, inputTypes) {
     'use strict';
 
     /**
@@ -54,8 +54,9 @@ define([
         var shippingOptionInputLayout = _.map(
             shippingOption.inputs,
             function (/** @type {DhlInput} */ shippingOptionInput) {
+                var inputType = inputTypes.get(shippingOptionInput.input_type);
                 return {
-                    component: 'Dhl_Ui/js/view/shipping-option-input',
+                    component: inputType.component,
                     parent: parentName,
                     shippingOptionInput: shippingOptionInput,
                     shippingOption: shippingOption,
@@ -65,7 +66,7 @@ define([
                     options: shippingOptionInput.options,
                     tooltip: shippingOptionInput.tooltip ? {description: shippingOptionInput.tooltip} : false,
                     comment: shippingOptionInput.comment,
-                    elementTmpl: inputTemplates.get(shippingOptionInput.input_type),
+                    elementTmpl: inputType.template,
                     value: getDefaultValue(shippingOption, shippingOptionInput),
                     validation: buildValidationData(shippingOptionInput),
                 };
