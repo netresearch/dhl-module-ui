@@ -37,6 +37,16 @@ define([
 
         onOpen: function () {
             this.modalOpen = true;
+        },
+
+        onClosed: function () {
+            this.modalOpen = false;
+            console.log('closed');
+        },
+
+        onOpened: function () {
+            this.modalOpen = true;
+            console.log('open');
         }
     });
 });
