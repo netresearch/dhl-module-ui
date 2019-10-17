@@ -1,7 +1,10 @@
 <input type="hidden" data-bind="value: selectedShopId, attr: {name: inputName}">
-<button type="button">
+<button type="button" id="showShopfinder" data-trigger="showShopfinder">
         <span class="ui-button-text">
-            <span data-bind="text: buttonLabel"></span>
+            <span text="buttonLabel"/>
         </span>
 </button>
 <p data-bind="text: selectedShopAddress"></p>
+<div id="modal-shopfinder"
+     data-bind="afterRender: initModal"/>
+
