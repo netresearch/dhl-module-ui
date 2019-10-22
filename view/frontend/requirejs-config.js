@@ -11,5 +11,8 @@ var config = {
                 'Dhl_Ui/js/mixin/checkout/place-order': true
             }
         }
+    },
+    paths: {
+        leaflet: 'Dhl_Ui/lib/leaflet/leaflet'
     }
 };

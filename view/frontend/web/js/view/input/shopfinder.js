@@ -2,12 +2,15 @@ define([
     "underscore",
     "jquery",
     "Dhl_Ui/js/view/shipping-option-input",
+    "Dhl_Ui/js/model/map",
     "Magento_Ui/js/modal/modal"
-], function (_, $, Component) {
+], function (_, $, Component, map) {
     'use strict';
 
     return Component.extend({
         defaults: {
+            modalId: "modal-shopfinder",
+            modalMapId: "modal-shopfinder-map",
             buttonLabel: '${ $.shippingOptionInput.label }',
             selectedShopId: null,
             selectedShopAddress: null,
@@ -20,14 +23,14 @@ define([
          * to make sure the container is available in the DOM.
          */
         initModal: function () {
-            $('#modal-shopfinder').modal({
+            $('#' + this.modalId).modal({
                 trigger: '[data-trigger=showShopfinder]',
-                type: 'slide',
+                type: 'popup',
                 responsive: true,
                 clickableOverlay: true,
                 buttons: [],
-                closed: this.onClose,
-                opened: this.onOpen,
+                closed: this.onClose.bind(this),
+                opened: this.onOpen.bind(this)
             });
         },
 
@@ -37,6 +40,7 @@ define([
 
         onOpen: function () {
             this.modalOpen = true;
+            map.init(this.modalMapId, 0.0, 0.0, 13, []);
         }
     });
 });
