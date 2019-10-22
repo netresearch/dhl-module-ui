@@ -1,0 +1,52 @@
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magento_Ui/js/core/app": {
+                "components": {
+                    "shopfinder-map-popup-${ $.location.shop_id }": {
+                        "name": "shopfinder-map-popup-${ $.location.shop_id }",
+                        "component": "Dhl_Ui/js/view/shopfinder-map-popup",
+                        "location": ${ JSON.stringify($.location) }
+                    }
+                }
+            }
+        }
+    }
+</script>
+
+<div class="map-popup-container"
+     id="map-popup-container-${ $.location.shop_id }"
+     data-bind="scope: 'shopfinder-map-popup-${ $.location.shop_id }'">
+    <h4 data-bind="text: location.shop_name"></h4>
+
+    <p>
+        <span data-bind="if: location.shop_type">
+            <span data-bind="text: location.shop_type"></span>
+            <span data-bind="text: location.shop_number"></span><br/>
+        </span>
+        <span data-bind="text: location.address.street"></span><br/>
+        <span data-bind="text: location.address.postal_code"></span>
+        <span data-bind="text: location.address.city"></span>
+    </p>
+
+    <div data-bind="if: location.opening_hours.length > 0">
+        <h5 data-bind="i18n: 'Opening hours'"></h5>
+        <p data-bind="foreach: location.opening_hours">
+            <span data-bind="text: day_of_week"></span>:
+            <span data-bind="text: opens"></span> – <span data-bind="text: closes"></span>
+            <br/>
+        </p>
+    </div>
+
+    <div data-bind="if: location.services.length > 0">
+        <h5 data-bind="i18n: 'Services'"></h5>
+        <p data-bind="foreach: location.services">
+            <span data-bind="text: $data"></span><br/>
+        </p>
+    </div>
+
+    <button type="button" class="action-primary" data-bind="
+        i18n: 'Select',
+        click: handleLocationSelect
+    "></button>
+</div>

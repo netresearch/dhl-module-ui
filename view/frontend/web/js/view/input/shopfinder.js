@@ -1,10 +1,11 @@
 define([
-    "underscore",
     "jquery",
     "Dhl_Ui/js/view/shipping-option-input",
+    "Dhl_Ui/js/action/checkout/webapi/get-locations",
     "Dhl_Ui/js/model/map",
+    "Magento_Checkout/js/model/quote",
     "Magento_Ui/js/modal/modal"
-], function (_, $, Component, map) {
+], function ($, Component, getLocations, map, quote) {
     'use strict';
 
     return Component.extend({
@@ -40,7 +41,18 @@ define([
 
         onOpen: function () {
             this.modalOpen = true;
-            map.init(this.modalMapId, 0.0, 0.0, 13, []);
+            map.init(this.modalMapId, 0.0, 0.0, 13);
+            getLocations(
+                quote.shippingMethod().carrier_code,
+                {
+                    country: 'country',
+                    postal_code: '1235',
+                    city: 'city',
+                    street: 'street'
+                }
+            ).then(/** @param {DhlLocation[]} locations */ function (locations) {
+                map.setLocations(locations);
+            });
         }
     });
 });
