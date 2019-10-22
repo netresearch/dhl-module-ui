@@ -4,14 +4,12 @@
             <span text="buttonLabel"></span>
         </span>
     </button>
-    <div if="selectedLocation">
-        <p>
-            <strong text="selectedLocation().shop_name"></strong><br/>
-            <span text="selectedLocation().address.street"></span><br/>
-            <span text="selectedLocation().address.postal_code"></span>
-            <span text="selectedLocation().address.city"></span><br/>
-        </p>
-    </div>
+    <p data-bind="if: selectedLocation">
+        <strong text="selectedLocation().shop_name"></strong><br/>
+        <span text="selectedLocation().address.street"></span><br/>
+        <span text="selectedLocation().address.postal_code"></span>
+        <span text="selectedLocation().address.city"></span><br/>
+    </p>
 </div>
 <div id="modal-shopfinder" data-bind="afterRender: initModal">
     <div id="modal-shopfinder-map"></div>

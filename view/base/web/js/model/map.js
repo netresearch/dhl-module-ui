@@ -92,16 +92,16 @@ define([
             // center map on first location
             if (locations[0]) {
                 map.setView([
-                    locations[0].address.latitude,
-                    locations[0].address.longitude
+                    locations[0].latitude,
+                    locations[0].longitude
                 ], 15);
             }
 
             // add new locations to map
             _.each(locations, /** @param {DhlLocation} location */ function (location) {
                 var marker = leaflet.marker(leaflet.latLng(
-                    location.address.latitude,
-                    location.address.longitude
+                    location.latitude,
+                    location.longitude
                 ));
                 var popup = leaflet.popup({
                     className: 'location-popup-' + location.shop_id,
@@ -112,7 +112,7 @@ define([
                     marker.setIcon(
                         leaflet.icon({
                             iconUrl: location.icon,
-                            popupAnchor: [23, 0]
+                            iconAnchor: [23, 23],
                         })
                     );
                 }

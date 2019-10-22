@@ -5,8 +5,9 @@ define([
     'Dhl_Ui/js/model/map',
     'Dhl_Ui/js/model/current-carrier',
     'Dhl_Ui/js/model/shipping-option/selections',
-    'Magento_Ui/js/modal/modal'
-], function ($, Component, getLocations, map, currentCarrier, selections, modal) {
+    'Magento_Ui/js/modal/modal',
+    'Magento_Checkout/js/model/quote'
+], function ($, Component, getLocations, map, currentCarrier, selections, modal, quote) {
     'use strict';
 
     return Component.extend({
@@ -30,16 +31,18 @@ define([
          * to make sure the container is available in the DOM.
          */
         initModal: function () {
-            this.selectedLocation(
-                {
-                    'shop_name': selections.getShippingOptionValue(this.shippingOption.code, 'shop-name'),
-                    'address': {
-                        'street': selections.getShippingOptionValue(this.shippingOption.code, 'address-street'),
-                        'postal_code': selections.getShippingOptionValue(this.shippingOption.code, 'address-postalcode'),
-                        'city': selections.getShippingOptionValue(this.shippingOption.code, 'address-city'),
+            if (selections.getShippingOptionValue(this.shippingOption.code, this.shippingOptionInput.code)) {
+                this.selectedLocation(
+                    {
+                        'shop_name': selections.getShippingOptionValue(this.shippingOption.code, 'shop-name'),
+                        'address': {
+                            'street': selections.getShippingOptionValue(this.shippingOption.code, 'address-street'),
+                            'postal_code': selections.getShippingOptionValue(this.shippingOption.code, 'address-postalcode'),
+                            'city': selections.getShippingOptionValue(this.shippingOption.code, 'address-city'),
+                        }
                     }
-                }
-            );
+                );
+            }
             this.modal = modal(
                 {
                     trigger: '[data-trigger=showShopfinder]',
@@ -73,14 +76,17 @@ define([
          * Initialize the map and load locations when opening the modal
          */
         onOpen: function () {
+            var address = quote.shippingAddress();
+
             map.init(this.modalMapId, 0.0, 0.0, 13);
+
             getLocations(
                 currentCarrier.get(),
                 {
-                    country: 'country',
-                    postal_code: '1235',
-                    city: 'city',
-                    street: 'street'
+                    country: address.countryId,
+                    postal_code: address.postcode,
+                    city: address.city,
+                    street: address.street.join(' ')
                 }
             ).then(/** @param {DhlLocation[]} locations */ function (locations) {
                 map.setLocations(locations);
