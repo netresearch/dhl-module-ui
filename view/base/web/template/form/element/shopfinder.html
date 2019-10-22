@@ -1,10 +1,18 @@
-<input type="hidden" data-bind="value: selectedShopId, attr: {name: inputName}">
-<button type="button" id="showShopfinder" data-trigger="showShopfinder">
+<div class="shopfinder-option">
+    <button type="button" id="showShopfinder" data-trigger="showShopfinder">
         <span class="ui-button-text">
             <span text="buttonLabel"></span>
         </span>
-</button>
-<p data-bind="text: selectedShopAddress"></p>
+    </button>
+    <div if="selectedLocation">
+        <p>
+            <strong text="selectedLocation().shop_name"></strong><br/>
+            <span text="selectedLocation().address.street"></span><br/>
+            <span text="selectedLocation().address.postal_code"></span>
+            <span text="selectedLocation().address.city"></span><br/>
+        </p>
+    </div>
+</div>
 <div id="modal-shopfinder" data-bind="afterRender: initModal">
     <div id="modal-shopfinder-map"></div>
 </div>

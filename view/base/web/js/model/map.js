@@ -8,7 +8,7 @@ define([
     'mage/translate',
     'leaflet',
     'Dhl_Ui/js/model/map-location-renderer',
-    'uiRegistry',
+    'uiRegistry'
 ], function (_, ko, $, $t, leaflet, mapLocationRenderer, registry) {
     'use strict';
 

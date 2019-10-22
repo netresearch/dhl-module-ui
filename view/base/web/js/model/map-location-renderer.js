@@ -3,7 +3,7 @@
  */
 define([
     'mage/utils/template',
-    'text!Dhl_Ui/template/checkout/location/popup.html',
+    'text!Dhl_Ui/template/location/popup.html',
 ], function (template, popupTmpl) {
     'use strict';
 

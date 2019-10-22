@@ -1,11 +1,11 @@
 define([
     'Magento_Checkout/js/model/url-builder',
-    'mage/storage',
     'Magento_Checkout/js/model/shipping-service',
+    'mage/storage'
 ], function (
     urlBuilder,
-    storage,
-    shippingService
+    shippingService,
+    storage
 ) {
     'use strict';
 
@@ -24,7 +24,6 @@ define([
      *     services: string[],
      *     icon: string,
      *     address: {
-     *         house_no: string,
      *         postal_code: string,
      *         city: string,
      *         street: string
@@ -56,8 +55,6 @@ define([
         var serviceUrl = urlBuilder.createUrl('/dhl/location-data/get', {}),
             payload = {carrierCode: carrierCode, address: address};
 
-        shippingService.isLoading(true);
-
         var testData = new Promise(function (resolve, reject) {
             setTimeout(function () {
                 resolve([{
@@ -78,47 +75,46 @@ define([
                     services: [],
                     icon: 'test.jpg',
                     address: {
-                        house_no: '11d',
                         postal_code: '041229',
                         city: 'Leipzig',
-                        street: 'Nonnenstraße',
+                        street: 'Nonnenstraße 11d',
                         country: 'Germany',
                         latitude: 51.328753,
                         longitude: 12.3429326,
                     }
                 },
-                {
-                    shop_type: 'Post office',
-                    shop_number: '01234',
-                    shop_name: 'test postOffice',
-                    shop_id: 'testid2',
-                    shop_station: 'test',
-                    opening_hours: [{
-                        day_of_week: 'mon',
-                        opens: '08:00:00',
-                        closes: '16:00:00',
-                    }, {
-                        day_of_week: 'tue',
-                        opens: '08:00:00',
-                        closes: '16:00:00',
-                    }],
-                    services: ['test', '123'],
-                    address: {
-                        house_no: '13d',
-                        postal_code: '041229',
-                        city: 'Leipzig',
-                        street: 'Nonnenstraße',
-                        country: 'Germany',
-                        latitude: 51.328753,
-                        longitude: 12.3439326,
+                    {
+                        shop_type: 'Post office',
+                        shop_number: '01234',
+                        shop_name: 'test postOffice',
+                        shop_id: 'testid2',
+                        shop_station: 'test',
+                        opening_hours: [{
+                            day_of_week: 'mon',
+                            opens: '08:00:00',
+                            closes: '16:00:00',
+                        }, {
+                            day_of_week: 'tue',
+                            opens: '08:00:00',
+                            closes: '16:00:00',
+                        }],
+                        services: ['test', '123'],
+                        address: {
+                            postal_code: '041229',
+                            city: 'Leipzig',
+                            street: 'Nonnenstraße 1',
+                            country: 'Germany',
+                            latitude: 51.328753,
+                            longitude: 12.3439326,
+                        }
                     }
-                }
                 ]);
             }, 1000);
         });
 
         return testData;
 
+        shippingService.isLoading(true);
         return storage.post(
             serviceUrl,
             JSON.stringify(payload)
