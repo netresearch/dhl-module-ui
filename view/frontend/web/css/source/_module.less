@@ -27,29 +27,38 @@
 }
 
 .shopfinder-option {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  & > * {
-    margin-right: 1em;
-  }
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    & > * {
+        margin-right: 1em;
+    }
+
+    .action-remove {
+        .lib-icon-font(@icon-trash);
+        word-spacing: 10px;
+
+        &:before {
+            margin: -3px 5px 0 0px;
+        }
+    }
 }
 
 #modal-shopfinder-map {
-  height: 600px;
-  max-height: 80vh;
+    height: 600px;
+    max-height: 80vh;
 }
 
 .leaflet-popup-content .map-popup-container {
-  p {
-    margin: 4px 0;
-  }
+    p {
+        margin: 4px 0;
+    }
 
-  h4 {
-    margin-bottom: 0;
-  }
+    h4 {
+        margin-bottom: 0;
+    }
 
-  h5 {
-    margin: 0;
-  }
+    h5 {
+        margin: 0;
+    }
 }

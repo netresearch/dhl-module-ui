@@ -1,15 +1,24 @@
 <div class="shopfinder-option">
-    <button type="button" id="showShopfinder" data-trigger="showShopfinder">
-        <span class="ui-button-text">
-            <span text="buttonLabel"></span>
-        </span>
+    <!-- ko ifnot: selectedLocation-->
+    <button type="button" id="showShopfinder" data-bind="click: openModal">
+        <span text="buttonLabel"></span>
     </button>
-    <p data-bind="if: selectedLocation">
+    <!-- /ko -->
+    <!-- ko if: selectedLocation -->
+    <button type="reset"
+            id="removeLocation"
+            class="action-remove-button"
+            data-bind="click: removeLocation"
+    >
+        <span class="action-remove" data-bind="i18n: 'Remove'"></span>
+    </button>
+    <div>
         <strong text="selectedLocation().shop_name"></strong><br/>
         <span text="selectedLocation().address.street"></span><br/>
         <span text="selectedLocation().address.postal_code"></span>
         <span text="selectedLocation().address.city"></span><br/>
-    </p>
+    </div>
+    <!-- /ko -->
 </div>
 <div id="modal-shopfinder" data-bind="afterRender: initModal">
     <div id="modal-shopfinder-map"></div>
