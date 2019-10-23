@@ -74,15 +74,15 @@ define([
          */
         updateSelections: function (location) {
             if (location === null || !location.shop_id) {
+                this.value(null);
                 selections.removeSelection(this.shippingOption.code, 'shop-name');
-                selections.removeSelection(this.shippingOption.code, this.shippingOptionInput.code);
                 selections.removeSelection(this.shippingOption.code, 'address-street');
                 selections.removeSelection(this.shippingOption.code, 'address-postalcode');
                 selections.removeSelection(this.shippingOption.code, 'address-city');
                 selections.removeSelection(this.shippingOption.code, 'address-country');
             } else {
+                this.value(location.shop_id);
                 selections.addSelection(this.shippingOption.code, 'shop-name', location.shop_name);
-                selections.addSelection(this.shippingOption.code, this.shippingOptionInput.code, location.shop_id);
                 selections.addSelection(this.shippingOption.code, 'address-street', location.address.street);
                 selections.addSelection(this.shippingOption.code, 'address-postalcode', location.address.postal_code);
                 selections.addSelection(this.shippingOption.code, 'address-city', location.address.city);
