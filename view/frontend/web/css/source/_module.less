@@ -44,6 +44,31 @@
     }
 }
 
+#modal-shopfinder-search {
+    margin: 0 0 15px 0;
+
+    .search-inputs {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-around;
+
+        div {
+            width: 100%;
+            margin: 0 0 10px 0;
+        }
+
+        label {
+            font-weight: 600;
+        }
+    }
+
+    .btn-primary {
+        margin: 0 0 0 5px;
+        .lib-icon-font(@icon-search);
+    }
+}
+
 #modal-shopfinder-map {
     height: 600px;
     max-height: 80vh;
@@ -60,5 +85,15 @@
 
     h5 {
         margin: 0;
+    }
+}
+
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+    #modal-shopfinder-search{
+        .search-inputs {
+            div {
+                width: 49%;
+            }
+        }
     }
 }

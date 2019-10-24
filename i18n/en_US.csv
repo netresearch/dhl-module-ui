@@ -3,6 +3,8 @@
 "Add Another Package","Add Another Package"
 Back,Back
 "Changes have been made to this section that have not been saved.","Changes have been made to this section that have not been saved."
+City,City
+Country,Country
 "Create Shipments","Create Shipments"
 "Create Shipping Label","Create Shipping Label"
 "DHL Label Status","DHL Label Status"
@@ -26,6 +28,8 @@ Processed,Processed
 "Recipient Street","Recipient Street"
 Save,Save
 Remove,Remove
+Postcode,Postcode
+Search,Search
 "Service Options","Service Options"
 "Ship To:","Ship To:"
 "Shipment could not be created.","Shipment could not be created."

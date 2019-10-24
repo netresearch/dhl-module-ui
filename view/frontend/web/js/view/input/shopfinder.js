@@ -17,6 +17,10 @@ define([
             modalMapId: "modal-shopfinder-map",
             buttonLabel: '${ $.shippingOptionInput.label }',
             selectedLocation: null,
+            searchCity: null,
+            searchStreet: null,
+            searchZip: null,
+            searchCountry: null,
             listens: {
                 selectedLocation: "updateSelections"
             }
@@ -24,13 +28,22 @@ define([
 
         initObservable: function () {
             this._super();
-            this.observe('selectedLocation');
+            this.observe(['selectedLocation', 'searchCity', 'searchStreet', 'searchZip', 'searchCountry']);
             return this;
         },
 
         initialize: function () {
+            var address;
+
             this._super();
+
+            address = quote.shippingAddress();
+            this.searchCity(address.city);
+            this.searchCountry(address.countryId);
+            this.searchStreet(address.street.join(' '));
+            this.searchZip(address.postcode);
             this.selectedLocation(this.initSelectedLocation());
+
             return this;
         },
 
@@ -112,19 +125,22 @@ define([
          * Open the modal, initialize the map and load locations.
          */
         openModal: function () {
-            var address = quote.shippingAddress();
-
             this.modal.openModal();
-
             map.init(this.modalMapId, 0.0, 0.0, 13);
+            this.updateLocations();
+        },
 
+        /**
+         * update locations
+         */
+        updateLocations: function () {
             getLocations(
                 currentCarrier.get(),
                 {
-                    country: address.countryId,
-                    postal_code: address.postcode,
-                    city: address.city,
-                    street: address.street.join(' ')
+                    country: this.searchCountry(),
+                    postal_code: this.searchZip(),
+                    city: this.searchCity(),
+                    street: this.searchStreet()
                 }
             ).then(/** @param {DhlLocation[]} locations */ function (locations) {
                 map.setLocations(locations);

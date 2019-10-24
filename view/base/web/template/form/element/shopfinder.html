@@ -21,5 +21,36 @@
     <!-- /ko -->
 </div>
 <div id="modal-shopfinder" data-bind="afterRender: initModal">
+    <div id="modal-shopfinder-search">
+        <div class="search-inputs">
+            <div>
+                <label for="searchCountry">
+                    <span data-bind="i18n: 'Country'"></span>
+                </label>
+                <input id="searchCountry" type="text" data-bind="value: searchCountry" />
+            </div>
+            <div>
+                <label for="searchCity">
+                    <span data-bind="i18n: 'City'"></span>
+                </label>
+                <input id="searchCity" type="text" data-bind="value: searchCity"/>
+            </div>
+            <div>
+                <label for="searchZip">
+                    <span data-bind="i18n: 'Postcode'"></span>
+                </label>
+                <input id="searchZip" type="text" data-bind="value: searchZip"/>
+            </div>
+            <div>
+                <label for="searchStreet">
+                    <span data-bind="i18n: 'Street'"></span>
+                </label>
+                <input id="searchStreet" type="text" data-bind="value: searchStreet"/>
+            </div>
+        </div>
+        <button class="btn-primary" data-bind="click: updateLocations">
+            <span data-bind="i18n: 'Search'"></span>
+        </button>
+    </div>
     <div id="modal-shopfinder-map"></div>
 </div>
