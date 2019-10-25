@@ -3,92 +3,83 @@
  */
 define([
     'underscore',
-    'knockout',
-    'jquery',
     'mage/translate',
     'leaflet',
-    'Dhl_Ui/js/model/map-location-renderer',
+    'Dhl_Ui/js/model/map/markers',
+    'Dhl_Ui/js/model/map/controls',
     'uiRegistry'
-], function (_, ko, $, $t, leaflet, mapLocationRenderer, registry) {
+], function (_, $t, leaflet, markers, controls) {
     'use strict';
 
-    var map,
-        markers = [],
-        mapUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibXVoYW1tYWQtcWFzaW0iLCJhIjoiY2swdzZibjFuMDEwejNjbmJtNTBxNGxuOSJ9.2x0s6jiqfuKlyNNqCDXkGw',
-        accessToken = 'pk.eyJ1IjoibXVoYW1tYWQtcWFzaW0iLCJhIjoiY2swdzZibjFuMDEwejNjbmJtNTBxNGxuOSJ9.2x0s6jiqfuKlyNNqCDXkGw',
-        attribution = $t('Map data') + ' &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>';
+    /**
+     * @typedef {{
+     *     type: string,
+     *     iconUrl: string,
+     *     markers: leaflet.Marker[],
+     *     control: leaflet.Control|null
+     * }} MarkerGroup
+     */
+
+    /**
+     * @param {Object.<string, MarkerGroup>} markerGroups
+     **/
+    var markerGroups = {};
+
+    /**
+     * @type {leaflet.Map|null}
+     */
+    var map = null;
+
+    /**
+     * @type {string}
+     */
+    var accessToken = [
+        'pk.eyJ1IjoibXVoYW1tYWQtcWFzaW0iLCJhIjoiY2swdzZibj',
+        'FuMDEwejNjbmJtNTBxNGxuOSJ9.2x0s6jiqfuKlyNNqCDXkGw'
+    ].join('');
+
+    /**
+     * @type {string}
+     */
+    var mapUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + accessToken;
+
+    /**
+     * @type {string}
+     */
+    var attribution = $t('Map data') + ' &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>';
 
     return {
         /**
          * Initialize map at the given element with given coordinates and zoom.
          *
-         * @function
          * @param {string} elementId
          * @param {number} lat
          * @param {number} lng
          * @param {number} zoom
          */
         init: function (elementId, lat, lng, zoom) {
-
             if (map) {
                 map.remove();
             }
 
-            // Initialize map
             map = leaflet.map(elementId).setView([lat, lng], zoom);
+
             leaflet.tileLayer(mapUrl, {
                 attribution: attribution,
                 maxZoom: 18,
                 id: 'mapbox.streets',
                 accessToken: accessToken
             }).addTo(map);
-
-            // Add "show locations" checkbox
-            leaflet.Control.TypeSelector = leaflet.Control.extend({
-                onAdd: function () {
-                    var label = leaflet.DomUtil.create('label'),
-                        labelText = leaflet.DomUtil.create('span'),
-                        checkbox = leaflet.DomUtil.create('input'),
-                        div = leaflet.DomUtil.create('div'),
-                        form = leaflet.DomUtil.create('form');
-
-                    labelText.innerText = $t('Display locations');
-
-                    checkbox.setAttribute('id', 'location-toggle');
-                    checkbox.setAttribute('type', 'checkbox');
-                    checkbox.checked = 'checked';
-                    checkbox.addEventListener('click', function (event) {
-                        _.each(markers, function (marker) {
-                            marker.setOpacity(Number(event.target.checked));
-                        });
-                    });
-
-                    label.appendChild(checkbox);
-                    label.appendChild(labelText);
-                    form.insertAdjacentElement('afterbegin', label);
-                    div.insertAdjacentElement('afterbegin', form);
-
-                    return div;
-                }
-            });
-            new leaflet.Control.TypeSelector({position: 'topright'}).addTo(map);
         },
 
         /**
          * Create a Marker for each location, add it to the map and add a popup for each location.
          * The map is centered on the added locations.
-         * Popups are initialized as custom JavaScript components with full knockout functionality.
          *
-         * @function
+         * @public
          * @param {DhlLocation[]} locations - new locations fetched from web service.
          */
         setLocations: function (locations) {
-            // remove current markers from map
-            _.each(markers, function (marker) {
-                marker.removeFrom(map);
-            });
-            markers = [];
-
             // center map on first location
             if (locations[0]) {
                 map.setView([
@@ -97,45 +88,55 @@ define([
                 ], 15);
             }
 
+            markerGroups = this.regenerateMarkerGroups(markerGroups, locations);
+
             // add new locations to map
             _.each(locations, /** @param {DhlLocation} location */ function (location) {
-                var marker = leaflet.marker(leaflet.latLng(
-                    location.latitude,
-                    location.longitude
-                ));
-                var popup = leaflet.popup({
-                    className: 'location-popup-' + location.shop_id,
-                    minWidth: 200
-                });
+                var marker = markers.createPopupMarker(location);
 
-                if (location.icon) {
-                    marker.setIcon(
-                        leaflet.icon({
-                            iconUrl: location.icon,
-                            iconAnchor: [23, 23],
-                        })
-                    );
-                }
-
-                marker.bindPopup(popup);
-                marker.setPopupContent(mapLocationRenderer.render(location));
-                marker.on('popupopen', function () {
-                    var containerId = 'map-popup-container-' + location.shop_id,
-                        componentName = 'shopfinder-map-popup-' + location.shop_id;
-
-                    // parse x-magento-init script
-                    $(document.getElementById(containerId)).trigger('contentUpdated');
-                    registry.get(componentName, function (component) {
-                        // apply ko bindings on template
-                        ko.applyBindings(
-                            component,
-                            document.getElementById(containerId)
-                        );
-                    });
-                });
                 marker.addTo(map);
-                markers.push(marker);
+                markerGroups[location.shop_type].markers.push(marker);
             });
+
+            // add marker filter controls
+            _.each(markerGroups, /** @param {MarkerGroup} group */ function (group) {
+                group.control = controls.createGroupFilterControl(group, map);
+            });
+        },
+
+        /**
+         * Remove all controls and markers,
+         * regenerate marker groups from locations
+         *
+         * @private
+         * @param {Object.<string, MarkerGroup>} oldMarkerGroups
+         * @param {DhlLocation[]} locations
+         * @return {Object.<string, MarkerGroup>}
+         */
+        regenerateMarkerGroups: function (oldMarkerGroups, locations) {
+            var groups = {};
+
+            // remove old markers and controls from map
+            _.each(oldMarkerGroups, function (group) {
+                map.removeControl(group.control);
+                _.each(group.markers, function (marker) {
+                    map.removeLayer(marker);
+                });
+            });
+
+            // create new marker groups
+            _.each(locations, /** @param {DhlLocation} location */ function (location) {
+                if (location.icon && _.keys(groups).indexOf(location.shop_type) === -1) {
+                    groups[location.shop_type] = {
+                        type: location.shop_type,
+                        iconUrl: location.icon,
+                        control: null,
+                        markers: []
+                    };
+                }
+            });
+
+            return groups;
         }
     };
 });
