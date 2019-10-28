@@ -89,6 +89,7 @@ define([
             if (location === null || !location.shop_id) {
                 this.value(null);
                 selections.removeSelection(this.shippingOption.code, 'shop-name');
+                selections.removeSelection(this.shippingOption.code, 'shop-number');
                 selections.removeSelection(this.shippingOption.code, 'address-street');
                 selections.removeSelection(this.shippingOption.code, 'address-postalcode');
                 selections.removeSelection(this.shippingOption.code, 'address-city');
@@ -96,6 +97,7 @@ define([
             } else {
                 this.value(location.shop_id);
                 selections.addSelection(this.shippingOption.code, 'shop-name', location.shop_name);
+                selections.addSelection(this.shippingOption.code, 'shop-number', location.shop_number);
                 selections.addSelection(this.shippingOption.code, 'address-street', location.address.street);
                 selections.addSelection(this.shippingOption.code, 'address-postalcode', location.address.postal_code);
                 selections.addSelection(this.shippingOption.code, 'address-city', location.address.city);
