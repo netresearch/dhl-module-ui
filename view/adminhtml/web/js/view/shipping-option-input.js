@@ -37,18 +37,9 @@ define([
         },
 
         initialize: function () {
-            var value;
-
             this._super();
-            value = selections.getShippingOptionValue(
-                this.section,
-                this.shippingOption.code,
-                this.shippingOptionInput.code,
-                this.itemId
-            );
-            if (value !== null) {
-                this.value(value);
-            } else if (this.value() !== '') {
+
+            if (this.value() !== '') {
                 selections.addSelection(
                     this.section,
                     this.shippingOption.code,

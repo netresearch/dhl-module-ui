@@ -99,7 +99,6 @@ define([
 
         initChildComponents: function () {
             self._super();
-            self.elems.subscribe(enforceCompatibility);
             self.reset();
         },
 

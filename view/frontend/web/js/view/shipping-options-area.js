@@ -24,7 +24,12 @@ define([
     footnotes
 ) {
     'use strict';
+
+    /**
+     * @param {string} SHIPPING_OPTION_CACHE_KEY
+     */
     var SHIPPING_OPTION_CACHE_KEY = 'dhlShippingOptionSettingsHash';
+
     /**
      * @param {DhlCarrier} carrierData
      */
