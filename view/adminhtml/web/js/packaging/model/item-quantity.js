@@ -85,7 +85,7 @@ define([
         }
         _.each(Object.keys(selections.items), function (itemId) {
             registry.get({
-                component: 'Dhl_Ui/js/view/shipping-option-input',
+                isInputComponent: true,
                 inputCode: 'qty',
                 itemId: itemId
             }, function (component) {

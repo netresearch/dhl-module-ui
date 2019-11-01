@@ -19,6 +19,7 @@ define([
 
         defaults: {
             template: 'Dhl_Ui/form/field',
+            isInputComponent: true,
             shippingOptionCode: '',
             inputCode: '${ $.shippingOptionInput.code }',
             elementTmpl: '',

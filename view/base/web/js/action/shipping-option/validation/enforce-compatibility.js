@@ -30,7 +30,7 @@ define([
         } else {
             /** Modify specific input defined by compound code */
             registry.get({
-                component: 'Dhl_Ui/js/view/shipping-option-input',
+                isInputComponent: true,
                 shippingOptionCode: shippingOptionCodes.getShippingOptionCode(code),
                 inputCode: shippingOptionCodes.getInputCode(code),
             }, action);

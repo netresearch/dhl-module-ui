@@ -34,7 +34,7 @@ define([
 
             if (serviceCodes.getInputCode(subject)) {
                 serviceInputs = [registry.get({
-                    component: 'Dhl_Ui/js/view/shipping-option-input',
+                    isInputComponent: true,
                     inputCode: serviceCodes.getInputCode(subject),
                 })];
             } else {

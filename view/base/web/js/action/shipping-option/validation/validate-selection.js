@@ -10,7 +10,7 @@ define([
      * @return {bool}
      */
     return function () {
-        var inputs = registry.filter({component: 'Dhl_Ui/js/view/shipping-option-input'}),
+        var inputs = registry.filter({isInputComponent: true}),
             result = true;
 
         _.each(inputs, function (input) {
