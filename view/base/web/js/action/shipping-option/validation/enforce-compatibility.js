@@ -166,7 +166,6 @@ define([
             actionLists.enable = _.difference(actionLists.enable, actionLists.disable);
             actionLists.show = _.difference(actionLists.show, actionLists.hide);
 
-
             /** Set disabled/visible status of individual shipping option inputs */
             _.each(_.uniq(actionLists.enable), function (shippingOptionCode) {
                 doActionOnInputComponents(shippingOptionCode, function (input) {
@@ -198,6 +197,16 @@ define([
             _.each(_.uniq(actionLists.show), function (shippingOptionCode) {
                 doActionOnInputComponents(shippingOptionCode, function (input) {
                     input.visible(true);
+                });
+            });
+            _.each(_.uniq(actionLists.require), function (shippingOptionCode) {
+                doActionOnInputComponents(shippingOptionCode, function (input) {
+                    input.setValidation('required-entry', true);
+                });
+            });
+            _.each(_.uniq(actionLists.unrequire), function (shippingOptionCode) {
+                doActionOnInputComponents(shippingOptionCode, function (input) {
+                    input.setValidation('required-entry', false);
                 });
             });
 
