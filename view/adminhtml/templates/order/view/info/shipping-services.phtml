@@ -9,7 +9,7 @@ $services = $viewModel->getSelectedServices();
 <?php if (count($services) > 0) : ?>
     <section class="admin__page-section dhl-selected-services">
         <div class="admin__page-section-title">
-            <span class="title"><?= /* @noEscape */  __('DHL Services') ?></span>
+            <span class="title"><?= $block->escapeHtml(__('DHL Services')) ?></span>
         </div>
         <div class="admin__page-section-content">
             <table class="admin__table-secondary order-information-table">

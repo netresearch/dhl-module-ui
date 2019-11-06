@@ -2,9 +2,11 @@
 /**
  * See LICENSE.md for license details.
  */
-declare(strict_types=1);
+?>
 
+<?php
 /** @var $block Magento\Shipping\Block\Adminhtml\Order\Packaging */
+$carrierCode = strtok((string) $block->getShipment()->getOrder()->getShippingMethod(), '_');
 ?>
 <script type="text/x-magento-init">
     {
@@ -13,17 +15,15 @@ declare(strict_types=1);
                 "name": "packaging-popup-modal",
                 "target": "#packaging-window",
                 "options": {
-                    "title": "<?= /** @noEscape */__('Shipment Setup') ?>",
+                    "title": "<?= $block->escapeHtml(__('Shipment Setup')) ?>",
                     "type": "slide",
                     "buttons": []
                 },
-                "carrierCode": "<?= $block->escapeHtml(
-                    $block->getShipment()->getOrder()->getShippingMethod(true)->getCarrierCode()
-                ) ?>"
+                "carrierCode": "<?= $block->escapeHtml($carrierCode) ?>"
             }
         }
     }
 </script>
 <div id="packaging-window">
-    <?= $block->getChildHtml() ?>
+    <?= /* @noEscape */ $block->getChildHtml() ?>
 </div>

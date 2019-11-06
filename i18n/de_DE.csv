@@ -1,31 +1,43 @@
+"(Excl. Tax)","(Exkl. Steuer)"
+"(Incl. Tax)","(Inkl. Steuer)"
 "Add Another Package","Weiteres Paket hinzufügen"
-"Back","Zurück"
+Back,Zurück
+"Changes have been made to this section that have not been saved.","In diesem Abschnitt gibt es ungespeicherte Änderungen"
 "Create Shipments","Versandetiketten erzeugen"
 "Create Shipping Label","Versandetikett erzeugen"
 "DHL Label Status","DHL Label Status"
 "DHL Recipient Street","DHL Empfängeradresse"
-"Edit","Bearbeiten"
+"DHL Services","DHL Services"
+"DHL Shipping Solutions","Versenden mit DHL"
+Edit,Bearbeiten
 "Estimated Delivery","Voraussichtliche Lieferung"
-"Failed","Fehlgeschlagen"
+Failed,Fehlgeschlagen
+"For editing package items click to enlarge","Anklicken um Artikel im Paket zu bearbeiten"
 "Item quantity must be between {0} and {1}.","Artikelmenge muss zwischen {0} und {1} liegen."
 "New Package","Neues Paket"
-"No","Nein"
+No,Nein
 "Not Available","Nicht verfügbar"
 "Package %1","Paket %1"
 "Package Items","Artikel im Paket"
-"Package Options","Paket-Parameter"
-"Partial","Teilweise verarbeitet"
-"Pending","Austehend"
-"Processed","Verarbeitet"
-"Recipient Street","Empfängeradresse"
-"Save","Speichern"
-"Service Options","Serviceoptionen"
-"Shipment Setup","Versandetikett-Konfiguration"
+"Package Options",Paket-Parameter
+Partial,"Teilweise verarbeitet"
+Pending,Austehend
+Processed,Verarbeitet
+"Recipient Street",Empfängeradresse
+Save,Speichern
+"Service Options",Serviceoptionen
+"Ship To:","Versenden an:"
+"Shipment Setup",Versandetikett-Konfiguration
+"Shipping Method:","Versandmethode:"
+"Shipping Settings","Versandeinstellungen"
 "Some items are not assigned to a package. Please assign every item to a package.","Einige Artikel sind keinem Paket zugeordnet. Bitte teilen Sie alle Artikel einem Paket zu."
-"Street Name","Straße"
-"Street Number","Hausnummer"
-"Street","Straße"
-"Supplement","Ergänzung"
-"Yes","Ja"
+"Street Name",Straße
+"Street Number",Hausnummer
+Supplement,Ergänzung
+"This tab contains invalid data. Please resolve this before saving.","Dieser Reiter enthält ungültige Daten. Bitte vor dem Speichern korrigieren."
+Yes,Ja
 "You must not refer to a packing station, postal office, or similar.","Sie dürfen nicht Packstation, Postfiliale oder ähnliche angeben."
 "Your input must not include one of the following: ","Ihre Angaben dürfen folgende Zeichen nicht enthalten: "
+"Your shipping option selections could not be saved.","Ihre Versandoptions-Auswahl konnte nicht gespeichert werden."
+and,und
+edit,bearbeiten

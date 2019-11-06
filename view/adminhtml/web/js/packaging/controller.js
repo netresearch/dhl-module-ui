@@ -248,6 +248,14 @@ define([
         },
 
         /**
+         * @param {{id: string}} parcel
+         * @return {string}
+         */
+        getPackageTitle: function (parcel) {
+            return $t('Package %1').replace('%1', parcel.id);
+        },
+
+        /**
          * @return {string}
          */
         getImage: function () {

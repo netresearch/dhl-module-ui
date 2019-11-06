@@ -1,31 +1,43 @@
+"(Excl. Tax)","(Excl. Tax)"
+"(Incl. Tax)","(Incl. Tax)"
 "Add Another Package","Add Another Package"
-"Back","Back"
+Back,Back
+"Changes have been made to this section that have not been saved.","Changes have been made to this section that have not been saved."
 "Create Shipments","Create Shipments"
 "Create Shipping Label","Create Shipping Label"
 "DHL Label Status","DHL Label Status"
 "DHL Recipient Street","DHL Recipient Street"
-"Edit","Edit"
+"DHL Services","DHL Services"
+"DHL Shipping Solutions","DHL Shipping Solutions"
+Edit,Edit
 "Estimated Delivery","Estimated Delivery"
-"Failed","Failed"
+Failed,Failed
+"For editing package items click to enlarge","For editing package items click to enlarge"
 "Item quantity must be between {0} and {1}.","Item quantity must be between {0} and {1}."
 "New Package","New Package"
-"No","No"
+No,No
 "Not Available","Not Available"
-"Package %1", "Package %1"
+"Package %1","Package %1"
 "Package Items","Package Items"
 "Package Options","Package Options"
-"Partial","Partial"
-"Pending","Pending"
-"Processed","Processed"
+Partial,Partial
+Pending,Pending
+Processed,Processed
 "Recipient Street","Recipient Street"
-"Save","Save"
+Save,Save
 "Service Options","Service Options"
+"Ship To:","Ship To:"
 "Shipment Setup","Shipment Setup"
+"Shipping Method:","Shipping Method:"
+"Shipping Settings","Shipping Settings"
 "Some items are not assigned to a package. Please assign every item to a package.","Some items are not assigned to a package. Please assign every item to a package."
 "Street Name","Street Name"
 "Street Number","Street Number"
-"Street","Street"
-"Supplement","Supplement"
-"Yes","Yes"
+Supplement,Supplement
+"This tab contains invalid data. Please resolve this before saving.","This tab contains invalid data. Please resolve this before saving."
+Yes,Yes
 "You must not refer to a packing station, postal office, or similar.","You must not refer to a packing station, postal office, or similar."
 "Your input must not include one of the following: ","Your input must not include one of the following: "
+"Your shipping option selections could not be saved.","Your shipping option selections could not be saved."
+and,and
+edit,edit

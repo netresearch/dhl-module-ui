@@ -121,7 +121,7 @@ class Popup implements ArgumentInterface
      * Fetch data from PackagingDataProvider
      *
      * @return mixed[]
-     * @throws LocalizedException If something is wrong with the shipping options configuration
+     * @throws \RuntimeException If something is wrong with the shipping options configuration
      * @see \Dhl\ShippingCore\Model\Packaging\PackagingDataProvider
      */
     public function getShippingSettings(): array

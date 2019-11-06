@@ -48,11 +48,11 @@
                 "
             role="tab">
             <div class="tab-anchor-group">
-                <a data-bind="attr: {title: $t('Package %1').replace('%1', package.id)}, text: $t('Package %1').replace('%1', package.id) , click: $parent.selectPackage"
+                <a data-bind="attr: {title: $parent.getPackageTitle($data)}, text: $parent.getPackageTitle($data) , click: $parent.selectPackage"
                    class="ui-tabs-anchor select-package" data-tab-type=""
                    role="presentation" tabindex="-1">
                 </a>
-                <a data-bind="attr: {title: $t('Package %1').replace('%1', package.id) }, click: $parent.deletePackage"
+                <a data-bind="attr: {title: $parent.getPackageTitle($data) }, click: $parent.deletePackage"
                    class="ui-tabs-anchor delete-package" data-tab-type=""
                    role="presentation" tabindex="-1">
                 </a>
