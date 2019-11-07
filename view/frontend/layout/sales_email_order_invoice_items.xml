@@ -4,7 +4,7 @@
         <referenceBlock name="invoice_totals">
             <block class="Dhl\Ui\Block\AdditionalFee\Total" name="dhl_creditmemo_additional_fee">
                 <arguments>
-                    <argument name="label_properties" xsi:type="string">colspan="4" class="mark"</argument>
+                    <argument name="label_properties" xsi:type="string">colspan="2" class="mark"</argument>
                     <argument name="value_properties" xsi:type="string">class="amount"</argument>
                 </arguments>
             </block>
