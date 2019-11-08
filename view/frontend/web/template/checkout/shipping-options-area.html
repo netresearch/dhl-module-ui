@@ -2,9 +2,8 @@
 <div style="border: 2px solid rgb(255,204,0); padding: 20px; margin: 1em 0;" data-bind="visible: visible">
     <fieldset class="fieldset dhl-shipping-settings-container">
         <img if="image()" data-bind="attr: {src: image}" width="150px" height="auto"/>
-        <legend if="title()" class="label">
-            <h3 text="title"/>
-        </legend>
+        <h3 if="title()" text="title" class="title"/>
+
         <!-- ko foreach: { data: commentsBefore, as: 'comment' } -->
             <p>
                 <span data-bind="html: comment.content"/>
