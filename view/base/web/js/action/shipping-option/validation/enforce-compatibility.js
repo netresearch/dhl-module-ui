@@ -151,69 +151,76 @@ define([
     };
 
     var enforceShippingOptionCompatibility = function () {
-        var carrierData = shippingSettings.getByCarrier(currentCarrier.get()),
+        var carrier = currentCarrier.get(),
+            carrierData,
             actionLists,
             valuesHaveChanged = false;
 
-        console.warn('Enforcing shipping option selection compatibility ...');
+        if (!carrier) {
+            return;
+        }
 
-        if (carrierData) {
-            actionLists = processRules(
-                preprocessRules(carrierData.compatibility_data)
-            );
+        carrierData = shippingSettings.getByCarrier(carrier);
 
-            /** Don't enable/show shipping options that another rule will disable/hide */
-            actionLists.enable = _.difference(actionLists.enable, actionLists.disable);
-            actionLists.show = _.difference(actionLists.show, actionLists.hide);
+        if (!carrierData) {
+            return;
+        }
 
-            /** Set disabled/visible status of individual shipping option inputs */
-            _.each(_.uniq(actionLists.enable), function (shippingOptionCode) {
-                doActionOnInputComponents(shippingOptionCode, function (input) {
-                    input.disabled(false);
-                });
+        actionLists = processRules(
+            preprocessRules(carrierData.compatibility_data)
+        );
+
+        /** Don't enable/show shipping options that another rule will disable/hide */
+        actionLists.enable = _.difference(actionLists.enable, actionLists.disable);
+        actionLists.show = _.difference(actionLists.show, actionLists.hide);
+
+        /** Set disabled/visible status of individual shipping option inputs */
+        _.each(_.uniq(actionLists.enable), function (shippingOptionCode) {
+            doActionOnInputComponents(shippingOptionCode, function (input) {
+                input.disabled(false);
             });
-            _.each(_.uniq(actionLists.disable), function (shippingOptionCode) {
-                doActionOnInputComponents(shippingOptionCode, function (input) {
-                    if (!input.disabled()) {
-                        input.disabled(true);
-                        if (input.value() !== '') {
-                            input.value('');
-                            valuesHaveChanged = true;
-                        }
+        });
+        _.each(_.uniq(actionLists.disable), function (shippingOptionCode) {
+            doActionOnInputComponents(shippingOptionCode, function (input) {
+                if (!input.disabled()) {
+                    input.disabled(true);
+                    if (input.value() !== '') {
+                        input.value('');
+                        valuesHaveChanged = true;
                     }
-                });
+                }
             });
-            _.each(_.uniq(actionLists.hide), function (shippingOptionCode) {
-                doActionOnInputComponents(shippingOptionCode, function (input) {
-                    if (input.visible()) {
-                        input.visible(false);
-                        if (input.value() !== '') {
-                            input.value('');
-                            valuesHaveChanged = true;
-                        }
+        });
+        _.each(_.uniq(actionLists.hide), function (shippingOptionCode) {
+            doActionOnInputComponents(shippingOptionCode, function (input) {
+                if (input.visible()) {
+                    input.visible(false);
+                    if (input.value() !== '') {
+                        input.value('');
+                        valuesHaveChanged = true;
                     }
-                });
+                }
             });
-            _.each(_.uniq(actionLists.show), function (shippingOptionCode) {
-                doActionOnInputComponents(shippingOptionCode, function (input) {
-                    input.visible(true);
-                });
+        });
+        _.each(_.uniq(actionLists.show), function (shippingOptionCode) {
+            doActionOnInputComponents(shippingOptionCode, function (input) {
+                input.visible(true);
             });
-            _.each(_.uniq(actionLists.require), function (shippingOptionCode) {
-                doActionOnInputComponents(shippingOptionCode, function (input) {
-                    input.setValidation('required-entry', true);
-                });
+        });
+        _.each(_.uniq(actionLists.require), function (shippingOptionCode) {
+            doActionOnInputComponents(shippingOptionCode, function (input) {
+                input.setValidation('required-entry', true);
             });
-            _.each(_.uniq(actionLists.unrequire), function (shippingOptionCode) {
-                doActionOnInputComponents(shippingOptionCode, function (input) {
-                    input.setValidation('required-entry', false);
-                });
+        });
+        _.each(_.uniq(actionLists.unrequire), function (shippingOptionCode) {
+            doActionOnInputComponents(shippingOptionCode, function (input) {
+                input.setValidation('required-entry', false);
             });
+        });
 
-            /** Re-run the compatibility enforcer until all data is consistent. */
-            if (valuesHaveChanged) {
-                enforceShippingOptionCompatibility();
-            }
+        /** Re-run the compatibility enforcer until all data is consistent. */
+        if (valuesHaveChanged) {
+            enforceShippingOptionCompatibility();
         }
     };
 

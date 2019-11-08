@@ -56,7 +56,6 @@ define([
                 selections.removeSelection(this.shippingOption.code, this.shippingOptionInput.code);
             }
             enforceCompatibility();
-
         },
 
         /**

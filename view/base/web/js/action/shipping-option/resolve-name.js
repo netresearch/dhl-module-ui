@@ -13,10 +13,17 @@ define([
      * @return {string|boolean} - will return false if the requested shipping option does not exist
      */
     return function (code) {
-        var shippingSettingsData = shippingSettings.getByCarrier(currentCarrier.get()),
+        var carrier = currentCarrier.get(),
+            shippingSettingsData,
             matchingOption,
             matchingInput,
             label;
+
+        if (!carrier) {
+            return false;
+        }
+
+        shippingSettingsData = shippingSettings.getByCarrier(carrier);
 
         if (!shippingSettingsData) {
             return false;

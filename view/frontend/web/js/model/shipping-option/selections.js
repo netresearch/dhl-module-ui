@@ -28,6 +28,7 @@ define([
             selections({});
             storage.set(CACHE_KEY, {});
         },
+
         /**
          * @return {DhlShippingOptionSelectionObservable}
          */
@@ -55,12 +56,20 @@ define([
          * @return {string|string[]|null} Shipping option input value(s) or null if shipping option not found
          */
         getShippingOptionValue: function (shippingOptionCode, inputCode) {
-            var carrierData = this.getByCarrier(currentCarrier.get()),
+            var carrier = currentCarrier.get(),
+                carrierData,
                 selection;
+
+            if (!carrier) {
+                return null;
+            }
+
+            carrierData = this.getByCarrier(carrier);
 
             if (!carrierData || !(shippingOptionCode in carrierData)) {
                 return null;
             }
+
             selection = carrierData[shippingOptionCode];
             if (!inputCode) {
                 return selection;
@@ -77,9 +86,14 @@ define([
          * @return {{code: string, value: string}[]}
          */
         getSelectionValuesInCompoundFormat: function () {
-            var selectionObjects = [];
+            var selectionObjects = [],
+                carrier = currentCarrier.get();
 
-            _.each(this.getByCarrier(currentCarrier.get()), function (values, shippingOptionCode) {
+            if (!carrier) {
+                return selectionObjects;
+            }
+
+            _.each(this.getByCarrier(carrier), function (values, shippingOptionCode) {
                 _.each(values, function (inputValue, inputCode) {
                     if (inputValue) {
                         selectionObjects.push({
@@ -99,9 +113,14 @@ define([
          * @return {string[]}
          */
         getSelectionsInCompoundFormat: function () {
-            var selectedCodes = [];
+            var selectedCodes = [],
+                carrier = currentCarrier.get();
 
-            _.each(this.getByCarrier(currentCarrier.get()), function (values, shippingOptionCode) {
+            if (!carrier) {
+                return selectedCodes;
+            }
+
+            _.each(this.getByCarrier(carrier), function (values, shippingOptionCode) {
                 selectedCodes.push(shippingOptionCode);
                 _.each(values, function (value, inputCode) {
                     selectedCodes.push([shippingOptionCode, inputCode].join('.'));
@@ -121,6 +140,10 @@ define([
         addSelection: function (shippingOptionCode, inputCode, inputValue) {
             var carrier = currentCarrier.get(),
                 workingCopy = selections();
+
+            if (!carrier) {
+                return;
+            }
 
             if (workingCopy[carrier] == undefined) {
                 workingCopy[carrier] = {};
@@ -143,6 +166,10 @@ define([
         removeSelection: function (shippingOptionCode, inputCode) {
             var carrier = currentCarrier.get(),
                 workingCopy = selections();
+
+            if (!carrier) {
+                return;
+            }
 
             if (workingCopy[carrier]) {
                 if (workingCopy[carrier][shippingOptionCode]) {

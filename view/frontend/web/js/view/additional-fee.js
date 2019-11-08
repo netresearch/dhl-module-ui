@@ -40,25 +40,26 @@ define([
          * @return {Number}
          */
         getValue: function () {
-            return totals.getSegment('dhlgw_additional_fee')
-                ? totals.getSegment('dhlgw_additional_fee').value
-                : 0;
-        },
+            var segment = totals.getSegment('dhlgw_additional_fee');
 
+            if (segment) {
+                return segment.value;
+            }
+
+            return 0;
+        },
 
         /**
          * @return {string}
          */
         getTitle: function () {
-            var title = '';
+            var segment = totals.getSegment('dhlgw_additional_fee');
 
-            if (totals.getSegment('dhlgw_additional_fee')) {
-                title = totals.getSegment('dhlgw_additional_fee')
-                    ? totals.getSegment('dhlgw_additional_fee').title
-                    : '';
+            if (segment) {
+                return segment.title;
             }
 
-            return title;
+            return '';
         }
     });
 });

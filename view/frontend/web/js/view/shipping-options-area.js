@@ -3,25 +3,35 @@ define([
     'uiCollection',
     'Dhl_Ui/js/model/checkout/storage',
     'Magento_Checkout/js/model/quote',
+    'Magento_Checkout/js/model/payment/additional-validators',
     'Dhl_Ui/js/model/checkout/checkout-data-refresh',
     'Dhl_Ui/js/action/shipping-option/generate-components',
     'Dhl_Ui/js/action/checkout/webapi/get-checkout-data',
     'Dhl_Ui/js/action/shipping-option/validation/enforce-compatibility',
+    'Dhl_Ui/js/action/shipping-option/validation/validate-compatibility',
+    'Dhl_Ui/js/action/shipping-option/validation/validate-selection',
     'Dhl_Ui/js/model/shipping-settings',
     'Dhl_Ui/js/model/shipping-option/selections',
-    'Dhl_Ui/js/model/checkout/footnotes'
+    'Dhl_Ui/js/model/checkout/footnotes',
+    'Magento_Checkout/js/model/cart/totals-processor/default',
+    'Dhl_Ui/js/action/checkout/webapi/update-shipping-option-selection'
 ], function (
     _,
     UiCollection,
     storage,
     quote,
+    additionalValidators,
     dataRefresh,
     generateShippingOptions,
     getCheckoutData,
     enforceCompatibility,
+    validateCompatibility,
+    validateSelection,
     checkoutData,
     selections,
-    footnotes
+    footnotes,
+    defaultTotalsProcessor,
+    updateSelection
 ) {
     'use strict';
 
@@ -61,6 +71,10 @@ define([
         initialize: function () {
             this._super();
             this.lastDataHash = storage.get(SHIPPING_OPTION_CACHE_KEY);
+
+            additionalValidators.registerValidator({validate: validateSelection});
+            additionalValidators.registerValidator({validate: validateCompatibility});
+
             checkoutData.get().subscribe(this.refresh, this);
             quote.shippingMethod.subscribe(this.refresh, this);
 
@@ -112,12 +126,27 @@ define([
             storage.set(SHIPPING_OPTION_CACHE_KEY, this.lastDataHash);
 
             this.updateFootnotes();
-            selections.get().subscribe(this.updateFootnotes.bind(this));
+
+            selections.get().subscribe(function () {
+                this.updateFootnotes();
+                this.recalculateTotals();
+            }.bind(this));
 
             this.destroyChildren();
             generateShippingOptions(carrierData.service_options, this.name);
 
             enforceCompatibility();
+        },
+
+        /**
+         * Sync selections with Magento server and recalculate totals.
+         *
+         * @private
+         */
+        recalculateTotals: function () {
+            updateSelection().done(function () {
+                defaultTotalsProcessor.estimateTotals(quote.shippingAddress());
+            });
         },
 
         /**

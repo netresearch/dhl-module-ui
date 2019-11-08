@@ -4,22 +4,30 @@ define([
     'Magento_Checkout/js/model/url-builder',
     'Magento_Customer/js/model/customer',
     'Magento_Checkout/js/model/quote',
-    'Magento_Checkout/js/model/shipping-service',
-    'Magento_Checkout/js/model/full-screen-loader',
     'Dhl_Ui/js/model/shipping-option/selections',
     'Dhl_Ui/js/model/current-carrier',
-], function (_, storage, urlBuilder, customer, quote, shippingService, fullScreenLoader, selectionsModel, currentCarrier) {
+], function (_, storage, urlBuilder, customer, quote, selectionsModel, currentCarrier) {
     'use strict';
 
     /**
      * Save current DHL service selection against Magento REST API endpoint.
+     *
+     * @return {Deferred}
      */
     return function () {
         var url,
             urlParams,
             serviceUrl,
             payload,
-            selections = selectionsModel.getByCarrier(currentCarrier.get());
+            selections,
+            carrier = currentCarrier.get();
+
+        if (!carrier) {
+            Promise.reject('No shipping option selected');
+        }
+
+        selections = selectionsModel.getByCarrier(carrier);
+
 
         if (customer.isLoggedIn()) {
             url = '/carts/mine/dhl/shipping-option/selection/update';
@@ -52,17 +60,12 @@ define([
 
         serviceUrl = urlBuilder.createUrl(url, urlParams);
 
-        shippingService.isLoading(true);
         return storage.post(
             serviceUrl,
             JSON.stringify(payload)
         ).fail(
             function () {
                 console.warn('Shipping option selections could not be saved');
-            }
-        ).always(
-            function () {
-                shippingService.isLoading(false);
             }
         );
     };

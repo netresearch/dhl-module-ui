@@ -42,6 +42,7 @@ define([
             function (response) {
                 storage.set(countryId + postalCode, response);
                 checkoutData.set(response);
+                shippingService.isLoading(false);
             }
         ).fail(
             function () {

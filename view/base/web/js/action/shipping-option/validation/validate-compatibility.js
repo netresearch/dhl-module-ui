@@ -31,6 +31,7 @@ define([
     var markRelatedInputsWithError = function (rule) {
         _.each(rule.subjects, function (subject) {
             var serviceInputs = [];
+
             if (serviceCodes.getInputCode(subject)) {
                 serviceInputs = [registry.get({
                     component: 'Dhl_Ui/js/view/shipping-option-input',
@@ -84,17 +85,27 @@ define([
      * @return {boolean} - whether there were any compatibility errors.
      */
     return function () {
-        var compatibilityInfo = shippingSettings.getByCarrier(currentCarrier.get()).compatibility_data,
-            selectedServiceCodes = serviceSelection.getSelectionsInCompoundFormat(),
-            shippingSettingsView = registry.get({shippingSettingsController: true});
+        var carrier = currentCarrier.get(),
+            compatibilityInfo,
+            selectedServiceCodes,
+            shippingSettingsView;
+
+        if (!carrier) {
+            return true;
+        }
+
+        compatibilityInfo = shippingSettings.getByCarrier(carrier).compatibility_data;
+        selectedServiceCodes = serviceSelection.getSelectionsInCompoundFormat();
+        shippingSettingsView = registry.get({shippingSettingsController: true});
 
         shippingSettingsView.errors([]);
 
         _.each(compatibilityInfo, function (compatibility) {
+            var serviceDifference, errorMessage;
+
             if (compatibility.masters.length === 0
                 || _.intersection(selectedServiceCodes, compatibility.masters).length) {
-                var serviceDifference = _.difference(compatibility.subjects, selectedServiceCodes).length,
-                    errorMessage;
+                serviceDifference = _.difference(compatibility.subjects, selectedServiceCodes).length;
 
                 if (isIncompatibleServiceCombination(compatibility, serviceDifference)
                     || isMissingRequiredServices(compatibility, serviceDifference)
