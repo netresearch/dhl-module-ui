@@ -84,11 +84,17 @@ define([
             return self;
         },
 
+        /**
+         * Extract the requested item quantities from the new shipment page DOM
+         * and create shipment items in the packaging popup.
+         */
         initShipmentItems: function () {
-            var itemSelection = Array.from(document.querySelectorAll('#ship_items_container input.qty-item'))
-                .map(function (item) {
-                    return {id: item.name.replace(/[^0-9]+/g, ''), qty: item.value};
-                });
+            var itemQtyInputs = Array.from(
+                document.querySelectorAll('#ship_items_container .col-qty > input')
+            );
+            var itemSelection = itemQtyInputs.map(function (item) {
+                return {id: item.name.replace(/[^0-9]+/g, ''), qty: item.value};
+            });
 
             shipmentData.setItems(self.items.map(function (item) {
                 return _.extend(item, itemSelection.find(function (selected) {
