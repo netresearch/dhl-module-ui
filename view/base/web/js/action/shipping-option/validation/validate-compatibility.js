@@ -40,7 +40,7 @@ define([
             } else {
                 serviceInputs = registry.get({
                     component: 'Dhl_Ui/js/view/shipping-option',
-                    serviceCode: subject
+                    shippingOptionCode: subject
                 }).elems();
             }
             _.each(serviceInputs, function (input) {

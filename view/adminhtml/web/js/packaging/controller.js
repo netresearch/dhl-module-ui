@@ -14,6 +14,7 @@ define([
     'Dhl_Ui/js/action/shipping-option/validation/enforce-compatibility',
     'Dhl_Ui/js/packaging/model/item-quantity',
     'Dhl_Ui/js/packaging/model/item-combination-rules',
+    'Dhl_Ui/js/packaging/model/value-maps',
 ], function (
     _,
     Component,
@@ -29,7 +30,8 @@ define([
     validateCompatibility,
     enforceCompatibility,
     itemQuantity,
-    itemCombinationRules
+    itemCombinationRules,
+    valueMaps
 ) {
     'use strict';
 
@@ -128,21 +130,28 @@ define([
             }
             layout(fieldsets);
 
-            /** Keep item qty options updated */
+
+            /**
+             * When selections change:
+             * 1. Keep item qty options updated
+             * 2. Apply item combination rules
+             */
             selections.get().subscribe(
                 /** @param {DhlCurrentSelection} selectionObject **/ function (selectionObject) {
                     if (selectionObject) {
+                        valueMaps.apply(
+                            self.shippingSettings.carriers[0].package_options,
+                            'package'
+                        );
                         itemQuantity(selectionObject);
+
+                        itemCombinationRules.apply(
+                            selections.getCurrentItems()(),
+                            self.shippingSettings.carriers[0].package_options
+                        );
                     }
                 }
             );
-
-            /** Apply item combination rules on changes to item inputs */
-            selections.getCurrentItems().subscribe(function (selectionItems) {
-                if (selectionItems) {
-                    itemCombinationRules.apply(selectionItems, self.shippingSettings.carriers[0].package_options);
-                }
-            });
         },
 
         generateItemSelectionFieldset: function () {

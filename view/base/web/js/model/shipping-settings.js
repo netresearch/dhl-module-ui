@@ -71,11 +71,13 @@ define([
      *     sort_order: int,
      *     tooltip: string,
      *     validation_rules: {name: string, params: mixed}[],
-     *     item_combination_rule: DhlItemCombinationRule
+     *     item_combination_rule: DhlItemCombinationRule,
+     *     value_maps: DhlValueMap[]
      * }} DhlInput
      *
      * @typedef {{
      *     source_item_input_code: string,
+     *     additional_source_input_codes: string[],
      *     action: string,
      * }} DhlItemCombinationRule
      *
@@ -83,6 +85,11 @@ define([
      *     content: string,
      *     footnote_id: string,
      * }} DhlComment
+     *
+     * @typedef {{
+     *     source_value: string,
+     *     input_values: {code: string, value: string}[],
+     * }} DhlValueMap
      */
 
     return {

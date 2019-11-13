@@ -26,11 +26,36 @@ define([
     var currentSelection = ko.observable({}).extend({rateLimit: {timeout: 50, method: 'notifyWhenChangesStop'}});
 
     /**
+     * An object in the following format:
+     *
+     * {
+     *   itemId: {
+     *     shippingOptionCode: {
+     *       inputCode: inputValue
+     *     }
+     *   }
+     * }
+     *
+     * @typedef {
+     *  Object.<
+     *      number,
+     *      Object.<
+     *          string,
+     *          Object.<
+     *              string,
+     *              string|number
+     *          >
+     *      >
+     *  >
+     * } DhlItemSelections
+     */
+
+    /**
      * Item selection data only, for when you only want to be notified of selection changes to item inputs.
      *
      * @callback DhlSelectionItemsObservable
-     * @param {*} [value]
-     * @return {*}
+     * @param {DhlItemSelections} [value]
+     * @return {DhlItemSelections}
      *
      * @property DhlSelectionItemsObservable
      */
@@ -60,7 +85,7 @@ define([
          * @param {string} section
          * @param {string} shippingOptionCode
          * @param {string} [inputCode]
-         * @param {integer|false} itemId
+         * @param {integer|boolean} itemId  Use "false" if itemId does not apply
          * @return {string|string[]|null} Shipping option input value(s) or null if shipping option not found
          */
         getShippingOptionValue: function (section, shippingOptionCode, inputCode, itemId) {
@@ -123,7 +148,7 @@ define([
         getSelectionValuesInCompoundFormat: function () {
             var selectionObjects = [];
 
-            _.each(this.get()(), function (data, section) {
+            _.each(this.get()(), function (data) {
                 _.each(data, function (shippingOption, shippingOptionCode) {
                     _.each(shippingOption, function (inputValue, inputCode) {
                         if (inputValue) {
@@ -145,7 +170,7 @@ define([
          * @param {string} section
          * @param {string} shippingOptionCode
          * @param {string} inputCode
-         * @param {integer|false} itemId
+         * @param {integer|boolean} itemId  Use "false" if itemId does not apply
          * @param {*} inputValue
          */
         addSelection: function (section, shippingOptionCode, inputCode, itemId, inputValue) {
@@ -185,7 +210,7 @@ define([
          *
          * @param {string} section
          * @param {string} shippingOptionCode
-         * @param {integer|false} itemId
+         * @param {integer|boolean} itemId  Use "false" if itemId does not apply
          * @param {string} inputCode
          */
         removeSelection: function (section, shippingOptionCode, inputCode, itemId) {

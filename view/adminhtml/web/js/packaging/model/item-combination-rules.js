@@ -6,84 +6,151 @@ define([
     'use strict';
 
     /**
-     * @param {DhlInput} input
-     * @param {*} selectionItems
-     * @return {string}
+     * Extract an array of string and/or number values
+     * from inputs that match the given rule.
+     *
+     * @param {DhlItemSelections} itemSelections
+     * @param {DhlItemCombinationRule} combinationRule
+     * @param {string} section  The package id of the input
+     * @return {Array<string|number>}
      */
-    var computeNewValue = function (input, selectionItems) {
-        var sourceItemOptionCode = input.item_combination_rule.source_item_input_code.split('.')[0],
-            sourceItemInputCode = input.item_combination_rule.source_item_input_code.split('.')[1],
-            sourceValues,
-            newValue;
+    var extractSourceValues = function (itemSelections, combinationRule, section) {
+        var sourceValues = [];
 
-        sourceValues = Object.values(selectionItems).map(function (item) {
-            var value = '';
+        /**
+         * Collect values from source item inputs.
+         */
+        _.each(Object.values(itemSelections), function (item) {
+            var sourceItemOptionCode = combinationRule.source_item_input_code.split('.')[0],
+                sourceItemInputCode = combinationRule.source_item_input_code.split('.')[1],
+                value;
 
-            if (item[sourceItemOptionCode][sourceItemInputCode] && item.details.qty > 0.0) {
-                value = item[sourceItemOptionCode][sourceItemInputCode];
+            /**
+             * Items without quantity are not considered
+             */
+            if (item.details.qty === 0) {
+                return;
             }
 
-            /** Multiply with qty if we have an "add" rule. */
-            if (input.item_combination_rule.action === 'add' && item.details.qty) {
+            /**
+             * Source items that are not selected are not considered
+             */
+            if (!(sourceItemOptionCode in item) || !(sourceItemInputCode in item[sourceItemOptionCode])) {
+                return;
+            }
+
+            value = item[sourceItemOptionCode][sourceItemInputCode];
+
+            /** Multiply with item qty if we have an "add" rule. */
+            if (combinationRule.action === 'add') {
                 value = Number(value) * Number(item.details.qty);
             }
 
-            return value;
+            sourceValues.push(value);
         });
 
-        if (input.item_combination_rule.action === 'add') {
-            newValue = String(
-                sourceValues.reduce(
-                    function (carry, value) {return carry + Number(value);},
-                    0
-                )
-            );
-        } else if(input.item_combination_rule.action === 'concat') {
+        /**
+         * Collect additional source input values.
+         */
+        _.each(combinationRule.additional_source_input_codes, function (compoundCode) {
+            var optionCode = compoundCode.split('.')[0],
+                inputCode = compoundCode.split('.')[1],
+                value = selectionsModel.getShippingOptionValue(
+                    section,
+                    optionCode,
+                    inputCode,
+                    false
+                );
+
+            if (value) {
+                sourceValues.unshift(value);
+            }
+        });
+
+        return sourceValues;
+    };
+
+    /**
+     * @param {DhlItemCombinationRule} combinationRule
+     * @param {DhlItemSelections} itemSelections
+     * @param {string} section
+     * @return {string}
+     */
+    var computeNewValue = function (combinationRule, itemSelections, section) {
+        /**
+         * @var {string} newValue
+         */
+        var newValue = '';
+        var sourceValues = extractSourceValues(itemSelections, combinationRule, section);
+
+        if (combinationRule.action === 'add') {
+            /**
+             * For "add" rules, create the sum of the source values.
+             */
+            newValue = String(sourceValues.reduce(
+                function (carry, value) {
+                    return (Number(carry) + Number(value)).toFixed(2);
+                },
+                0
+            ));
+        } else if (combinationRule.action === 'concat') {
+            /**
+             * For "concat" rules, concatenate the source values.
+             */
             newValue = sourceValues.filter(Boolean).join(', ');
         } else {
-            throw 'Invalid item combination rule action "' + input.item_combination_rule.action + '"';
+            console.error('Invalid item combination rule action "' + combinationRule.action + '"');
         }
 
         return newValue;
     };
 
     /**
-     * @param {DhlInput} input
-     * @param {string} optionCode
-     * @param {*} selectionItems
+     * Load component by input and option code
+     * and update value according to item combination rules.
+     *
+     * @param {string} inputCode    To identify the input to modify.
+     * @param {string} optionCode   To identify the input to modify.
+     * @param {DhlItemCombinationRule} combinationRule  The rule to apply.
+     * @param {DhlItemSelections} itemSelections   The source of item input values to process.
      */
-    var processCombinationRule = function(input, optionCode, selectionItems) {
-        registry.get({inputCode: input.code, shippingOptionCode: optionCode}, function (component) {
-            try {
-                component.value(computeNewValue(input, selectionItems));
-            } catch (e) {
-                // If we can't compute a value, do nothing.
-            }
+    var processCombinationRule = function (
+        inputCode,
+        optionCode,
+        combinationRule,
+        itemSelections
+    ) {
+        registry.get({inputCode: inputCode, shippingOptionCode: optionCode}, function (component) {
+            component.value(
+                computeNewValue(combinationRule, itemSelections, component.section)
+            );
         });
     };
 
     return {
         /**
-         * Process every every package option's combination rules by
-         * combining values from selectionItems and updating the package
+         * Process every package option's combination rules by
+         * combining values from itemSelections and updating the package
          * option components value.
          *
-         * @param {*} selectionItems
-         * @param {DhlShippingOption[]} packageOptions
+         * @param {DhlItemSelections} itemSelections        Contains the values of all item inputs
+         *                                                  of the current package.
+         * @param {DhlShippingOption[]} shippingOptions     List of shipping options whose item
+         *                                                  combination rules to process.
          */
-        apply: function (selectionItems, packageOptions) {
-            if (!selectionItems) {
-                return;
-            }
-            console.warn('Applying item combination rules …');
-            _.each(packageOptions, /** @param {DhlShippingOption} shippingOption */ function (shippingOption) {
-                    _.each(shippingOption.inputs, /** @param {DhlInput} input */ function(input) {
-                        if (input.item_combination_rule) {
-                            processCombinationRule(input, shippingOption.code, selectionItems);
-                        }
-                    });
-                }
-            );
+        apply: function (itemSelections, shippingOptions) {
+            _.each(shippingOptions, /** @param {DhlShippingOption} shippingOption */ function (shippingOption) {
+                _.each(shippingOption.inputs, /** @param {DhlInput} input */ function (input) {
+                    if (input.item_combination_rule) {
+                        processCombinationRule(
+                            input.code,
+                            shippingOption.code,
+                            input.item_combination_rule,
+                            itemSelections
+                        );
+                    }
+                });
+            });
         }
     };
 });

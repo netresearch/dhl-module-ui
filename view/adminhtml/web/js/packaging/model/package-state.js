@@ -83,22 +83,9 @@ define([
     var createPackage = function (id) {
         var allSelections = selections.getAll();
         var availableItems = getAvailableItems(false);
-        // @TODO: fill in additional initial package values, preferably via hook
         var packageSelection = {
             packageId: id,
-            items: {},
-            package: {
-                packageDetails: {
-                    weight: _.reduce(availableItems, function (carry, item) {
-                        return carry + Number(item.qty) * Number(item.weight);
-                    }, 0)
-                },
-                packageCustoms: {
-                    customsValue: _.reduce(availableItems, function (carry, item) {
-                        return carry + Number(item.qty) * Number(item.price);
-                    }, 0)
-                }
-            }
+            items: {}
         };
 
         _.each(availableItems, function (item) {
