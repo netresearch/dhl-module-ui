@@ -6,7 +6,6 @@ declare(strict_types=1);
 
 namespace Dhl\Ui\ViewModel\Order\Packaging;
 
-use Dhl\ShippingCore\Api\ShipmentItemFilterInterface;
 use Dhl\ShippingCore\Model\Packaging\PackagingDataProvider;
 use Dhl\ShippingCore\Model\ShippingDataHydrator;
 use Magento\Backend\Model\UrlInterface;
@@ -14,7 +13,6 @@ use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Api\Data\ShipmentInterface;
 use Magento\Sales\Model\Order\Shipment;
-use Magento\Sales\Model\Order\Shipment\Item;
 
 /**
  * Class Popup
@@ -30,11 +28,6 @@ class Popup implements ArgumentInterface
      * @var Registry
      */
     private $registry;
-
-    /**
-     * @var ShipmentItemFilterInterface
-     */
-    private $itemFilter;
 
     /**
      * @var PackagingDataProvider
@@ -65,20 +58,17 @@ class Popup implements ArgumentInterface
      * Popup constructor.
      *
      * @param Registry $registry
-     * @param ShipmentItemFilterInterface $itemFilter
      * @param PackagingDataProvider $packageDataProvider
      * @param ShippingDataHydrator $hydrator
      * @param UrlInterface $urlBuilder
      */
     public function __construct(
         Registry $registry,
-        ShipmentItemFilterInterface $itemFilter,
         PackagingDataProvider $packageDataProvider,
         ShippingDataHydrator $hydrator,
         UrlInterface $urlBuilder
     ) {
         $this->registry = $registry;
-        $this->itemFilter = $itemFilter;
         $this->packageDataProvider = $packageDataProvider;
         $this->hydrator = $hydrator;
         $this->urlBuilder = $urlBuilder;
@@ -94,37 +84,6 @@ class Popup implements ArgumentInterface
         }
 
         return $this->shipment;
-    }
-
-    /**
-     * @return string[][]
-     */
-    public function getItemData(): array
-    {
-        $items = $this->itemFilter->getShippableItems($this->getShipment()->getAllItems());
-
-        $result = array_reduce(
-            $items,
-            /**
-             * @param Item $item
-             * @param string[] $carry
-             * @return array
-             */
-            static function ($carry, $item) {
-                $carry[] = [
-                    'id' => $item->getOrderItemId(),
-                    'qty' => $item->getQty(),
-                    'productName' => $item->getName(),
-                    'weight' => $item->getWeight(),
-                    'price' => $item->getPrice(),
-                ];
-
-                return $carry;
-            },
-            []
-        );
-
-        return $result;
     }
 
     /**

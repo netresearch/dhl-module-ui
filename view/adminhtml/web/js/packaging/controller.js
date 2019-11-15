@@ -42,22 +42,10 @@ define([
     return Component.extend({
         defaults: {
             template: 'Dhl_Ui/packaging/control',
-            items: [],
             errors: [],
             submitUrl: '',
             successRedirect: '',
             shippingSettingsController: true,
-        },
-        fieldsetTemplate: {
-            component: 'Dhl_Ui/js/packaging/view/fieldset',
-            label: '${ $.$data.label }',
-            name: '${ $.$data.name }',
-            parent: '${ $.$data.parent }',
-            additionalClasses: 'dhl-fieldset ${ $.$data.name }',
-            config: {
-                shippingOptions: [],
-                activeFieldset: ''
-            }
         },
 
         packages: packageState.packages,
@@ -94,15 +82,15 @@ define([
             var itemQtyInputs = Array.from(
                 document.querySelectorAll('#ship_items_container .col-qty > input')
             );
+
             var itemSelection = itemQtyInputs.map(function (item) {
-                return {id: item.name.replace(/[^0-9]+/g, ''), qty: item.value};
+                return {
+                    id: Number(item.name.replace(/[^0-9]+/g, '')),
+                    qty: Number(item.value)
+                };
             });
 
-            shipmentData.setItems(self.items.map(function (item) {
-                return _.extend(item, itemSelection.find(function (selected) {
-                    return Number(selected.id) === Number(item.id);
-                }));
-            }));
+            shipmentData.setItems(itemSelection);
         },
 
         initChildComponents: function () {
@@ -161,26 +149,25 @@ define([
                 self.shippingSettings.carriers[0].item_options
             );
 
-            baseFieldset.config.opened = true;
-            baseFieldset.items = self.items;
+            baseFieldset.opened = true;
             baseFieldset.component = 'Dhl_Ui/js/packaging/view/item-controller';
+
             return baseFieldset;
         },
 
         generateFieldset: function (name, label, options) {
-            var fieldset = utils.template(self.fieldsetTemplate, {
-                name: name,
+            return {
+                component: 'Dhl_Ui/js/packaging/view/fieldset',
                 label: label,
+                name: name,
                 parent: self.name,
-            });
-
-            fieldset.config = {
+                additionalClasses: 'dhl-fieldset ' + name,
                 shippingOptions: options,
                 itemId: false,
                 collapsible: true,
-                opened: true
+                opened: true,
+                activeFieldset: ''
             };
-            return fieldset;
         },
 
         selectPackage: function (selectedPackage) {

@@ -6,13 +6,10 @@ define([
 
     return Component.extend({
         defaults: {
-            defaults: {
-                items: [],
-                selectedOrderItems: [],
-                shippingOptions: [],
-                itemId: false,
-                additionalClasses: 'dhl-item'
-            },
+            selectedOrderItems: [],
+            shippingOptions: [],
+            itemId: false,
+            additionalClasses: 'dhl-item',
             listens: {
                 selectedOrderItems: 'handleChangedItemSelection',
             }

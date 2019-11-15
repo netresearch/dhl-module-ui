@@ -23,7 +23,7 @@ define([
      *     compatibility_data: DhlCompatibility[],
      *     service_options: DhlShippingOption[],
      *     package_options: DhlShippingOption[],
-     *     item_options: {item_id: int, shippingOptions: DhlShippingOption[]}[],
+     *     item_options: DhlItemOption[],
      *     metadata: {
      *         comments_after: DhlComment[],
      *         comments_before: DhlComment[],
@@ -90,6 +90,11 @@ define([
      *     source_value: string,
      *     input_values: {code: string, value: string}[],
      * }} DhlValueMap
+     *
+     * @typedef {{
+     *     item_id: int,
+     *     shipping_options: DhlShippingOption[]
+     * }} DhlItemOption
      */
 
     return {

@@ -17,8 +17,8 @@ define([
 
         if (!_.isEmpty(currentSelection)) {
             _.each(currentSelection.items, function (itemSelection, itemId) {
-                var item = availableItems.find(function (item) {
-                    return item.id === itemId;
+                var item = availableItems.find(function (availableItem) {
+                    return availableItem.id === Number(itemId);
                 });
 
                 item.qty += Number(itemSelection.details.qty);
@@ -31,25 +31,30 @@ define([
         });
     };
 
+    /**
+     * @param {DhlItemOption} itemOption
+     * @return {string}
+     */
+    var getItemName = function (itemOption) {
+        /** @type DhlInput */
+        var itemInput = _.findWhere(
+            _.findWhere(
+                itemOption.shipping_options,
+                {code: 'details'}
+            ).inputs,
+            {code: 'productName'}
+        );
+
+        return itemInput.default_value ? itemInput.default_value : '';
+    };
+
     return Component.extend({
         defaults: {
             label: $t('Package Items'),
-            items: [],
             shippingOptions: [],
             activeFieldset: '',
             template: "Dhl_Ui/form/fieldset",
             title: $t('For editing package items click to enlarge')
-        },
-        fieldsetTemplate: {
-            component: 'Dhl_Ui/js/packaging/view/item-properties-fieldset',
-            name: '${ $.$data.id }',
-            parent: '${ $.$data.parent }',
-            label: '${ $.$data.itemName }',
-            additionalClasses: 'item-options',
-            config: {
-                shippingOptions: [],
-                activeFieldset: '',
-            }
         },
 
         initialize: function () {
@@ -58,35 +63,34 @@ define([
             return this;
         },
 
+        /**
+         * Filter the item options with the availability data of all previously taken selections,
+         * so only items that are available/part of the current selection are listed
+         */
         initChildComponents: function () {
-            this._super();
             var itemFieldsets = [],
-                itemsToDisplay = getItemsToDisplay();
+                itemsToDisplay = getItemsToDisplay(),
+                applicableShippingOptions = this.shippingOptions.filter(function (itemSet) {
+                    return _.contains(itemsToDisplay, itemSet.item_id);
+                });
 
-            /**
-             * Filter the item options with the availability data of all previously taken selections,
-             * so only items that are available/part of the current selection are listed
-             */
-            _.each(this.shippingOptions.filter(function (itemSet) {
-                return _.contains(itemsToDisplay, itemSet.item_id);
-            }), function (itemOptionSet) {
-                var items = shipmentData.getItems(),
-                    itemData = items.find(function (item) {
-                        return Number(item.id) === itemOptionSet.item_id;
-                    }),
-                    fieldset = utils.template(this.fieldsetTemplate, {
-                        parent: this.name,
-                        id: itemOptionSet.item_id,
-                        itemName: itemData.productName
-                    });
+            this._super();
 
-                fieldset.config = {
-                    shippingOptions: itemOptionSet.shipping_options,
-                    itemId: itemOptionSet.item_id,
+            _.each(applicableShippingOptions, /** @type DhlItemOption */ function (itemOption) {
+                var fieldset = {
+                    component: 'Dhl_Ui/js/packaging/view/item-properties-fieldset',
+                    itemId: itemOption.item_id,
+                    name: itemOption.item_id,
+                    parent: this.name,
+                    label: getItemName(itemOption),
+                    additionalClasses: 'item-options',
+                    shippingOptions: itemOption.shipping_options,
+                    activeFieldset: '',
                     collapsible: itemsToDisplay.length > 1
                 };
+
                 itemFieldsets.push(fieldset);
-            }, this);
+            }.bind(this));
 
             layout(itemFieldsets);
         },
