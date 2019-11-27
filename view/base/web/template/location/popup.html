@@ -38,13 +38,6 @@
         </p>
     </div>
 
-    <div data-bind="if: location.services.length > 0">
-        <h5 data-bind="i18n: 'Services'"></h5>
-        <p data-bind="foreach: location.services">
-            <span data-bind="text: $data"></span><br/>
-        </p>
-    </div>
-
     <button type="button" class="action-primary" data-bind="
         i18n: 'Select',
         click: handleLocationSelect

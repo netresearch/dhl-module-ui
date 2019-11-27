@@ -15,13 +15,11 @@ define([
      *     shop_number: string,
      *     shop_name: string,
      *     shop_id: string,
-     *     shop_station: string,
      *     opening_hours: {
      *         day_of_week: string,
      *         opens: string,
      *         closes: string,
      *     }[],
-     *     services: string[],
      *     icon: string,
      *     address: {
      *         postal_code: string,
