@@ -21,6 +21,7 @@ define([
             searchStreet: null,
             searchZip: null,
             searchCountry: null,
+            errorMessage: '',
             listens: {
                 selectedLocation: "updateSelections"
             }
@@ -28,7 +29,15 @@ define([
 
         initObservable: function () {
             this._super();
-            this.observe(['selectedLocation', 'searchCity', 'searchStreet', 'searchZip', 'searchCountry']);
+            this.observe([
+                'selectedLocation',
+                'searchCity',
+                'searchStreet',
+                'searchZip',
+                'searchCountry',
+                'errorMessage'
+            ]);
+
             return this;
         },
 
@@ -128,7 +137,7 @@ define([
          */
         openModal: function () {
             this.modal.openModal();
-            map.init(this.modalMapId, 0.0, 0.0, 13);
+            map.init(this.modalMapId, 51.163375, 10.447683, 6);
             this.updateLocations();
         },
 
@@ -136,6 +145,7 @@ define([
          * update locations
          */
         updateLocations: function () {
+            this.errorMessage('');
             getLocations(
                 currentCarrier.get(),
                 {
@@ -144,9 +154,13 @@ define([
                     city: this.searchCity(),
                     street: this.searchStreet()
                 }
-            ).then(/** @param {DhlLocation[]} locations */ function (locations) {
+            )
+            .done(/** @param {DhlLocation[]} locations */ function (locations) {
                 map.setLocations(locations);
-            });
+            })
+            .fail(function (response) {
+                this.errorMessage(response.responseJSON.message);
+            }.bind(this));
         }
     });
 });

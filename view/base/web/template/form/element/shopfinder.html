@@ -48,6 +48,9 @@
                 <input id="searchStreet" type="text" data-bind="value: searchStreet"/>
             </div>
         </div>
+        <div class="message error" if="errorMessage">
+            <span text="errorMessage"/>
+        </div>
         <button class="btn-primary" data-bind="click: updateLocations">
             <span data-bind="i18n: 'Search'"></span>
         </button>
