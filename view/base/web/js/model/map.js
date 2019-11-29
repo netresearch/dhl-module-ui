@@ -6,8 +6,7 @@ define([
     'mage/translate',
     'leaflet',
     'Dhl_Ui/js/model/map/markers',
-    'Dhl_Ui/js/model/map/controls',
-    'uiRegistry'
+    'Dhl_Ui/js/model/map/controls'
 ], function (_, $t, leaflet, markers, controls) {
     'use strict';
 

@@ -110,7 +110,7 @@ define([
                 selections.addSelection(this.shippingOption.code, 'address-street', location.address.street);
                 selections.addSelection(this.shippingOption.code, 'address-postalcode', location.address.postal_code);
                 selections.addSelection(this.shippingOption.code, 'address-city', location.address.city);
-                selections.addSelection(this.shippingOption.code, 'address-country', location.address.country);
+                selections.addSelection(this.shippingOption.code, 'address-country', location.address.country_code);
             }
         },
 
@@ -149,7 +149,7 @@ define([
             getLocations(
                 currentCarrier.get(),
                 {
-                    country: this.searchCountry(),
+                    country_code: this.searchCountry(),
                     postal_code: this.searchZip(),
                     city: this.searchCity(),
                     street: this.searchStreet()
