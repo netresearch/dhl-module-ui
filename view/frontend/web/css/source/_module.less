@@ -93,6 +93,17 @@
     h5 {
         margin: 0;
     }
+
+    .opening-hours {
+        .day, time {
+            display: inline-block;
+            min-width: 35px;
+        }
+
+        time {
+            text-align: center;
+        }
+    }
 }
 
 .media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {

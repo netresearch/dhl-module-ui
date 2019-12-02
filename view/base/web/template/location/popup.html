@@ -31,9 +31,11 @@
 
     <div data-bind="if: location.opening_hours.length > 0">
         <h5 data-bind="i18n: 'Opening hours'"></h5>
-        <p data-bind="foreach: location.opening_hours">
-            <span data-bind="text: day_of_week"></span>:
-            <span data-bind="text: opens"></span> – <span data-bind="text: closes"></span>
+        <p data-bind="foreach: location.opening_hours" class="opening-hours">
+            <span class="day">
+                <span data-bind="text: day_of_week"></span>:
+            </span>
+            <time data-bind="text: opens"></time> – <time data-bind="text: closes"></time>
             <br/>
         </p>
     </div>
