@@ -16,8 +16,9 @@ define([
      * to init component.
      *
      * @param {DhlLocation} location
+     * @param {leaflet.Popup} popup
      */
-    var initTemplateBindings = function (location) {
+    var initTemplateBindings = function (location, popup) {
         var containerId = 'map-popup-container-' + location.shop_id,
             componentName = 'shopfinder-map-popup-' + location.shop_id;
 
@@ -29,8 +30,10 @@ define([
 
             try {
                 ko.applyBindings(component, element);
+                popup.update();
             } catch (e) {
                 // if the binding is already applied everything is fine.
+                popup.update();
             }
         });
     };
@@ -67,8 +70,8 @@ define([
                 ))
             );
 
-            marker.on('popupopen', function () {
-                initTemplateBindings(location);
+            marker.on('popupopen', function (event) {
+                initTemplateBindings(location, event.popup);
             });
 
             return marker;
