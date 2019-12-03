@@ -90,6 +90,19 @@ define([
         },
 
         /**
+         * Make sure to deinitialize the modal on destroy
+         *
+         * @param {Boolean} skipUpdate
+         */
+        destroy: function (skipUpdate) {
+            if (this.modal) {
+                this.modal.modal.remove();
+            }
+
+            this._super(skipUpdate);
+        },
+
+        /**
          * Update the selections model when the selectedLocation changes
          *
          * @param {DhlLocation|null} location
