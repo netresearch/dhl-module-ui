@@ -17,13 +17,13 @@
 <div class="map-popup-container"
      id="map-popup-container-${ $.location.shop_id }"
      data-bind="scope: 'shopfinder-map-popup-${ $.location.shop_id }'">
-    <h4 data-bind="text: location.shop_name"></h4>
+    <h4 data-bind="if: location.shop_type">
+        <span data-bind="text: location.shop_type"></span>
+        <span data-bind="text: location.shop_number"></span><br/>
+    </h4>
 
     <p>
-        <span data-bind="if: location.shop_type">
-            <span data-bind="text: location.shop_type"></span>
-            <span data-bind="text: location.shop_number"></span><br/>
-        </span>
+        <span data-bind="text: location.shop_name"></span><br/>
         <span data-bind="text: location.address.street"></span><br/>
         <span data-bind="text: location.address.postal_code"></span>
         <span data-bind="text: location.address.city"></span>
