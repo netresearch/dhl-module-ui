@@ -21,6 +21,7 @@ define([
      *         closes: string,
      *     }[],
      *     icon: string,
+     *     services: string[],
      *     address: {
      *         postal_code: string,
      *         city: string,
