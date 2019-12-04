@@ -75,22 +75,47 @@ define([
         },
 
         /**
-         * Extract the requested item quantities from the new shipment page DOM
-         * and create shipment items in the packaging popup.
+         * Extract the requested item quantities and store them.
+         *
+         * On the "New Shipment" page, item qtys are dynamic and must
+         * be picked from DOM input fields.
+         * On the "View Shipment" page, the total qtys are immutable
+         * and the DOM does not matter.
          */
         initShipmentItems: function () {
-            var itemQtyInputs = Array.from(
-                document.querySelectorAll('#ship_items_container .col-qty > input')
-            );
+            var qtyMap,
+                itemQtyElements = Array.from(
+                    document.querySelectorAll('#ship_items_container .col-qty > input')
+                );
 
-            var itemSelection = itemQtyInputs.map(function (item) {
-                return {
-                    id: Number(item.name.replace(/[^0-9]+/g, '')),
-                    qty: Number(item.value)
-                };
-            });
+            if (itemQtyElements.length > 0) {
+                /**
+                 * Dynamic Qty data from the DOM is more
+                 * up-to-date than shipping settings.
+                 */
+                qtyMap = itemQtyElements.map(function (item) {
+                    return {
+                        id: Number(item.name.replace(/[^0-9]+/g, '')),
+                        qty: Number(item.value)
+                    };
+                });
+            } else {
+                /*
+                 * If there is no DOM information, fall back
+                 * to using data from shipping settings.
+                 */
+                qtyMap = self.shippingSettings.carriers[0].item_options.map(function (itemOption) {
+                    /** @type {DhlInput|undefined} */
+                    var qtyInput = _.findWhere(itemOption.shipping_options[0].inputs, {code: 'qty'});
 
-            shipmentData.setItems(itemSelection);
+                    return {
+                        id: itemOption.item_id,
+                        qty: Number(qtyInput ? qtyInput.default_value : 0)
+                    };
+                });
+            }
+
+            shipmentData.setItems(qtyMap);
         },
 
         initChildComponents: function () {
