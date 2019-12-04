@@ -28,7 +28,10 @@
                     <label for="searchCountry">
                         <span data-bind="i18n: 'Country'"></span>
                     </label>
-                    <input id="searchCountry" type="text" data-bind="value: searchCountry" />
+                    <select id="searchCountry"
+                            class="select admin__control-select"
+                            data-bind="options: getCountryOptions()"
+                    />
                 </div>
                 <div>
                     <label for="searchCity">

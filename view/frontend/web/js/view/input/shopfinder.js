@@ -2,12 +2,13 @@ define([
     'jquery',
     'Dhl_Ui/js/view/shipping-option-input',
     'Dhl_Ui/js/action/checkout/webapi/get-locations',
+    'Dhl_Ui/js/model/checkout/country-options',
     'Dhl_Ui/js/model/map',
     'Dhl_Ui/js/model/current-carrier',
     'Dhl_Ui/js/model/shipping-option/selections',
     'Magento_Ui/js/modal/modal',
     'Magento_Checkout/js/model/quote'
-], function ($, Component, getLocations, map, currentCarrier, selections, modal, quote) {
+], function ($, Component, getLocations,countryOptions,  map, currentCarrier, selections, modal, quote) {
     'use strict';
 
     return Component.extend({
@@ -178,6 +179,14 @@ define([
             .fail(function (response) {
                 this.errorMessage(response.responseJSON.message);
             }.bind(this));
+        },
+
+        getCountryOptions: function () {
+            debugger;
+            var shippingMethod = quote.shippingMethod(),
+                carrierCode = shippingMethod.carrier_code;
+
+            return countryOptions.get(carrierCode, this.shippingOptionCode);
         }
     });
 });

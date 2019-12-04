@@ -56,6 +56,7 @@ define([
      *     label: string,
      *     packaging_readonly: boolean,
      *     sort_order: int,
+     *     routes: {exclude_destinations: string[], include_destinations: string[], origin: string}[]
      * }} DhlShippingOption
      *
      * @typedef {{
