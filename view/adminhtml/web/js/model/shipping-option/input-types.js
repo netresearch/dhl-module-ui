@@ -59,7 +59,7 @@ define([], function () {
             component: 'Dhl_Ui/js/view/shipping-option-input'
         },
         shopfinder: {
-            template: 'Dhl_Ui/form/element/static',
+            template: 'Dhl_Ui/form/element/checkbox',
             component: 'Dhl_Ui/js/view/shipping-option-input'
         }
     };

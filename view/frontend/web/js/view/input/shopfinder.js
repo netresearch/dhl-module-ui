@@ -65,11 +65,11 @@ define([
         initSelectedLocation: function () {
             if (selections.getShippingOptionValue(this.shippingOption.code, this.shippingOptionInput.code)) {
                 return {
-                    'shop_name': selections.getShippingOptionValue(this.shippingOption.code, 'shop-name'),
+                    'shop_name': selections.getShippingOptionValue(this.shippingOption.code, 'company'),
                     'address': {
-                        'street': selections.getShippingOptionValue(this.shippingOption.code, 'address-street'),
-                        'postal_code': selections.getShippingOptionValue(this.shippingOption.code, 'address-postalcode'),
-                        'city': selections.getShippingOptionValue(this.shippingOption.code, 'address-city')
+                        'street': selections.getShippingOptionValue(this.shippingOption.code, 'street'),
+                        'postal_code': selections.getShippingOptionValue(this.shippingOption.code, 'postalCode'),
+                        'city': selections.getShippingOptionValue(this.shippingOption.code, 'city')
                     }
                 };
             }
@@ -109,21 +109,25 @@ define([
          */
         updateSelections: function (location) {
             if (location === null || !location.shop_id) {
-                this.value(null);
-                selections.removeSelection(this.shippingOption.code, 'shop-name');
-                selections.removeSelection(this.shippingOption.code, 'shop-number');
-                selections.removeSelection(this.shippingOption.code, 'address-street');
-                selections.removeSelection(this.shippingOption.code, 'address-postalcode');
-                selections.removeSelection(this.shippingOption.code, 'address-city');
-                selections.removeSelection(this.shippingOption.code, 'address-country');
+                this.value(false);
+                selections.removeSelection(this.shippingOption.code, 'locationType');
+                selections.removeSelection(this.shippingOption.code, 'locationNumber');
+                selections.removeSelection(this.shippingOption.code, 'company');
+                selections.removeSelection(this.shippingOption.code, 'street');
+                selections.removeSelection(this.shippingOption.code, 'postalCode');
+                selections.removeSelection(this.shippingOption.code, 'city');
+                selections.removeSelection(this.shippingOption.code, 'countryCode');
+                selections.removeSelection(this.shippingOption.code, 'locationId');
             } else {
-                this.value(location.shop_id);
-                selections.addSelection(this.shippingOption.code, 'shop-name', location.shop_name);
-                selections.addSelection(this.shippingOption.code, 'shop-number', location.shop_number);
-                selections.addSelection(this.shippingOption.code, 'address-street', location.address.street);
-                selections.addSelection(this.shippingOption.code, 'address-postalcode', location.address.postal_code);
-                selections.addSelection(this.shippingOption.code, 'address-city', location.address.city);
-                selections.addSelection(this.shippingOption.code, 'address-country', location.address.country_code);
+                this.value(true);
+                selections.addSelection(this.shippingOption.code, 'locationType', location.shop_type);
+                selections.addSelection(this.shippingOption.code, 'locationNumber', location.shop_number);
+                selections.addSelection(this.shippingOption.code, 'company', location.shop_name);
+                selections.addSelection(this.shippingOption.code, 'street', location.address.street);
+                selections.addSelection(this.shippingOption.code, 'postalCode', location.address.postal_code);
+                selections.addSelection(this.shippingOption.code, 'city', location.address.city);
+                selections.addSelection(this.shippingOption.code, 'countryCode', location.address.country_code);
+                selections.addSelection(this.shippingOption.code, 'locationId', location.shop_id);
             }
         },
 
