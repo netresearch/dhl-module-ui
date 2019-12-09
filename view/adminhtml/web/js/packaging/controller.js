@@ -206,8 +206,9 @@ define([
             var data = selections.getAll();
 
             if (!packageState.allItemsPackaged()) {
-                window.packaging.messages.show().innerHTML =
-                    $t('Some items are not assigned to a package. Please assign every item to a package.');
+                self.setErrorMessage(
+                    $t('Some items are not assigned to a package. Please assign every item to a package.')
+                );
                 return;
             }
 
@@ -215,10 +216,13 @@ define([
                 submit(self.submitUrl, data)
                     .done(function (response) {
                         if (response.error) {
-                            window.packaging.messages.show().innerHTML = response.message;
+                            self.setErrorMessage(response.message);
                         } else if (response.ok) {
                             window.location.href = self.successRedirect;
                         }
+                    })
+                    .fail(function () {
+                        self.setErrorMessage($t('Shipment could not be created.'));
                     });
             }
         },
@@ -294,6 +298,18 @@ define([
          */
         hasImage: function () {
             return Boolean(self.shippingSettings.carriers[0].metadata.image_url);
+        },
+
+        /**
+         * @param {string} message
+         */
+        setErrorMessage: function (message) {
+            if (message) {
+                window.packaging.messages.show();
+                window.packaging.messages.textContent = message;
+            } else {
+                window.packaging.messages.hide();
+            }
         }
     });
 });

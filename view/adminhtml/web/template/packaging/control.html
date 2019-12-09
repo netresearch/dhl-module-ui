@@ -33,13 +33,13 @@
             </span>
         </button>
     </div>
-    <div class="message message-warning" style="display: none"></div>
-    <!-- ko if: errors()-->
-    <!-- ko foreach: { data: errors, as: 'error' } -->
-    <div class="message error" text="error"/>
-    <!-- /ko -->
-    <!-- /ko -->
 </div>
+<div class="message message-warning" style="display: none"/>
+<!-- ko if: errors()-->
+<!-- ko foreach: { data: errors, as: 'error' } -->
+<div class="message error" text="error"/>
+<!-- /ko -->
+<!-- /ko -->
 <div id="grid_tab" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
     <ul class="tabs-horiz ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist"
         data-bind="visible: packages().length > 1, foreach: { data: packages, as: 'package' }">
