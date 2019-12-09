@@ -19,6 +19,11 @@ define([
         ? ko.observable(storage.get(CACHE_KEY))
         : ko.observable({});
 
+    /**
+     * Debounce selections to not overwhelm subscribers
+     */
+    selections.extend({rateLimit: {timeout: 500, method: 'notifyWhenChangesStop'}});
+
     return {
 
         /**

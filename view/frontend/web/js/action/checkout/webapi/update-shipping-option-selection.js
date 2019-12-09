@@ -1,12 +1,13 @@
 define([
     'underscore',
+    'jquery',
     'mage/storage',
     'Magento_Checkout/js/model/url-builder',
     'Magento_Customer/js/model/customer',
     'Magento_Checkout/js/model/quote',
     'Dhl_Ui/js/model/shipping-option/selections',
     'Dhl_Ui/js/model/current-carrier',
-], function (_, storage, urlBuilder, customer, quote, selectionsModel, currentCarrier) {
+], function (_, $, storage, urlBuilder, customer, quote, selectionsModel, currentCarrier) {
     'use strict';
 
     /**
@@ -23,7 +24,9 @@ define([
             carrier = currentCarrier.get();
 
         if (!carrier) {
-            Promise.reject('No shipping option selected');
+            return $.Deferred(function (deferred) {
+                deferred.reject('No shipping option selected');
+            });
         }
 
         selections = selectionsModel.getByCarrier(carrier);
