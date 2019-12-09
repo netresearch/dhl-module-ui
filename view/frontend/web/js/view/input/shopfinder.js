@@ -8,7 +8,7 @@ define([
     'Dhl_Ui/js/model/shipping-option/selections',
     'Magento_Ui/js/modal/modal',
     'Magento_Checkout/js/model/quote'
-], function ($, Component, getLocations,countryOptions,  map, currentCarrier, selections, modal, quote) {
+], function ($, Component, getLocations, countryOptions,  map, currentCarrier, selections, modal, quote) {
     'use strict';
 
     return Component.extend({
@@ -182,11 +182,11 @@ define([
         },
 
         getCountryOptions: function () {
-            debugger;
             var shippingMethod = quote.shippingMethod(),
                 carrierCode = shippingMethod.carrier_code;
-
-            return countryOptions.get(carrierCode, this.shippingOptionCode);
+            var options = countryOptions.get(carrierCode, this.shippingOptionCode);
+            debugger;
+            return options;
         }
     });
 });

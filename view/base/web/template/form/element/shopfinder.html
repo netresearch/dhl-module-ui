@@ -30,8 +30,11 @@
                     </label>
                     <select id="searchCountry"
                             class="select admin__control-select"
-                            data-bind="options: getCountryOptions()"
-                    />
+                            data-bind="options: getCountryOptions(),
+                                        optionsText: 'countryName',
+                                        optionsValue: 'countryCode',
+                                        value: 'searchCountry'"
+                    ></select>
                 </div>
                 <div>
                     <label for="searchCity">

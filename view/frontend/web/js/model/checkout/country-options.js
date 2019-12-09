@@ -1,8 +1,9 @@
 define([
     'underscore',
+    'ko',
     'Magento_Customer/js/customer-data',
     'Dhl_Ui/js/model/shipping-settings'
-], function (_, customerData, checkoutData) {
+], function (_, ko, customerData, checkoutData) {
     'use strict';
 
     /**
@@ -10,23 +11,26 @@ define([
      */
     var carrierData;
 
+    var countryData = customerData.get('directory-data');
+    var countrySelected = ko.observable();
     /**
      *
      * @param {string}[] countryCodes
+     * @returns {[]}
      */
     var getOptions = function (countryCodes) {
-        debugger;
+        if (_.isEmpty(countryCodes)) {
+            return;
+        }
         var options = [];
         _.each(countryCodes, function (countryId) {
-            debugger;
-            var name = customerData.get('directory-data')[countryId].name,
+            var name = countryData()[countryId].name,
                 option = {
-                    value: countryId,
-                    label: name
+                    'countryCode': countryId,
+                    'countryName': name
                 };
             options.push(option);
         });
-        debugger;
         return options;
     };
 
@@ -50,9 +54,7 @@ define([
                     });
                 }
             });
-            debugger;
-            var options = getOptions(includes);
-            debugger;
+            return getOptions(includes);
         }
     }
 
