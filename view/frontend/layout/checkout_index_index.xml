@@ -64,5 +64,8 @@
                 </argument>
             </arguments>
         </referenceBlock>
+        <referenceContainer name="content">
+            <block class="Dhl\Ui\Block\Checkout\EuCountries" name="eu-countries"/>
+        </referenceContainer>
     </body>
 </page>

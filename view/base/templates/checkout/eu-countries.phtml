@@ -1,0 +1,13 @@
+<?php
+/**
+ * See LICENSE.md for license details.
+ */
+?>
+
+<?php
+/** @var \Dhl\Ui\Block\Checkout\EuCountries $block */
+?>
+
+<script type="text/javascript">
+    window.euCountries = "<?php echo $block->getEuCountries();?>".split(',');
+</script>

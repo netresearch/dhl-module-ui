@@ -185,7 +185,7 @@ define([
             var shippingMethod = quote.shippingMethod(),
                 carrierCode = shippingMethod.carrier_code;
             var options = countryOptions.get(carrierCode, this.shippingOptionCode);
-            debugger;
+
             return options;
         }
     });
