@@ -184,9 +184,7 @@ define([
         getCountryOptions: function () {
             var shippingMethod = quote.shippingMethod(),
                 carrierCode = shippingMethod.carrier_code;
-            var options = countryOptions.get(carrierCode, this.shippingOptionCode);
-
-            return options;
+            return countryOptions.get(carrierCode, this.shippingOptionCode);
         }
     });
 });

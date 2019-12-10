@@ -50,13 +50,17 @@ define([
      * }} DhlCompatibility
      *
      * @typedef {{
+     *     exclude_destinations: string[], include_destinations: string[], origin: string
+     * }} DhlShippingRoute
+     *
+     * @typedef {{
      *     available_at_postal_facility: boolean,
      *     code: string,
      *     inputs: DhlInput[],
      *     label: string,
      *     packaging_readonly: boolean,
      *     sort_order: int,
-     *     routes: {exclude_destinations: string[], include_destinations: string[], origin: string}[]
+     *     routes: DhlShippingRoute[]
      * }} DhlShippingOption
      *
      * @typedef {{
