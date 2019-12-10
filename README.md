@@ -9,17 +9,17 @@ All functionality provided will be activated through the Dhl_ShippingCore module
 ### Estimated delivery date in checkout
 
 Through additional data provided on a RateMethod these will be wrapped into an extension attribute 
-(see `Dhl\ShippingCore\Api\Data\MethodAdditionalInfoInterface` - the available data keys are listed in this interface).
+(see `\Dhl\ShippingCore\Api\Data\Rate\MethodAdditionalInfoInterface` - the available data keys are listed in this interface).
 
 ```php
 <?php
 
-$data = [Dhl\ShippingCore\Api\Data\MethodAdditionalInfoInterface::DELIVERY_DATE => 'Estimated delivery date'];
+$data = [\Dhl\ShippingCore\Api\Data\Rate\MethodAdditionalInfoInterface::DELIVERY_DATE => 'Estimated delivery date'];
 
-/** @var Dhl\ShippingCore\Model\Method\AdditionalInfoFactory $additionalInfoFactory */
+/** @var \Dhl\ShippingCore\Model\Rate\Data\MethodAdditionalInfoFactory $additionalInfoFactory */
 $additionalInfo = $additionalInfoFactory->create([
-                        'data' => $data
-                    ]);
+    'data' => $data
+]);
 
 
 $priceInBaseCurrency = 5.0;
@@ -35,27 +35,27 @@ $method = $methodFactory->create(
                         'cost' => $priceInBaseCurrency,
 
                         // Pass delivery date and carrier logo through specific 'additional_info' key
-                        Dhl\ShippingCore\Api\Data\MethodAdditionalInfoInterface::ATTRIBUTE_KEY => $additionalInfo
+                        \Dhl\ShippingCore\Api\Data\Rate\MethodAdditionalInfoInterface::ATTRIBUTE_KEY => $additionalInfo
                     ],
                 ]
             );
 ```
 
-This information will be used in {{Dhl\ShippingCore\Plugin\Quote\Cart\ShippingMethodConverterPlugin}} to get parsed into checkout as extension attributes
+This information will be used in {{\Dhl\ShippingCore\Plugin\Quote\Cart\ShippingMethodConverterPlugin}} to get parsed into checkout as extension attributes
 
 Output via: {{view/frontend/web/template/checkout/shipping/custom-method-item-template.html}}
 
 ### Carrier logo in checkout
 
 Through additional data provided on a RateMethod these will be wrapped into an extension attribute 
-(see `Dhl\ShippingCore\Api\Data\MethodAdditionalInfoInterface` - the available data keys are listed in this interface).
+(see `\Dhl\ShippingCore\Api\Data\Rate\MethodAdditionalInfoInterface` - the available data keys are listed in this interface).
 
 ```php
 <?php
 
-$data = [Dhl\ShippingCore\Api\Data\MethodAdditionalInfoInterface::CARRIER_LOGO_URL => 'LOGO URL'];
+$data = [\Dhl\ShippingCore\Api\Data\Rate\MethodAdditionalInfoInterface::CARRIER_LOGO_URL => 'LOGO URL'];
 
-/** @var Dhl\ShippingCore\Model\Method\AdditionalInfoFactory $additionalInfoFactory */
+/** @var \Dhl\ShippingCore\Model\Rate\Data\MethodAdditionalInfoFactory $additionalInfoFactory */
 $additionalInfo = $additionalInfoFactory->create([
                         'data' => $data
                     ]);
@@ -74,7 +74,7 @@ $method = $methodFactory->create(
                         'cost' => $priceInBaseCurrency,
 
                         // Pass delivery date and carrier logo through specific 'additional_info' key
-                        Dhl\ShippingCore\Api\Data\MethodAdditionalInfoInterface::ATTRIBUTE_KEY => $additionalInfo
+                        \Dhl\ShippingCore\Api\Data\Rate\MethodAdditionalInfoInterface::ATTRIBUTE_KEY => $additionalInfo
                     ],
                 ]
             );
