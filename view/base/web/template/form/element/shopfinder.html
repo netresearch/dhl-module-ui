@@ -13,10 +13,15 @@
         <span class="action-remove" data-bind="i18n: 'Remove'"></span>
     </button>
     <div>
-        <strong text="selectedLocation().shop_name"></strong><br/>
-        <span text="selectedLocation().address.street"></span><br/>
-        <span text="selectedLocation().address.postal_code"></span>
-        <span text="selectedLocation().address.city"></span><br/>
+        <strong data-bind="if: selectedLocation().display_name">
+            <span data-bind="text: selectedLocation().display_name"></span>
+        </strong>
+        <p>
+            <span data-bind="text: selectedLocation().shop_name"></span><br/>
+            <span data-bind="text: selectedLocation().address.street"></span><br/>
+            <span data-bind="text: selectedLocation().address.postal_code"></span>
+            <span data-bind="text: selectedLocation().address.city"></span>
+        </p>
     </div>
     <!-- /ko -->
 </div>

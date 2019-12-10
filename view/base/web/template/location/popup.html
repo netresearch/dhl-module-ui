@@ -17,9 +17,9 @@
 <div class="map-popup-container"
      id="map-popup-container-${ $.location.shop_id }"
      data-bind="scope: 'shopfinder-map-popup-${ $.location.shop_id }'">
-    <h4 data-bind="if: location.shop_type">
-        <span data-bind="text: location.shop_type"></span>
-        <span data-bind="text: location.shop_number"></span><br/>
+    <h4 data-bind="if: location.display_name">
+        <span data-bind="text: location.display_name"></span>
+        <br/>
     </h4>
 
     <p>
