@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Dhl\Ui\Component\Listing\Column\LabelStatus;
 
-use Dhl\ShippingCore\Api\LabelStatusManagementInterface;
+use Dhl\ShippingCore\Api\LabelStatus\LabelStatusManagementInterface;
 use Magento\Framework\Data\OptionSourceInterface;
 
 /**
