@@ -1,77 +1,59 @@
 define([
     'underscore',
-    'ko',
     'Dhl_Ui/js/model/shipping-settings',
     'Magento_Customer/js/customer-data'
-], function (_, ko, checkoutData,  customerData) {
+], function (_, checkoutData,  customerData) {
     'use strict';
-
-    var countryData = customerData.get('directory-data');
 
     /**
      * Create array of options objects for country select
      *
      * @param {string[]} countryCodes
-     * @returns {[]}
+     * @returns {{countryCode: string, countryName: string}[]}
      */
     var createOptions = function (countryCodes) {
-        var options = [];
+        var countryData = customerData.get('directory-data')(),
+            allCountryCodes = Object.keys(countryData),
+            options = [];
+
+        countryCodes = _.intersection(countryCodes, allCountryCodes);
+
         if (_.isEmpty(countryCodes)) {
-            _.each(countryData(), function (name, countryId) {
-                debugger;
-                var option = {
-                    'countryCode': countryId,
-                    'countryName': name.name
-                };
-                options.push(option);
-            });
-        } else {
-            _.each(countryCodes, function (countryId) {
-                var name = countryData()[countryId].name,
-                    option = {
-                        'countryCode': countryId,
-                        'countryName': name
-                    };
-                options.push(option);
-            });
+            countryCodes = allCountryCodes;
         }
 
-        return ko.observableArray(options);
-    };
+        _.each(countryCodes, function (countryId) {
+            options.push({
+                'countryCode': countryId,
+                'countryName': countryData[countryId].name
+            });
+        });
 
-    /**
-     * build allowed destinations from route included and excluded destinations
-     * @param {string[]} includes
-     * @param {string[]} excludes
-     * @return {[]}
-     */
-    var filterDestinations = function (includes, excludes) {
-        return _.difference(includes, excludes);
+        return options;
     };
 
     return {
         /**
          * Get country select options
+         *
          * @param {string} carrierName
          * @param {string} shippingOptionCode
-         * @return {*[]}
+         * @return {{countryCode: string, countryName: string}[]}
          */
         get: function (carrierName, shippingOptionCode) {
             var settings = checkoutData.getByCarrier(carrierName),
-                serviceOptions = settings.service_options.find(function (serviceOption) {
-                    return serviceOption.code ===  shippingOptionCode;
-                }),
+                serviceOptions = _.findWhere(settings.service_options, {code: shippingOptionCode}),
                 routes = serviceOptions.routes,
                 includes = [];
 
-            if (_.isEmpty(routes)) {
-                return createOptions([]);
-            }
-
             _.each(routes, /** @property {DhlShippingRoute} route */ function (route) {
-               includes.push(filterDestinations(route.include_destinations, route.exclude_destinations));
+                includes = includes.concat(_.difference(
+                    route.include_destinations,
+                    route.exclude_destinations
+                ));
             });
-            return createOptions(_.uniq(_.flatten(includes)));
+
+            return createOptions(_.uniq(includes));
         }
-    }
+    };
 });

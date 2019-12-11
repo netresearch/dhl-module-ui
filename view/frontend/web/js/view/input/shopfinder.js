@@ -22,6 +22,7 @@ define([
             searchStreet: null,
             searchZip: null,
             searchCountry: null,
+            searchCountryOptions: [],
             errorMessage: '',
             listens: {
                 selectedLocation: "updateSelections"
@@ -36,6 +37,7 @@ define([
                 'searchStreet',
                 'searchZip',
                 'searchCountry',
+                'searchCountryOptions',
                 'errorMessage'
             ]);
 
@@ -53,6 +55,7 @@ define([
             this.searchStreet(address.street.join(' '));
             this.searchZip(address.postcode);
             this.selectedLocation(this.initSelectedLocation());
+            this.searchCountryOptions(countryOptions.get(currentCarrier.get(), this.shippingOptionCode));
 
             return this;
         },
@@ -180,11 +183,5 @@ define([
                 this.errorMessage(response.responseJSON.message);
             }.bind(this));
         },
-
-        getCountryOptions: function () {
-            var shippingMethod = quote.shippingMethod(),
-                carrierCode = shippingMethod.carrier_code;
-            return countryOptions.get(carrierCode, this.shippingOptionCode);
-        }
     });
 });

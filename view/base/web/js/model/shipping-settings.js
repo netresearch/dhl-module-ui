@@ -3,6 +3,7 @@ define([
     'Dhl_Ui/js/action/util/hash'
 ], function (ko, hash) {
     'use strict';
+
     /**
      * @callback DhlShippingSettingsObservable
      * @param {DhlShippingSettings} [value]
@@ -50,7 +51,9 @@ define([
      * }} DhlCompatibility
      *
      * @typedef {{
-     *     exclude_destinations: string[], include_destinations: string[], origin: string
+     *     exclude_destinations: string[],
+     *     include_destinations: string[],
+     *     origin: string
      * }} DhlShippingRoute
      *
      * @typedef {{
