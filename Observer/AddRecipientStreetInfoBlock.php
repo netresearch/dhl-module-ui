@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Dhl\Ui\Observer;
 
-use Dhl\ShippingCore\Api\RecipientStreetRepositoryInterface;
+use Dhl\ShippingCore\Api\SplitAddress\RecipientStreetRepositoryInterface;
 use Magento\Framework\App\Request\Http;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Event\Observer;
