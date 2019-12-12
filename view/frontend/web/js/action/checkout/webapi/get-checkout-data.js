@@ -29,9 +29,8 @@ define([
             payload = {countryId: countryId, postalCode: postalCode};
 
         if (fromCache) {
-            console.warn('DHL checkout data cache disabled');
-            //checkoutData.set(fromCache);
-            //return;
+            checkoutData.set(fromCache);
+            return;
         }
 
         shippingService.isLoading(true);
