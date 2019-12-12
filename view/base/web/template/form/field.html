@@ -2,8 +2,7 @@
 <div class="field"
      data-bind="visible: visible,
                 attr: {'name': element.dataScope },
-                class: additionalClasses,
-                css: { hidden: element.inputType === 'hidden' }">
+                css: additionalClasses">
 
     <!-- ko if: element.label && element.labelVisible === 'true' && element.inputType !== 'checkbox' -->
     <label class="label" data-bind="attr: { for: element.uid }">
@@ -18,11 +17,9 @@
         <!-- /ko -->
         <!-- ko if: element.comment.content && !['prefixed', 'suffixed'].includes(element.inputType) -->
             <div class="field-note">
-                <span data-bind="html: element.comment.content"/>
+                <span data-bind="html: element.comment.content, css: element.inputType"/>
                 <span data-bind="visible: showAsterisk(element.comment)"
-                      class="asterisk"
-                      style="color: #e02b27;
-                      font-size: 1.2rem;">*</span>
+                      class="asterisk">*</span>
             </div>
         <!-- /ko -->
         <!-- ko if: element.error() -->

@@ -84,6 +84,8 @@ define([
             enable: [],
             hide: [],
             show: [],
+            require: [],
+            unrequire: []
         };
 
         _.each(rules, function (rule) {
@@ -173,6 +175,7 @@ define([
         /** Don't enable/show shipping options that another rule will disable/hide */
         actionLists.enable = _.difference(actionLists.enable, actionLists.disable);
         actionLists.show = _.difference(actionLists.show, actionLists.hide);
+        actionLists.unrequire = _.difference(actionLists.unrequire, actionLists.require);
 
         /** Set disabled/visible status of individual shipping option inputs */
         _.each(_.uniq(actionLists.enable), function (shippingOptionCode) {
@@ -209,14 +212,18 @@ define([
         });
         _.each(_.uniq(actionLists.require), function (shippingOptionCode) {
             doActionOnInputComponents(shippingOptionCode, function (input) {
-                input.setValidation('required-entry', true);
+                input.required(true);
+                input.validation['required-entry'] = true;
             });
         });
         _.each(_.uniq(actionLists.unrequire), function (shippingOptionCode) {
             doActionOnInputComponents(shippingOptionCode, function (input) {
-                input.setValidation('required-entry', false);
+                input.required(false);
+                input.validation['required-entry'] = false;
+                input.error(false);
             });
         });
+
 
         /** Re-run the compatibility enforcer until all data is consistent. */
         if (valuesHaveChanged) {

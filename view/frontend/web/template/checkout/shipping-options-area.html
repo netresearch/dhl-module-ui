@@ -6,7 +6,7 @@
         <!-- ko foreach: { data: commentsBefore, as: 'comment' } -->
             <p>
                 <span data-bind="html: comment.content"/>
-                <span if="comment.hasFootnote" class="asterisk" style="color: #e02b27; font-size: 1.2rem;">*</span>
+                <span if="comment.hasFootnote" class="asterisk">*</span>
             </p>
         <!-- /ko -->
         <!-- ko foreach: { data: elems, as: 'element' } -->
@@ -16,7 +16,7 @@
         <!-- ko if: footnotes -->
         <!-- ko foreach: { data: footnotes, as: 'footnote' } -->
             <p class="field-note">
-                <span class="asterisk" style="color: #e02b27; font-size: 1.2rem;">*</span>
+                <span class="asterisk">*</span>
                 <span data-bind="html: footnote.content"/>
             </p>
         <!-- /ko -->
