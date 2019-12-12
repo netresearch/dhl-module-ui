@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Dhl\Ui\Model\Sales\Pdf;
 
-use Dhl\ShippingCore\Api\TaxConfigInterface;
+use Dhl\ShippingCore\Api\AdditionalFee\TaxConfigInterface;
 use Dhl\ShippingCore\Model\AdditionalFee\Total;
 use Magento\Sales\Model\Order\Pdf\Total\DefaultTotal;
 use Magento\Tax\Helper\Data;

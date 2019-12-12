@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Dhl\Ui\ViewModel\Order\Totals;
 
-use Dhl\ShippingCore\Api\TaxConfigInterface;
+use Dhl\ShippingCore\Api\AdditionalFee\TaxConfigInterface;
 use Dhl\ShippingCore\Model\AdditionalFee\DisplayObject;
 use Dhl\ShippingCore\Model\AdditionalFee\Total;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
