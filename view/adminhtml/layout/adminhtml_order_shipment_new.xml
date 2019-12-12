@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
 <!--
-  See LICENSE.md for license details.
+/**
+ * See LICENSE.md for license details.
+ */
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
-    <referenceContainer name="content">
+    <body>
         <referenceBlock name="order_info">
             <block name="dhl_recipient_street" template="Dhl_Ui::order/view/info/recipient-street.phtml">
                 <arguments>
@@ -12,16 +14,12 @@
             </block>
         </referenceBlock>
 
-        <referenceBlock name="sales_shipment_create">
-            <referenceBlock name="form">
-                <block class="Magento\Shipping\Block\Adminhtml\Order\Packaging" name="shipment_packaging" template="Magento_Shipping::order/packaging/popup.phtml">
-                    <block name="dhl_packaging_popup" template="Dhl_Ui::order/packaging/packaging-content.phtml">
-                        <arguments>
-                            <argument name="popup_view_model" xsi:type="object">Dhl\Ui\ViewModel\Order\Packaging\Popup</argument>
-                        </arguments>
-                    </block>
-                </block>
-            </referenceBlock>
+        <referenceBlock name="shipment_packaging">
+            <block name="dhl_packaging_popup" template="Dhl_Ui::order/packaging/packaging-content.phtml">
+                <arguments>
+                    <argument name="popup_view_model" xsi:type="object">Dhl\Ui\ViewModel\Order\Packaging\Popup</argument>
+                </arguments>
+            </block>
         </referenceBlock>
-    </referenceContainer>
+    </body>
 </page>
