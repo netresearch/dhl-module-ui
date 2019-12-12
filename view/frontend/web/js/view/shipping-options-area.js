@@ -96,6 +96,13 @@ define([
             if (!shippingMethod) {
                 return;
             }
+
+            carrierData = checkoutData.getByCarrier(shippingMethod.carrier_code);
+            if (!carrierData || carrierData.service_options.length === 0) {
+                this.visible(false);
+                return;
+            }
+
             if (
                 shippingMethod.carrier_code === this.lastCarrierCode
                 && this.visible()
@@ -107,12 +114,6 @@ define([
             if (this.lastDataHash !== checkoutData.getHash()) {
                 // reset selections if the shipping option settings have changed
                 selections.reset();
-            }
-
-            carrierData = checkoutData.getByCarrier(shippingMethod.carrier_code);
-            if (!carrierData || carrierData.service_options.length === 0) {
-                this.visible(false);
-                return;
             }
 
             this.image(carrierData.metadata.image_url);
