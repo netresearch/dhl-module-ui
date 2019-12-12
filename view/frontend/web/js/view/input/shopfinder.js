@@ -126,7 +126,7 @@ define([
                 this.value(true);
                 selections.addSelection(this.shippingOption.code, 'locationType', location.shop_type);
                 selections.addSelection(this.shippingOption.code, 'locationNumber', location.shop_number);
-                selections.addSelection(this.shippingOption.code, 'company', location.shop_name);
+                selections.addSelection(this.shippingOption.code, 'company', location.address.company);
                 selections.addSelection(this.shippingOption.code, 'street', location.address.street);
                 selections.addSelection(this.shippingOption.code, 'postalCode', location.address.postal_code);
                 selections.addSelection(this.shippingOption.code, 'city', location.address.city);
