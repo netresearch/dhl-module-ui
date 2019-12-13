@@ -6,9 +6,10 @@ define([
     'Dhl_Ui/js/model/map',
     'Dhl_Ui/js/model/current-carrier',
     'Dhl_Ui/js/model/shipping-option/selections',
+    'Dhl_Ui/js/model/selected-location',
     'Magento_Ui/js/modal/modal',
     'Magento_Checkout/js/model/quote'
-], function ($, Component, getLocations, countryOptions,  map, currentCarrier, selections, modal, quote) {
+], function ($, Component, getLocations, countryOptions,  map, currentCarrier, selections, selectedLocation, modal, quote) {
     'use strict';
 
     return Component.extend({
@@ -45,40 +46,17 @@ define([
         },
 
         initialize: function () {
-            var address;
-
             this._super();
 
-            address = quote.shippingAddress();
-            this.searchCity(address.city);
-            this.searchCountry(address.countryId);
-            this.searchStreet(address.street.join(' '));
-            this.searchZip(address.postcode);
-            this.selectedLocation(this.initSelectedLocation());
+            this.updateSearchValues(quote.shippingAddress());
+            quote.shippingAddress.subscribe(function (address) {
+                this.updateSearchValues(address);
+            }.bind(this));
+
+            this.selectedLocation(selectedLocation.get(this.shippingOption.code));
             this.searchCountryOptions(countryOptions.get(currentCarrier.get(), this.shippingOptionCode));
 
             return this;
-        },
-
-        /**
-         * Try to create a basic initial location object from selection data
-         * or set to null.
-         *
-         * @return {DhlLocation|null}
-         */
-        initSelectedLocation: function () {
-            if (selections.getShippingOptionValue(this.shippingOption.code, this.shippingOptionInput.code)) {
-                return {
-                    'shop_name': selections.getShippingOptionValue(this.shippingOption.code, 'company'),
-                    'address': {
-                        'street': selections.getShippingOptionValue(this.shippingOption.code, 'street'),
-                        'postal_code': selections.getShippingOptionValue(this.shippingOption.code, 'postalCode'),
-                        'city': selections.getShippingOptionValue(this.shippingOption.code, 'city')
-                    }
-                };
-            }
-
-            return null;
         },
 
         /**
@@ -91,6 +69,13 @@ define([
                 {responsive: true, buttons: []},
                 $('#' + this.modalId)
             );
+        },
+
+        updateSearchValues: function (address) {
+            this.searchCity(address.city);
+            this.searchCountry(address.countryId);
+            this.searchStreet(address.street.join(' '));
+            this.searchZip(address.postcode);
         },
 
         /**
@@ -112,26 +97,12 @@ define([
          * @param {DhlLocation|null} location
          */
         updateSelections: function (location) {
-            if (location === null || !location.shop_id) {
+            if (location === null) {
                 this.value(false);
-                selections.removeSelection(this.shippingOption.code, 'locationType');
-                selections.removeSelection(this.shippingOption.code, 'locationNumber');
-                selections.removeSelection(this.shippingOption.code, 'company');
-                selections.removeSelection(this.shippingOption.code, 'street');
-                selections.removeSelection(this.shippingOption.code, 'postalCode');
-                selections.removeSelection(this.shippingOption.code, 'city');
-                selections.removeSelection(this.shippingOption.code, 'countryCode');
-                selections.removeSelection(this.shippingOption.code, 'locationId');
+                selectedLocation.reset(this.shippingOption.code);
             } else {
                 this.value(true);
-                selections.addSelection(this.shippingOption.code, 'locationType', location.shop_type);
-                selections.addSelection(this.shippingOption.code, 'locationNumber', location.shop_number);
-                selections.addSelection(this.shippingOption.code, 'company', location.address.company);
-                selections.addSelection(this.shippingOption.code, 'street', location.address.street);
-                selections.addSelection(this.shippingOption.code, 'postalCode', location.address.postal_code);
-                selections.addSelection(this.shippingOption.code, 'city', location.address.city);
-                selections.addSelection(this.shippingOption.code, 'countryCode', location.address.country_code);
-                selections.addSelection(this.shippingOption.code, 'locationId', location.shop_id);
+                selectedLocation.set(this.shippingOption.code, location);
             }
         },
 
@@ -182,6 +153,6 @@ define([
             .fail(function (response) {
                 this.errorMessage(response.responseJSON.message);
             }.bind(this));
-        },
+        }
     });
 });

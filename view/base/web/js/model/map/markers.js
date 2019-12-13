@@ -30,11 +30,10 @@ define([
 
             try {
                 ko.applyBindings(component, element);
-                popup.update();
             } catch (e) {
                 // if the binding is already applied everything is fine.
-                popup.update();
             }
+            popup.update();
         });
     };
 

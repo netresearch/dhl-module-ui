@@ -13,7 +13,7 @@ define([
      * @typedef {{
      *     shop_type: string,
      *     shop_number: string,
-     *     shop_name: string,
+     *     display_name: string,
      *     shop_id: string,
      *     opening_hours: {
      *         day_of_week: string,
@@ -23,6 +23,7 @@ define([
      *     icon: string,
      *     services: string[],
      *     address: {
+     *         company: string,
      *         postal_code: string,
      *         city: string,
      *         street: string

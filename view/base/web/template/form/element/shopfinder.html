@@ -16,7 +16,7 @@
         <div data-bind="if: selectedLocation().display_name">
             <strong data-bind="text: selectedLocation().display_name"></strong>
         </div>
-        <div data-bind="text: selectedLocation().shop_name"></div>
+        <div data-bind="text: selectedLocation().address.company"></div>
         <div data-bind="text: selectedLocation().address.street"></div>
         <div>
             <span data-bind="text: selectedLocation().address.postal_code"></span>
