@@ -37,12 +37,16 @@ define([
     var buildDisplayData = function (carrierData, currentSelections) {
         var data = [];
 
-        _.each(Object.keys(currentSelections), function (optionCode) {
+        _.each(currentSelections, function (inputValues, optionCode) {
             var optionData = _.findWhere(carrierData.service_options, {code: optionCode}),
                 valueData = currentSelections[optionCode],
                 valueParts = [];
 
             _.each(valueData, function (selectionValue, inputCode) {
+                var inputData = _.findWhere(optionData.inputs, {code: inputCode});
+                if (!inputData) {
+                    return;
+                }
                 valueParts.push(deriveHumanReadableSelectionValue(
                     selectionValue,
                     inputCode,

@@ -20,9 +20,18 @@ $services = $viewModel->getSelectedServices();
                         <td><?= $block->escapeHtml($service['value']) ?></td>
                     </tr>
                 <?php endforeach; ?>
+                <?php if ($viewModel->getPickupLocationAddress()) : ?>
+                <tr>
+                    <th><?= $block->escapeHtml(__('Pickup location')) ?></th>
+                    <td>
+                        <?php foreach ($viewModel->getPickupLocationAddress() as $addressLine) : ?>
+                            <div><?= $block->escapeHtml($addressLine) ?></div>
+                        <?php endforeach; ?>
+                    </td>
+                </tr>
+                <?php endif; ?>
                 </tbody>
             </table>
         </div>
     </section>
 <?php endif; ?>
-

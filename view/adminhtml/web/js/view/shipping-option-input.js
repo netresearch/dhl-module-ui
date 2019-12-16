@@ -32,7 +32,7 @@ define([
             placeholder: '${ $.shippingOptionInput.placeholder }',
             options: [],
             itemId: false,
-            additionalClasses: '${ $.shippingOptionInput.code }',
+            additionalClasses: '${ $.shippingOptionInput.code } ${ $.inputType }',
             section: '',
             disabled: '${ $.shippingOptionInput.disabled }'
         },

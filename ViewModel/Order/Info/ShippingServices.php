@@ -10,6 +10,7 @@ use Dhl\ShippingCore\Api\Data\ShippingSettings\ShippingOption\InputInterface;
 use Dhl\ShippingCore\Api\Data\ShippingSettings\ShippingOption\OptionInterface;
 use Dhl\ShippingCore\Api\Data\ShippingSettings\ShippingOption\Selection\AssignedSelectionInterface;
 use Dhl\ShippingCore\Api\Data\ShippingSettings\ShippingOption\Selection\SelectionInterface;
+use Dhl\ShippingCore\Api\Data\ShippingSettings\ShippingOptionInterface;
 use Dhl\ShippingCore\Model\ShippingSettings\OrderDataProvider;
 use Dhl\ShippingCore\Model\ShippingSettings\ShippingOption\Selection\OrderSelectionRepository;
 use Magento\Framework\Api\SearchCriteriaBuilder;
@@ -26,6 +27,13 @@ use Magento\Sales\Model\Order;
  */
 class ShippingServices implements ArgumentInterface
 {
+    const SHOPFINDER_INPUT_TYPE = 'shopfinder';
+    const SHOPFINDER_INPUT_COMPANY = 'company';
+    const SHOPFINDER_INPUT_STREET = 'street';
+    const SHOPFINDER_INPUT_POSTALCODE = 'postalCode';
+    const SHOPFINDER_INPUT_CITY = 'city';
+    const SHOPFINDER_INPUT_COUNTRYCODE = 'countryCode';
+
     /**
      * @var Registry
      */
@@ -45,6 +53,16 @@ class ShippingServices implements ArgumentInterface
      * @var OrderSelectionRepository
      */
     private $selectionRepository;
+
+    /**
+     * @var Order
+     */
+    private $order = null;
+
+    /**
+     * @var string[]
+     */
+    private $pickupLocationAddress = null;
 
     /**
      * ShippingServices constructor.
@@ -71,33 +89,23 @@ class ShippingServices implements ArgumentInterface
      */
     public function getSelectedServices(): array
     {
-        /** @var Order $order */
-        $order = $this->registry->registry('current_order');
-        $shippingAddress = $order->getShippingAddress();
+        $shippingAddress = $this->getOrder()->getShippingAddress();
 
         if (!$shippingAddress || !$shippingAddress->getId()) {
             return [];
         }
         $selections = $this->loadSelections($shippingAddress);
-
-        if (empty($selections)) {
-            // no selections present, either because there were none or the carrier is not compatible
-            return [];
-        }
-
-        /** need to create a tmp shipment for packagingDataProvider */
-        $carrierData = $this->orderDataProvider->getShippingOptions($order);
-        if ($carrierData === null) {
-            return [];
-        }
-
-        $serviceOptions = $carrierData->getServiceOptions() ?? [];
+        $serviceOptions = $this->getServiceOptions();
         $result = [];
         foreach ($selections as $selection) {
             $shippingOptionCode = $selection->getShippingOptionCode();
             $inputCode = $selection->getInputCode();
             if (isset($serviceOptions[$shippingOptionCode])) {
                 $serviceOption = $serviceOptions[$shippingOptionCode];
+                $inputs = $serviceOption->getInputs();
+                if (!isset($inputs[$inputCode]) || $inputs[$inputCode]->getInputType() === 'hidden') {
+                    continue;
+                }
                 $displayValue = $this->formatDisplayValue(
                     $serviceOption->getInputs()[$inputCode],
                     $result[$shippingOptionCode]['value'] ?? false
@@ -111,6 +119,60 @@ class ShippingServices implements ArgumentInterface
         }
 
         return $result;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getPickupLocationAddress(): array
+    {
+        if ($this->pickupLocationAddress !== null) {
+            return $this->pickupLocationAddress;
+        }
+
+        $this->pickupLocationAddress = [];
+
+        $shippingAddress = $this->getOrder()->getShippingAddress();
+        if (!$shippingAddress || !$shippingAddress->getId()) {
+            return $this->pickupLocationAddress;
+        }
+        $serviceOptions = $this->getServiceOptions();
+        $selections = $this->loadSelections($shippingAddress);
+
+        $dropoffInputs = false;
+        foreach ($selections as $selection) {
+            $serviceOption = $serviceOptions[$selection->getShippingOptionCode()];
+            if ($serviceOption) {
+                foreach ($serviceOption->getInputs() as $input) {
+                    if ($input->getInputType() === self::SHOPFINDER_INPUT_TYPE) {
+                        $dropoffInputs = $serviceOption->getInputs();
+                        break 2;
+                    }
+                }
+            }
+        }
+
+        if (!$dropoffInputs) {
+            return $this->pickupLocationAddress;
+        }
+
+        if (isset($dropoffInputs[self::SHOPFINDER_INPUT_COMPANY])) {
+            $this->pickupLocationAddress[] = $dropoffInputs[self::SHOPFINDER_INPUT_COMPANY]->getDefaultValue();
+        }
+        if (isset($dropoffInputs[self::SHOPFINDER_INPUT_STREET])) {
+            $this->pickupLocationAddress[] = $dropoffInputs[self::SHOPFINDER_INPUT_STREET]->getDefaultValue();
+        }
+        if (isset($dropoffInputs[self::SHOPFINDER_INPUT_POSTALCODE], $dropoffInputs[self::SHOPFINDER_INPUT_CITY])) {
+            $this->pickupLocationAddress[] = implode(' ', [
+                $dropoffInputs[self::SHOPFINDER_INPUT_POSTALCODE]->getDefaultValue(),
+                $dropoffInputs[self::SHOPFINDER_INPUT_CITY]->getDefaultValue()
+            ]);
+        }
+        if (isset($dropoffInputs[self::SHOPFINDER_INPUT_COUNTRYCODE])) {
+            $this->pickupLocationAddress[] = $dropoffInputs[self::SHOPFINDER_INPUT_COUNTRYCODE]->getDefaultValue();
+        }
+
+        return $this->getPickupLocationAddress();
     }
 
     /**
@@ -131,17 +193,17 @@ class ShippingServices implements ArgumentInterface
     /**
      * @param InputInterface $input
      * @param string|false $existingValue
-     * @return \Magento\Framework\Phrase|string
+     * @return string
      */
     private function formatDisplayValue(
         InputInterface $input,
         $existingValue
-    ) {
+    ): string {
         $displayValue = $input->getInputType() === 'radio' ? $this->getRadioOptionLabel(
             $input->getOptions()
         ) : $input->getDefaultValue();
 
-        $displayValue = $displayValue === '1' ? __('Yes') : $displayValue;
+        $displayValue = $displayValue === '1' ? __('Yes')->render() : $displayValue;
 
         /**
          * If a previous selection already added a value here, append the new value.
@@ -171,5 +233,34 @@ class ShippingServices implements ArgumentInterface
         );
 
         return $label;
+    }
+
+    /**
+     * @return ShippingOptionInterface[]
+     */
+    private function getServiceOptions(): array
+    {
+        $shippingAddress = $this->getOrder()->getShippingAddress();
+        if (!$shippingAddress || !$shippingAddress->getId()) {
+            return [];
+        }
+        /** need to create a tmp shipment for packagingDataProvider */
+        $carrierData = $this->orderDataProvider->getShippingOptions($this->getOrder());
+        if ($carrierData === null) {
+            return [];
+        }
+
+        return $carrierData->getServiceOptions() ?? [];
+    }
+
+    /**
+     * @return Order
+     */
+    private function getOrder(): Order
+    {
+        if (!$this->order) {
+            $this->order = $this->registry->registry('current_order');
+        }
+        return $this->order;
     }
 }
