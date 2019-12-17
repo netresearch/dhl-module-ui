@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 namespace Dhl\Ui\Observer;
 
-use Dhl\ShippingCore\Model\Support\PackagingPopup;
+use Dhl\ShippingCore\Model\ShippingSettings\PackagingPopup;
 use \Magento\Framework\Event\Observer;
 use \Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Registry;

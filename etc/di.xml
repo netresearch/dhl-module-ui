@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-
+    <!-- # argument di overrides -->
     <type name="Dhl\Ui\Observer\ChangePackagingTemplateObserver">
         <arguments>
-            <argument name="packagingPopup" xsi:type="object">Dhl\ShippingCore\Model\Support\PackagingPopup\Proxy</argument>
+            <argument name="packagingPopup" xsi:type="object">Dhl\ShippingCore\Model\ShippingSettings\PackagingPopup\Proxy</argument>
             <argument name="coreRegistry" xsi:type="object">Magento\Framework\Registry\Proxy</argument>
         </arguments>
     </type>
     <type name="Dhl\Ui\ViewModel\Order\Info\ShippingServices">
         <arguments>
-            <argument name="packagingDataProvider" xsi:type="object">Dhl\ShippingCore\Model\Packaging\PackagingDataProvider\Proxy</argument>
+            <argument name="packagingDataProvider" xsi:type="object">Dhl\ShippingCore\Model\ShippingSettings\PackagingDataProvider\Proxy</argument>
             <argument name="shipmentFactory" xsi:type="object">Magento\Sales\Model\Order\ShipmentDocumentFactory\Proxy</argument>
         </arguments>
     </type>

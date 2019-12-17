@@ -6,8 +6,8 @@ declare(strict_types=1);
 
 namespace Dhl\Ui\ViewModel\Order\Packaging;
 
-use Dhl\ShippingCore\Model\Packaging\PackagingDataProvider;
-use Dhl\ShippingCore\Model\ShippingDataHydrator;
+use Dhl\ShippingCore\Model\ShippingSettings\PackagingDataProvider;
+use Dhl\ShippingCore\Model\ShippingSettings\ShippingDataHydrator;
 use Magento\Backend\Model\UrlInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
@@ -91,7 +91,7 @@ class Popup implements ArgumentInterface
      *
      * @return mixed[]
      * @throws \RuntimeException If something is wrong with the shipping options configuration
-     * @see \Dhl\ShippingCore\Model\Packaging\PackagingDataProvider
+     * @see \Dhl\ShippingCore\Model\ShippingSettings\PackagingDataProvider
      */
     public function getShippingSettings(): array
     {

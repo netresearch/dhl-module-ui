@@ -6,12 +6,12 @@ declare(strict_types=1);
 
 namespace Dhl\Ui\ViewModel\Order\Info;
 
-use Dhl\ShippingCore\Api\Data\ShippingOption\InputInterface;
-use Dhl\ShippingCore\Api\Data\ShippingOption\OptionInterface;
-use Dhl\ShippingCore\Api\Data\ShippingOption\Selection\AssignedSelectionInterface;
-use Dhl\ShippingCore\Api\Data\ShippingOption\Selection\SelectionInterface;
-use Dhl\ShippingCore\Model\ShippingOption\OrderDataProvider;
-use Dhl\ShippingCore\Model\ShippingOption\Selection\OrderSelectionRepository;
+use Dhl\ShippingCore\Api\Data\ShippingSettings\ShippingOption\InputInterface;
+use Dhl\ShippingCore\Api\Data\ShippingSettings\ShippingOption\OptionInterface;
+use Dhl\ShippingCore\Api\Data\ShippingSettings\ShippingOption\Selection\AssignedSelectionInterface;
+use Dhl\ShippingCore\Api\Data\ShippingSettings\ShippingOption\Selection\SelectionInterface;
+use Dhl\ShippingCore\Model\ShippingSettings\OrderDataProvider;
+use Dhl\ShippingCore\Model\ShippingSettings\ShippingOption\Selection\OrderSelectionRepository;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
