@@ -52,9 +52,11 @@ define([
      * @return {Deferred} jQuery ajax result containing {DhlLocation[]}
      */
     return function (carrierCode, address) {
-        var serviceUrl = urlBuilder.createUrl('/dhl/location-data/get', {}),
+        var url = '/dhl/delivery-locations/:carrierCode/search',
+            urlParams = {carrierCode: carrierCode},
+            serviceUrl = urlBuilder.createUrl(url, urlParams),
             /** DHLGW-687: we can't name the address 'address' in the request to keep compatibility with OSC */
-            payload = {carrierCode: carrierCode, searchAddress: address};
+            payload = {searchAddress: address};
 
         shippingService.isLoading(true);
         return storage.post(
