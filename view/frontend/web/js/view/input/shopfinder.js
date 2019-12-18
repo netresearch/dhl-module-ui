@@ -129,7 +129,7 @@ define([
          */
         openModal: function () {
             this.modal.openModal();
-            map.init(this.modalMapId, 51.163375, 10.447683, 6);
+            map.init(this.modalMapId, 51.163375, 10.447683, 6, this.errorMessage);
             this.updateLocations();
         },
 

@@ -5,9 +5,10 @@ define([
     'underscore',
     'mage/translate',
     'leaflet',
+    'Dhl_Ui/js/model/map-config',
     'Dhl_Ui/js/model/map/markers',
     'Dhl_Ui/js/model/map/controls'
-], function (_, $t, leaflet, markers, controls) {
+], function (_, $t, leaflet, mapConfig, markers, controls) {
     'use strict';
 
     /**
@@ -32,20 +33,17 @@ define([
     /**
      * @type {string}
      */
-    var accessToken = [
-        'pk.eyJ1IjoibXVoYW1tYWQtcWFzaW0iLCJhIjoiY2swdzZibj',
-        'FuMDEwejNjbmJtNTBxNGxuOSJ9.2x0s6jiqfuKlyNNqCDXkGw'
-    ].join('');
+    var accessToken = mapConfig.getToken();
 
     /**
      * @type {string}
      */
-    var mapUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=' + accessToken;
+    var mapUrl = mapConfig.getUrl();
 
     /**
      * @type {string}
      */
-    var attribution = $t('Map data') + ' &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>';
+    var attribution = $t('Map data') + ' &copy; ' + mapConfig.getAttribution();
 
     return {
         /**
@@ -55,20 +53,29 @@ define([
          * @param {number} lat
          * @param {number} lng
          * @param {number} zoom
+         * @param {function} errorHandler
          */
-        init: function (elementId, lat, lng, zoom) {
+        init: function (elementId, lat, lng, zoom, errorHandler) {
+            var tile;
+
             if (map) {
                 map.remove();
             }
 
             map = leaflet.map(elementId).setView([lat, lng], zoom);
 
-            leaflet.tileLayer(mapUrl, {
+            tile = leaflet.tileLayer(mapUrl, {
                 attribution: attribution,
                 maxZoom: 18,
                 id: 'mapbox.streets',
                 accessToken: accessToken
-            }).addTo(map);
+            });
+            tile.on('tileerror', function () {
+                var message = $t('An error occurred while loading map. Please try again later.');
+
+                errorHandler(message);
+            });
+            tile.addTo(map);
         },
 
         /**
