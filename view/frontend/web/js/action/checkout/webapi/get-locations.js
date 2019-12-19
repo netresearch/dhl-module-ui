@@ -30,7 +30,8 @@ define([
      *         country_code: string,
      *     },
      *     latitude: float,
-     *     longitude: float
+     *     longitude: float,
+     *     display_name: string
      * }} DhlLocation
      */
 

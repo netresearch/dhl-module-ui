@@ -102,7 +102,15 @@ define([
                 selectedLocation.reset(this.shippingOption.code);
             } else {
                 this.value(true);
-                selectedLocation.set(this.shippingOption.code, location);
+                selections.addSelection(this.shippingOption.code, 'locationType', location.shop_type);
+                selections.addSelection(this.shippingOption.code, 'locationNumber', location.shop_number);
+                selections.addSelection(this.shippingOption.code, 'company', location.address.company);
+                selections.addSelection(this.shippingOption.code, 'street', location.address.street);
+                selections.addSelection(this.shippingOption.code, 'postalCode', location.address.postal_code);
+                selections.addSelection(this.shippingOption.code, 'city', location.address.city);
+                selections.addSelection(this.shippingOption.code, 'countryCode', location.address.country_code);
+                selections.addSelection(this.shippingOption.code, 'locationId', location.shop_id);
+                selections.addSelection(this.shippingOption.code, 'displayName', location.display_name);
             }
         },
 
