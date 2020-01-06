@@ -17,8 +17,7 @@ define([
      *     shop_id: string,
      *     opening_hours: {
      *         day_of_week: string,
-     *         opens: string,
-     *         closes: string,
+     *         time_frames: DhlTimeFrame[],
      *     }[],
      *     icon: string,
      *     services: string[],
@@ -42,6 +41,13 @@ define([
      *     city: string,
      *     street: string[],
      * }} DhlAddress
+     */
+
+    /**
+     * @typedef {{
+     *     opens: string,
+     *     closes: string
+     * }} DhlTimeFrame
      */
 
     /**

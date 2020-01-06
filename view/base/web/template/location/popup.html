@@ -29,13 +29,16 @@
 
     <div data-bind="if: location.opening_hours.length > 0">
         <h5 data-bind="i18n: 'Opening hours'"></h5>
-        <p data-bind="foreach: location.opening_hours" class="opening-hours">
-            <span class="day">
-                <span data-bind="text: day_of_week"></span>:
-            </span>
-            <time data-bind="text: opens"></time> – <time data-bind="text: closes"></time>
-            <br/>
-        </p>
+        <table data-bind="foreach: location.opening_hours" class="opening-hours">
+            <tr>
+                <td data-bind="text: day_of_week"></td>
+                <td data-bind="foreach: time_frames">
+                    <div>
+                        <time data-bind="text: opens"></time> – <time data-bind="text: closes"></time>
+                    </div>
+                </td>
+            </tr>
+        </table>
     </div>
 
     <div data-bind="if: location.services.length > 0">
