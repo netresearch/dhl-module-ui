@@ -11,7 +11,6 @@ use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface;
 /**
  * SaveButton
  *
- * @package Dhl\Ui\Block\Adminhtml
  * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
  * @link https://www.netresearch.de/
  */

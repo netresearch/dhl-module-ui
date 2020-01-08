@@ -21,7 +21,6 @@ use Magento\Sales\Model\Order;
 /**
  * ShippingServices
  *
- * @package Dhl\Ui\ViewModel
  * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
  * @link    https://www.netresearch.de/
  */

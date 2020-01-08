@@ -16,7 +16,6 @@ use Magento\Shipping\Block\Adminhtml\Order\Packaging;
 /**
  * Class ChangePackagingTemplateObserver
  *
- * @package Dhl\ShippingCore\Observer
  */
 class ChangePackagingTemplateObserver implements ObserverInterface
 {

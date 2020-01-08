@@ -12,7 +12,6 @@ use Magento\Framework\Data\OptionSourceInterface;
 /**
  * Label Status Filter Options Source
  *
- * @package Dhl\Ui\Component
  * @author Sebastian Ertner <sebastian.ertner@netresearch.de>
  * @link https://www.netresearch.de/
  */

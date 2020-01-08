@@ -18,7 +18,6 @@ use Magento\Sales\Api\Data\OrderInterface;
 /**
  * AddRecipientStreetInfoBlock Observer
  *
- * @package Dhl\Ui\Observer
  * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
  * @link https://www.netresearch.de/
  */

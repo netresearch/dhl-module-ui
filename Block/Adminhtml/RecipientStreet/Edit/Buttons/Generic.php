@@ -11,7 +11,6 @@ use Magento\Backend\Block\Widget\Context;
 /**
  * Generic
  *
- * @package Dhl\Ui\Block\Adminhtml
  * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
  * @link https://www.netresearch.de/
  */

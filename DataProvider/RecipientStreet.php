@@ -14,7 +14,6 @@ use Magento\Ui\DataProvider\AbstractDataProvider;
 /**
  * Class RecipientStreet
  *
- * @package Dhl\Ui\DataProvider
  * @author Max Melzer <max.melzer@netresearch.de>
  */
 class RecipientStreet extends AbstractDataProvider

@@ -15,7 +15,6 @@ use Magento\Framework\View\Element\Block\ArgumentInterface;
 /**
  * RecipientStreet
  *
- * @package Dhl\Ui\ViewModel
  * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
  * @link    https://www.netresearch.de/
  */
