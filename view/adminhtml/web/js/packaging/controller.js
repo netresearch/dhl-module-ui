@@ -14,7 +14,6 @@ define([
     'Dhl_Ui/js/action/shipping-option/validation/enforce-compatibility',
     'Dhl_Ui/js/packaging/model/item-quantity',
     'Dhl_Ui/js/packaging/model/item-combination-rules',
-    'Dhl_Ui/js/packaging/model/value-maps',
 ], function (
     _,
     Component,
@@ -30,8 +29,7 @@ define([
     validateCompatibility,
     enforceCompatibility,
     itemQuantity,
-    itemCombinationRules,
-    valueMaps
+    itemCombinationRules
 ) {
     'use strict';
 
@@ -124,9 +122,10 @@ define([
         },
 
         reset: function () {
-            self.destroyChildren();
+            var fieldsets;
 
-            var fieldsets = [
+            self.destroyChildren();
+            fieldsets = [
                 self.generateItemSelectionFieldset(),
                 self.generateFieldset(
                     'package',
@@ -148,14 +147,14 @@ define([
              * When selections change:
              * 1. Keep item qty options updated
              * 2. Apply item combination rules
+             *
+             * Value maps are instead applied directly in
+             * js/viewshipping-option-input.js::onUpdate to make sure they
+             * are only triggered if the modified input has a value map.
              */
             selections.get().subscribe(
                 /** @param {DhlCurrentSelection} selectionObject **/ function (selectionObject) {
                     if (selectionObject) {
-                        valueMaps.apply(
-                            self.shippingSettings.carriers[0].package_options,
-                            'package'
-                        );
                         itemQuantity(selectionObject);
 
                         itemCombinationRules.apply(

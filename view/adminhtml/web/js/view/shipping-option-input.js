@@ -2,7 +2,8 @@ define([
     'Magento_Ui/js/form/element/abstract',
     'Dhl_Ui/js/model/shipping-option/selections',
     'Dhl_Ui/js/action/shipping-option/validation/enforce-compatibility',
-], function (Component, selections, enforceCompatibility) {
+    'Dhl_Ui/js/packaging/model/value-maps',
+], function (Component, selections, enforceCompatibility, valueMaps) {
     'use strict';
 
     return Component.extend({
@@ -85,6 +86,14 @@ define([
                     this.itemId
                 );
             }
+
+            if (this.shippingOptionInput.value_maps.length > 0) {
+                valueMaps.apply(
+                    [this.shippingOption],
+                    this.section
+                );
+            }
+
             enforceCompatibility();
         },
 
