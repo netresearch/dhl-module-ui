@@ -15,6 +15,7 @@ define([
      * @typedef {{
      *     type: string,
      *     iconUrl: string,
+     *     layerGroup: leaflet.LayerGroup,
      *     markers: leaflet.Marker[],
      *     control: leaflet.Control|null
      * }} MarkerGroup
@@ -100,7 +101,7 @@ define([
             _.each(locations, /** @param {DhlLocation} location */ function (location) {
                 var marker = markers.createPopupMarker(location);
 
-                marker.addTo(map);
+                markerGroups[location.shop_type].layerGroup.addLayer(marker);
                 markerGroups[location.shop_type].markers.push(marker);
             });
 
@@ -123,11 +124,9 @@ define([
             var groups = {};
 
             // remove old markers and controls from map
-            _.each(oldMarkerGroups, function (group) {
+            _.each(oldMarkerGroups, /** @param {MarkerGroup} group */ function (group) {
                 map.removeControl(group.control);
-                _.each(group.markers, function (marker) {
-                    map.removeLayer(marker);
-                });
+                map.removeLayer(group.layerGroup);
             });
 
             // create new marker groups
@@ -137,8 +136,10 @@ define([
                         type: location.shop_type,
                         iconUrl: location.icon,
                         control: null,
+                        layerGroup: leaflet.layerGroup(),
                         markers: []
                     };
+                    map.addLayer(groups[location.shop_type].layerGroup);
                 }
             });
 

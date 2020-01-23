@@ -15,9 +15,13 @@ define([
      * @param {MarkerGroup} group
      */
     var handleControlClick = function (element, group) {
-        _.each(group.markers, function (marker) {
-            marker.setOpacity(Number(element.checked));
-        });
+        if (element.checked) {
+            group.markers.forEach(function (marker) {
+                group.layerGroup.addLayer(marker);
+            });
+        } else {
+            group.layerGroup.clearLayers();
+        }
     };
 
     return {
