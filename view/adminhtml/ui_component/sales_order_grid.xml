@@ -19,7 +19,7 @@ See LICENSE.md for license details.
             <action name="dhlgw_orderactions">
                 <settings>
                     <type>autocreate</type>
-                    <label translate="true">DHL Shipping Solutions</label>
+                    <label translate="true">DHL Shipping</label>
                     <actions>
                         <action name="0">
                             <type>dhlgw_autocreate</type>
