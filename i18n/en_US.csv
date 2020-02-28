@@ -17,28 +17,32 @@ Edit,Edit
 Failed,Failed
 "For editing package items click to enlarge","For editing package items click to enlarge"
 "Item quantity must be between {0} and {1}.","Item quantity must be between {0} and {1}."
+"Map data","Map data"
 "New Package","New Package"
 No,No
 "Not Available","Not Available"
+"Opening hours","Opening hours"
 "Package %1","Package %1"
 "Package Items","Package Items"
 "Package Options","Package Options"
 Partial,Partial
 Pending,Pending
 "Pickup location","Pickup location"
+Postcode,Postcode
 Processed,Processed
 "Recipient Street","Recipient Street"
-Save,Save
 Remove,Remove
-Postcode,Postcode
+Save,Save
 Search,Search
+Select,Select
 "Service Options","Service Options"
+Services,Services
 "Ship To:","Ship To:"
-"Shipment could not be created.","Shipment could not be created."
 "Shipment Setup","Shipment Setup"
+"Shipment could not be created.","Shipment could not be created."
 "Shipping Method:","Shipping Method:"
-"Shipping Settings","Shipping Settings"
 "Some items are not assigned to a package. Please assign every item to a package.","Some items are not assigned to a package. Please assign every item to a package."
+Street,Street
 "Street Name","Street Name"
 "Street Number","Street Number"
 Supplement,Supplement
@@ -49,11 +53,3 @@ Yes,Yes
 "Your shipping option selections could not be saved.","Your shipping option selections could not be saved."
 and,and
 edit,edit
-"Map data","Map data"
-"Display locations","Display locations"
-"Services","Services"
-"Opening hours","Opening hours"
-"Parcel station","Parcel station"
-"Parcel shop","Parcel shop"
-"Post office","Post office"
-"Select","Select"

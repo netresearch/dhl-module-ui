@@ -17,28 +17,32 @@ Edit,Bearbeiten
 Failed,Fehlgeschlagen
 "For editing package items click to enlarge","Anklicken um Artikel im Paket zu bearbeiten"
 "Item quantity must be between {0} and {1}.","Artikelmenge muss zwischen {0} und {1} liegen."
+"Map data",Kartendaten
 "New Package","Neues Paket"
 No,Nein
 "Not Available","Nicht verfügbar"
+"Opening hours",Öffnungszeiten
 "Package %1","Paket %1"
 "Package Items","Artikel im Paket"
 "Package Options",Paket-Parameter
 Partial,"Teilweise verarbeitet"
 Pending,Austehend
-"Pickup location","Abholort"
+"Pickup location",Abholort
+Postcode,Postleitzahl
 Processed,Verarbeitet
 "Recipient Street",Empfängeradresse
-Save,Speichern
-"Service Options",Serviceoptionen
-"Ship To:","Versenden an:"
-"Shipment could not be created.","Sendung konnte nicht erstellt werden."
-"Shipment Setup",Versandetikett-Konfiguration
-"Shipping Method:","Versandmethode:"
-"Shipping Settings",Versandeinstellungen
 Remove,Entfernen
-Postcode,Postleitzahl
+Save,Speichern
 Search,Suchen
+Select,Auswählen
+"Service Options",Serviceoptionen
+Services,Dienstleistungen
+"Ship To:","Versenden an:"
+"Shipment Setup",Versandetikett-Konfiguration
+"Shipment could not be created.","Sendung konnte nicht erstellt werden."
+"Shipping Method:",Versandmethode:
 "Some items are not assigned to a package. Please assign every item to a package.","Einige Artikel sind keinem Paket zugeordnet. Bitte teilen Sie alle Artikel einem Paket zu."
+Street,"Straße"
 "Street Name",Straße
 "Street Number",Hausnummer
 Supplement,Ergänzung
@@ -49,11 +53,3 @@ Yes,Ja
 "Your shipping option selections could not be saved.","Ihre Versandoptions-Auswahl konnte nicht gespeichert werden."
 and,und
 edit,bearbeiten
-"Map data","Kartendaten"
-"Display locations","Orte anzeigen"
-"Services","Dienstleistungen"
-"Opening hours","Öffnungszeiten"
-"Parcel station","Paketstation"
-"Parcel shop","Paketshop"
-"Post office","Postfiliale"
-"Select","Auswählen"
