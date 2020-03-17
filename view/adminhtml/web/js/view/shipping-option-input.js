@@ -3,17 +3,26 @@ define([
     'Dhl_Ui/js/model/shipping-option/selections',
     'Dhl_Ui/js/action/shipping-option/validation/enforce-compatibility',
     'Dhl_Ui/js/packaging/model/value-maps',
-], function (Component, selections, enforceCompatibility, valueMaps) {
+    'Dhl_Ui/js/packaging/model/item-combination-rules',
+    'Dhl_Ui/js/model/shipping-settings'
+], function (
+    Component,
+    selections,
+    enforceCompatibility,
+    valueMaps,
+    itemCombinationRules,
+    shippingSettings
+) {
     'use strict';
 
     return Component.extend({
         /**
-         * @property {DhlShippingOption} shippingOption
+         * @type {DhlShippingOption} shippingOption
          */
         shippingOption: {},
 
         /**
-         * @property {DhlInput} shippingOptionInput
+         * @type {DhlInput} shippingOptionInput
          */
         shippingOptionInput: {},
 
@@ -91,6 +100,17 @@ define([
                 valueMaps.apply(
                     [this.shippingOption],
                     this.section
+                );
+            }
+
+            /**
+             * Only item level inputs must trigger an item combination rule
+             * so that it is still possible to manually override the combined value.
+             */
+            if (this.section === "items") {
+                itemCombinationRules.apply(
+                    selections.getCurrentItems()(),
+                    shippingSettings.get()().carriers[0].package_options
                 );
             }
 
