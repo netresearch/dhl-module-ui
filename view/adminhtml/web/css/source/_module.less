@@ -198,6 +198,10 @@
             }
         }
 
+        .admin__control-text {
+            width: 99%;
+        }
+
         &.items {
             >.fieldset-wrapper-title {
                 background: @color-gray-light01;
@@ -241,6 +245,12 @@
                 &:not(.dhl-checkbox) {
                     display: block;
                 }
+
+                input[type=text],
+                select,
+                textarea {
+                    width: 100%;
+                }
             }
         }
 
@@ -277,6 +287,12 @@
         color: @error__color;
         font-size: 1.2rem;
         margin: 0 0 0 5px;
+    }
+
+    .hidden,
+    input[type=hidden] {
+        width: 0;
+        height: 0;
     }
 }
 
@@ -396,8 +412,14 @@
                 &.items,
                 &.package{
                     .shipping-option-content-wrapper {
+                        .flexbox();
+                        .flex-flow(row wrap);
+                        margin:  0 @indent__m*-1;
+                        padding: 0 @indent__m 0 0;
+
                         .field:not(.hidden){
-                            margin: @indent__m 0 0 @indent__m;
+                            padding: @indent__m 0 0 @indent__m;
+                            width: 32%;
                         }
                     }
                 }
@@ -407,12 +429,12 @@
                         display: inline-block;
                         vertical-align: top;
                         padding: 0 @indent__m 0 0;
-                        min-width: 33%;
+                        width: 32.9%;
                     }
 
                     .shipping-option-content-wrapper {
                         .field:not(.hidden) {
-                            margin: @indent__s 0 0 @indent__m;
+                            padding: @indent__s 0 0 0;
 
                             &.dhl-checkbox {
                                 margin: 0;
@@ -420,13 +442,6 @@
                         }
                     }
                 }
-            }
-
-            .shipping-option-content-wrapper {
-                .flexbox();
-                .flex-flow(row wrap);
-                margin:  0 @indent__m*-1;
-
             }
         }
 
@@ -442,3 +457,5 @@
         }
     }
 }
+
+
