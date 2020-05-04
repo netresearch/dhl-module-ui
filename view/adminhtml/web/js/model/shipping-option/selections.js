@@ -254,13 +254,13 @@ define([
                 selections = this.getAll();
             }
             if (newSelection.items && !_.isEqual(newSelection.items, currentItems())) {
-                    /**
-                     * Isolate and update currentItems property separately.
-                     *
-                     * Make sure to pass items by value, not by reference.
-                     * Otherwise, item values will change in the observable without notifying subscribers.
-                     **/
-                    currentItems(JSON.parse(JSON.stringify(newSelection.items)));
+                /**
+                 * Isolate and update currentItems property separately.
+                 *
+                 * Make sure to pass items by value, not by reference.
+                 * Otherwise, item values will change in the observable without notifying subscribers.
+                 **/
+                currentItems(JSON.parse(JSON.stringify(newSelection.items)));
             }
             currentSelection(newSelection);
         },

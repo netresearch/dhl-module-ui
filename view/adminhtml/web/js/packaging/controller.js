@@ -11,8 +11,8 @@ define([
     'Dhl_Ui/js/packaging/action/submit',
     'Dhl_Ui/js/action/shipping-option/validation/validate-selection',
     'Dhl_Ui/js/action/shipping-option/validation/validate-compatibility',
-    'Dhl_Ui/js/action/shipping-option/validation/enforce-compatibility',
     'Dhl_Ui/js/packaging/model/item-quantity',
+    'Dhl_Ui/js/packaging/model/item-combination-rules',
 ], function (
     _,
     Component,
@@ -26,8 +26,8 @@ define([
     submit,
     validateSelection,
     validateCompatibility,
-    enforceCompatibility,
-    itemQuantity
+    itemQuantity,
+    itemCombinationRules
 ) {
     'use strict';
 
@@ -140,7 +140,6 @@ define([
             }
             layout(fieldsets);
 
-
             /**
              * When selections change, keep item qty options updated
              *
@@ -158,16 +157,16 @@ define([
         },
 
         generateItemSelectionFieldset: function () {
-            var baseFieldset = self.generateFieldset(
+            var fieldset = self.generateFieldset(
                 'items',
                 $t('Package Items'),
                 self.shippingSettings.carriers[0].item_options
             );
 
-            baseFieldset.opened = true;
-            baseFieldset.component = 'Dhl_Ui/js/packaging/view/item-controller';
+            fieldset.opened = true;
+            fieldset.component = 'Dhl_Ui/js/packaging/view/item-controller';
 
-            return baseFieldset;
+            return fieldset;
         },
 
         generateFieldset: function (name, label, options) {
@@ -221,6 +220,11 @@ define([
             if (packageState.allItemsPackaged() === false) {
                 packageState.newPackage();
                 self.reset();
+
+                /** Apply item combination rules once to establish initial state */
+                itemCombinationRules.apply(
+                    self.shippingSettings.carriers[0].package_options
+                );
             }
         },
 

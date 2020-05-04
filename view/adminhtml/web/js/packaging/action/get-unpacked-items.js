@@ -8,7 +8,6 @@ define([
      * Reads through the given selections to find items that are not yet packaged
      *
      * @param selections {[{items: Object, packageId: int}]}
-     * @param withUnavailable {boolean|true}
      */
     return function (selections) {
         var availableItems = [];

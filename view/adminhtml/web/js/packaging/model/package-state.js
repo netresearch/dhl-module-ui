@@ -12,6 +12,14 @@ define([
         allItemsPackaged = ko.observable(false);
 
     /**
+     * @param {Object} object
+     * @return {Object}
+     */
+    var deepClone = function (object) {
+        return JSON.parse(JSON.stringify(object));
+    };
+
+    /**
      * Resets the whole package state, dismissing all existing data.
      */
     var reset = function () {
@@ -24,14 +32,14 @@ define([
      * Goes through all selection data and extracts the unpacked items
      *
      * @param readFromDom {boolean|undefined}  - if true the selections will be read from the actual input components
-     * @returns {{{id: int, qty: float}}}
+     * @returns {{{id: int, qty: float, qtyToShip: float}}}
      */
     var getAvailableItems = function (readFromDom) {
         /**
          * We need a deep clone here, to avoid weird behaviour in intermediate
          * states (switching, deleting, creating packages)
          */
-        var allSelections = JSON.parse(JSON.stringify(selections.getAll()));
+        var allSelections = deepClone(selections.getAll());
 
         if (readFromDom) {
             /**
@@ -89,15 +97,30 @@ define([
         };
 
         _.each(availableItems, function (item) {
-            if (Number(item.qty) > 0) {
-                packageSelection['items'][item.id] = {
-                    'details': {
-                        'qty': item.qty,
-                        'qtyToShip': item.qtyToShip
-                    }
-                };
+            var newItemSelection,
+                existingPackageWithItem;
+
+            if (Number(item.qty) === 0) {
+                // items with only 0 qty available are not added to the new package.
+                return;
             }
+
+            existingPackageWithItem = _.find(allSelections, function (shipmentPackage) {
+                return !!shipmentPackage.items[item.id];
+            });
+
+            /**
+             * If we can find it, we use the item from an existing package as a template, only updating the qty.
+             * So, the new package can inherit customized item values from previous packages.
+             **/
+            newItemSelection = existingPackageWithItem
+                ? deepClone(existingPackageWithItem.items[item.id])
+                : {details: {}};
+            newItemSelection.details.qty = item.qty;
+            newItemSelection.details.qtyToShip = item.qtyToShip;
+            packageSelection['items'][item.id] = newItemSelection;
         });
+
         allSelections.push(packageSelection);
         selections.setAll(allSelections);
         allItemsPackaged(true);
@@ -119,13 +142,13 @@ define([
          */
         var packageIds = packages().map(function (item) {return item.id;}),
             allSelections = selections.getAll().filter(function (selection) {
-            return _.contains(packageIds, selection.packageId);
-        });
+                return _.contains(packageIds, selection.packageId);
+            });
 
         selections.setAll(allSelections);
         updateItemAvailability(false);
         if (currentPackage() === selectedPackage.id) {
-            return packages().find(function () {return true}).id;
+            return packages().find(function () {return true;}).id;
         }
 
         return currentPackage();

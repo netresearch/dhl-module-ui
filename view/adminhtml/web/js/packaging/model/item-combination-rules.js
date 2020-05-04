@@ -2,33 +2,33 @@ define([
     'underscore',
     'Dhl_Ui/js/model/shipping-option/selections',
     'uiRegistry'
-], function (_, selectionsModel, registry) {
+], function (_, selections, registry) {
     'use strict';
 
     /**
      * Extract an array of string and/or number values
      * from inputs that match the given rule.
      *
-     * @param {DhlItemSelections} itemSelections
      * @param {DhlItemCombinationRule} combinationRule
      * @param {string} section  The package id of the input
      * @return {Array<string|number>}
      */
-    var extractSourceValues = function (itemSelections, combinationRule, section) {
-        var sourceValues = [];
+    var extractSourceValues = function (combinationRule, section) {
+        var sourceValues = [],
+            sourceItemOptionCode = combinationRule.source_item_input_code.split('.')[0],
+            sourceItemInputCode = combinationRule.source_item_input_code.split('.')[1],
+            itemSelections = selections.getCurrentItems()();
 
         /**
          * Collect values from source item inputs.
          */
         _.each(Object.values(itemSelections), function (item) {
-            var sourceItemOptionCode = combinationRule.source_item_input_code.split('.')[0],
-                sourceItemInputCode = combinationRule.source_item_input_code.split('.')[1],
-                value;
+            var value;
 
             /**
              * Items without quantity are not considered
              */
-            if (item.details.qty === 0) {
+            if (_.contains([0, "0", 0.0], item.details.qty)) {
                 return;
             }
 
@@ -55,7 +55,7 @@ define([
         _.each(combinationRule.additional_source_input_codes, function (compoundCode) {
             var optionCode = compoundCode.split('.')[0],
                 inputCode = compoundCode.split('.')[1],
-                value = selectionsModel.getShippingOptionValue(
+                value = selections.getShippingOptionValue(
                     section,
                     optionCode,
                     inputCode,
@@ -72,16 +72,15 @@ define([
 
     /**
      * @param {DhlItemCombinationRule} combinationRule
-     * @param {DhlItemSelections} itemSelections
      * @param {string} section
      * @return {string}
      */
-    var computeNewValue = function (combinationRule, itemSelections, section) {
+    var computeNewValue = function (combinationRule, section) {
         /**
          * @var {string} newValue
          */
         var newValue = '';
-        var sourceValues = extractSourceValues(itemSelections, combinationRule, section);
+        var sourceValues = extractSourceValues(combinationRule, section);
 
         if (combinationRule.action === 'add') {
             /**
@@ -112,43 +111,79 @@ define([
      * @param {string} inputCode    To identify the input to modify.
      * @param {string} optionCode   To identify the input to modify.
      * @param {DhlItemCombinationRule} combinationRule  The rule to apply.
-     * @param {DhlItemSelections} itemSelections   The source of item input values to process.
      */
     var processCombinationRule = function (
         inputCode,
         optionCode,
-        combinationRule,
-        itemSelections
+        combinationRule
     ) {
         registry.get({inputCode: inputCode, shippingOptionCode: optionCode}, function (component) {
             component.value(
-                computeNewValue(combinationRule, itemSelections, component.section)
+                computeNewValue(combinationRule, component.section)
             );
         });
+    };
+
+    /**
+     * @param {DhlItemCombinationRule} rule
+     * @param {string} currentOptionCode
+     * @param {string} currentInputCode
+     * @return {boolean}
+     */
+    var ruleAffectedByCurrentInputChange = function (rule, currentOptionCode, currentInputCode) {
+        var effectedInputs = [rule.source_item_input_code].concat(rule.additional_source_input_codes);
+
+        if (currentOptionCode + currentInputCode === "") {
+            // If no current input is given, all rules should be applied
+            return true;
+        }
+
+        if (currentOptionCode === "details" && currentInputCode === "qty") {
+            // A changing item amount means that all rules must be applied again.
+            return true;
+        }
+
+        // Assumes that all codes are in compound format
+        return _.includes(effectedInputs, currentOptionCode + "." + currentInputCode);
     };
 
     return {
         /**
          * Process every package option's combination rules by
-         * combining values from itemSelections and updating the package
+         * combining values from current item selections and updating the package
          * option components value.
          *
-         * @param {DhlItemSelections} itemSelections        Contains the values of all item inputs
-         *                                                  of the current package.
          * @param {DhlShippingOption[]} shippingOptions     List of shipping options whose item
          *                                                  combination rules to process.
+         * @param {string|undefined} [currentOptionCode]    The shipping option that triggered the rule
+         * @param {string|undefined} [currentInputCode]     The shipping option input that triggered the rule
          */
-        apply: function (itemSelections, shippingOptions) {
+        apply: function (shippingOptions, currentOptionCode, currentInputCode) {
+            currentOptionCode = currentOptionCode ? currentOptionCode : "";
+            currentInputCode = currentInputCode ? currentInputCode : "";
+
             _.each(shippingOptions, /** @param {DhlShippingOption} shippingOption */ function (shippingOption) {
                 _.each(shippingOption.inputs, /** @param {DhlInput} input */ function (input) {
-                    if (input.item_combination_rule) {
-                        processCombinationRule(
-                            input.code,
-                            shippingOption.code,
-                            input.item_combination_rule,
-                            itemSelections
-                        );
+                    var rule = input.item_combination_rule;
+
+                    if (!rule) {
+                        // No combination rule, nothing to do
+                        return;
                     }
+                    if (shippingOption.code === currentOptionCode && input.code === currentInputCode) {
+                        // This input is the one that was modified, new value should not be overridden by rule
+                        return;
+                    }
+                    if (!ruleAffectedByCurrentInputChange(rule, currentOptionCode, currentInputCode)) {
+                        // This rule is not affected by the modified input
+                        return;
+                    }
+
+                    processCombinationRule(
+                        input.code,
+                        shippingOption.code,
+                        rule
+                    );
                 });
             });
         }

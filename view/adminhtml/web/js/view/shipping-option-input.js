@@ -103,16 +103,11 @@ define([
                 );
             }
 
-            /**
-             * Only item level inputs must trigger an item combination rule
-             * so that it is still possible to manually override the combined value.
-             */
-            if (this.section === "items") {
-                itemCombinationRules.apply(
-                    selections.getCurrentItems()(),
-                    shippingSettings.get()().carriers[0].package_options
-                );
-            }
+            itemCombinationRules.apply(
+                shippingSettings.get()().carriers[0].package_options,
+                this.shippingOption.code,
+                this.inputCode
+            );
 
             enforceCompatibility();
         },
