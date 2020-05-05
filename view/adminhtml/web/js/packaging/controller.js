@@ -194,6 +194,14 @@ define([
         submitPackages: function () {
             var data = selections.getAll();
 
+            // remove all items with 0 quantity
+            data = data.map(function (selection) {
+                selection.items = _.omit(selection.items, function (item) {
+                    return Number(item.details.qty) === 0;
+                });
+                return selection;
+            });
+
             if (!packageState.allItemsPackaged()) {
                 self.setErrorMessage(
                     $t('Some items are not assigned to a package. Please assign every item to a package.')

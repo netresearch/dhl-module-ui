@@ -66,7 +66,7 @@ define([
      * @param {{}} component
      * @param {int} itemId
      */
-    var updateValidation = function(selections, component, itemId) {
+    var updateValidation = function (selections, component, itemId) {
         var maxQty = getRemainingShippableQty(selections, itemId),
             minQty = isLastItemInPackage(selections, itemId) ? 1 : 0;
 
