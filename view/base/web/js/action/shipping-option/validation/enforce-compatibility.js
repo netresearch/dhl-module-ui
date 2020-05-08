@@ -95,63 +95,6 @@ define([
         return actionLists;
     };
 
-    /**
-     * Rules without masters should be treated as if there are multiple rules
-     * where one of the subjects is the master. This method splits up the rules
-     * accordingly (This is much easier to do than to handle master-less rules
-     * in the processRule method).
-     *
-     * It also converts all codes into compound codes and makes sure there is
-     * no master that is also a subject (which would lead to strange behaviour).
-     *
-     * @param {DhlCompatibility[]} rules
-     * @return {DhlCompatibility[]}
-     */
-    var preprocessRules = function (rules) {
-        var processedRules = [];
-
-        _.each(rules, /** @param {DhlCompatibility} rule */ function (rule) {
-
-            /** Convert to compound code and remove masters from subjects. */
-            var convertedMasters = shippingOptionCodes.convertToCompoundCodes(rule.masters);
-            var filteredSubjects = _.difference(
-                shippingOptionCodes.convertToCompoundCodes(rule.subjects),
-                convertedMasters
-            );
-
-            /**
-             * We check if there are no masters in the rule.
-             * The convertedMasters list is no good indication
-             * for a master-less rule since convertToCompoundCodes
-             * filters out unavailable services during runtime.
-             */
-            if (!rule.masters.length) {
-                /** Split up master-less rule */
-                _.each(filteredSubjects, function (subjectCode) {
-                    processedRules.push({
-                        masters: [subjectCode],
-                        subjects: _.without(filteredSubjects, subjectCode),
-                        error_message: rule.error_message,
-                        trigger_value: rule.trigger_value,
-                        action: rule.action,
-                    });
-                });
-            } else {
-                processedRules.push(
-                    {
-                        masters: convertedMasters,
-                        subjects: filteredSubjects,
-                        error_message: rule.error_message,
-                        trigger_value: rule.trigger_value,
-                        action: rule.action,
-                    }
-                );
-            }
-        });
-
-        return processedRules;
-    };
-
     var enforceShippingOptionCompatibility = function () {
         var carrier = currentCarrier.get(),
             carrierData,
@@ -168,9 +111,7 @@ define([
             return;
         }
 
-        actionLists = processRules(
-            preprocessRules(carrierData.compatibility_data)
-        );
+        actionLists = processRules(carrierData.compatibility_data);
 
         /** Don't enable/show shipping options that another rule will disable/hide */
         actionLists.enable = _.difference(actionLists.enable, actionLists.disable);
