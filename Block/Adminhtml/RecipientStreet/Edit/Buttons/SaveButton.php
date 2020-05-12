@@ -8,12 +8,6 @@ namespace Dhl\Ui\Block\Adminhtml\RecipientStreet\Edit\Buttons;
 
 use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface;
 
-/**
- * SaveButton
- *
- * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @link https://www.netresearch.de/
- */
 class SaveButton extends Generic implements ButtonProviderInterface
 {
     /**
@@ -27,23 +21,8 @@ class SaveButton extends Generic implements ButtonProviderInterface
             'label' => __('Save'),
             'class' => 'save primary',
             'data_attribute' => [
-                'mage-init' => [
-                    'buttonAdapter' => [
-                        'actions' => [
-                            [
-                                'targetName' => 'recipient_street_form.recipient_street_form',
-                                'actionName' => 'save',
-                                'params' => [
-                                    true,
-                                    [
-                                        'back' => 'edit',
-                                        'order_id' => $this->context->getRequest()->getParam('order_id')
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                'mage-init' => ['button' => ['event' => 'save']],
+                'form-role' => 'save'
             ],
             'sort_order' => 90
         ];

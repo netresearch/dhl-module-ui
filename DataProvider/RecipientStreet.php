@@ -7,17 +7,17 @@ declare(strict_types=1);
 namespace Dhl\Ui\DataProvider;
 
 use Dhl\ShippingCore\Model\ResourceModel\RecipientStreet\CollectionFactory;
-use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 use Magento\Ui\DataProvider\AbstractDataProvider;
 
-/**
- * Class RecipientStreet
- *
- * @author Max Melzer <max.melzer@netresearch.de>
- */
 class RecipientStreet extends AbstractDataProvider
 {
+    /**
+     * @var RequestInterface
+     */
+    private $request;
+
     /**
      * @var CollectionFactory
      */
@@ -26,39 +26,43 @@ class RecipientStreet extends AbstractDataProvider
     /**
      * RecipientStreet constructor.
      *
-     * @param CollectionFactory $collectionFactory
      * @param string $name
      * @param string $primaryFieldName
      * @param string $requestFieldName
-     * @param array $meta
-     * @param array $data
+     * @param RequestInterface $request
+     * @param CollectionFactory $collectionFactory
+     * @param mixed[] $meta
+     * @param mixed[] $data
      */
     public function __construct(
-        CollectionFactory $collectionFactory,
         $name,
         $primaryFieldName,
         $requestFieldName,
+        RequestInterface $request,
+        CollectionFactory $collectionFactory,
         array $meta = [],
         array $data = []
     ) {
+        $this->request = $request;
         $this->collectionFactory = $collectionFactory;
 
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
 
     /**
+     * Add order id to recipient street data, can be used for redirect after save.
+     *
      * @return mixed[][]
-     * @throws NoSuchEntityException
      */
     public function getData(): array
     {
         $data = parent::getData();
 
-        if (empty($data['items'])) {
-            throw new NoSuchEntityException();
+        if (!empty($data['items'])) {
+            $data['items'][0]['order_id'] = $this->request->getParam('order_id');
         }
-        $item = array_pop($data['items']);
 
+        $item = array_pop($data['items']);
         return [$item[$this->getPrimaryFieldName()] => $item];
     }
 

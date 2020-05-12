@@ -40,6 +40,11 @@
                 <item name="sortOrder" xsi:type="number">20</item>
             </item>
         </argument>
+        <field name="order_id" formElement="hidden">
+            <settings>
+                <dataType>text</dataType>
+            </settings>
+        </field>
         <field name="recipient_street_name">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
