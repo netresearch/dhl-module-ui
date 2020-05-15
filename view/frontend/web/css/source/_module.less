@@ -108,6 +108,45 @@
     }
 }
 
+.dhl-selected-services {
+    &:extend(.block);
+    max-width: 400px;
+
+    .section-title {
+        border-bottom: 1px solid #cccccc;
+        margin-bottom: 1.7rem;
+        padding: 1.4rem 0 .5rem;
+
+        .title {
+            color: #41362f;
+            font-weight: 300;
+            line-height: 1.2;
+            font-size: 2rem;
+        }
+    }
+
+    .section-content {
+
+    }
+
+    .order-information-table {
+        font-style: normal;
+        font-weight: 400;
+        line-height: 1.36;
+        font-size: 1.4rem;
+
+        tr:nth-child(odd) {
+            background-color: #f1f1f1;
+        }
+
+        td, th {
+            padding: 1rem 1rem;
+            text-align: left;
+            font-weight: 400;
+        }
+    }
+}
+
 .media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
     #modal-shopfinder-search{
         .search-inputs {

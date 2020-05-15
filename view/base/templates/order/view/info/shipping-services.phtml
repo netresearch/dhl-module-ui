@@ -7,12 +7,12 @@ $viewModel = $block->getData('viewModel');
 $services = $viewModel->getSelectedServices();
 ?>
 <?php if (count($services) > 0) : ?>
-    <section class="admin__page-section dhl-selected-services">
-        <div class="admin__page-section-title">
+    <div class=" dhl-selected-services">
+        <div class="section-title">
             <span class="title"><?= $block->escapeHtml(__('DHL Services')) ?></span>
         </div>
-        <div class="admin__page-section-content">
-            <table class="admin__table-secondary order-information-table">
+        <div class="section-content">
+            <table class="order-information-table">
                 <tbody>
                 <?php foreach ($services as $service) : ?>
                     <tr>
@@ -33,5 +33,5 @@ $services = $viewModel->getSelectedServices();
                 </tbody>
             </table>
         </div>
-    </section>
+    </div>
 <?php endif; ?>
