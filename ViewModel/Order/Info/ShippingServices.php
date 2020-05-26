@@ -16,6 +16,8 @@ use Dhl\ShippingCore\Model\ShippingSettings\ShippingOption\Selection\OrderSelect
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
+use Magento\Sales\Api\Data\OrderInterface;
+use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
 
 /**
@@ -44,6 +46,11 @@ class ShippingServices implements ArgumentInterface
     private $orderDataProvider;
 
     /**
+     * @var OrderRepositoryInterface
+     */
+    private $orderRepository;
+
+    /**
      * @var SearchCriteriaBuilder
      */
     private $searchCriteriaBuilder;
@@ -69,26 +76,43 @@ class ShippingServices implements ArgumentInterface
      * @param Registry $registry
      * @param OrderDataProvider $orderDataProvider
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param OrderRepositoryInterface $orderRepository
      * @param OrderSelectionRepository $selectionRepository
      */
     public function __construct(
         Registry $registry,
         OrderDataProvider $orderDataProvider,
         SearchCriteriaBuilder $searchCriteriaBuilder,
+        OrderRepositoryInterface $orderRepository,
         OrderSelectionRepository $selectionRepository
     ) {
         $this->registry = $registry;
         $this->orderDataProvider = $orderDataProvider;
+        $this->orderRepository = $orderRepository;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->selectionRepository = $selectionRepository;
     }
 
     /**
+     * @param int $orderId
      * @return string[]
      */
-    public function getSelectedServices(): array
+    public function getSelectedServicesByOrderId(int $orderId): array
     {
-        $shippingAddress = $this->getOrder()->getShippingAddress();
+        $order = $this->orderRepository->get($orderId);
+        return $this->getSelectedServices($order);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getSelectedServices(OrderInterface $order = null): array
+    {
+        if (!$order) {
+            $order = $this->getOrder();
+        }
+        $this->order = $order;
+        $shippingAddress = $order->getShippingAddress();
 
         if (!$shippingAddress || !$shippingAddress->getId()) {
             return [];
