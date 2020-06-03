@@ -7,34 +7,20 @@ declare(strict_types=1);
 namespace Dhl\Ui\ViewModel\Order\Info;
 
 use Dhl\ShippingCore\Api\Data\ShippingSettings\ShippingOption\InputInterface;
-use Dhl\ShippingCore\Api\Data\ShippingSettings\ShippingOption\OptionInterface;
 use Dhl\ShippingCore\Api\Data\ShippingSettings\ShippingOption\Selection\AssignedSelectionInterface;
 use Dhl\ShippingCore\Api\Data\ShippingSettings\ShippingOption\Selection\SelectionInterface;
 use Dhl\ShippingCore\Api\Data\ShippingSettings\ShippingOptionInterface;
 use Dhl\ShippingCore\Model\ShippingSettings\OrderDataProvider;
+use Dhl\ShippingCore\Model\ShippingSettings\ShippingOption\Codes;
 use Dhl\ShippingCore\Model\ShippingSettings\ShippingOption\Selection\OrderSelectionRepository;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
-use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Order;
 
-/**
- * ShippingServices
- *
- * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @link    https://www.netresearch.de/
- */
 class ShippingServices implements ArgumentInterface
 {
-    const SHOPFINDER_INPUT_TYPE = 'shopfinder';
-    const SHOPFINDER_INPUT_COMPANY = 'company';
-    const SHOPFINDER_INPUT_STREET = 'street';
-    const SHOPFINDER_INPUT_POSTALCODE = 'postalCode';
-    const SHOPFINDER_INPUT_CITY = 'city';
-    const SHOPFINDER_INPUT_COUNTRYCODE = 'countryCode';
-
     /**
      * @var Registry
      */
@@ -61,24 +47,25 @@ class ShippingServices implements ArgumentInterface
     private $selectionRepository;
 
     /**
-     * @var Order
+     * @var Order|null
      */
-    private $order = null;
+    private $order;
 
     /**
-     * @var string[]
+     * @var ShippingOptionInterface[]|null
      */
-    private $pickupLocationAddress = null;
+    private $serviceOptions;
 
     /**
-     * ShippingServices constructor.
-     *
-     * @param Registry $registry
-     * @param OrderDataProvider $orderDataProvider
-     * @param SearchCriteriaBuilder $searchCriteriaBuilder
-     * @param OrderRepositoryInterface $orderRepository
-     * @param OrderSelectionRepository $selectionRepository
+     * @var SelectionInterface[]|null
      */
+    private $selections;
+
+    /**
+     * @var string[]|null
+     */
+    private $pickupLocationAddress;
+
     public function __construct(
         Registry $registry,
         OrderDataProvider $orderDataProvider,
@@ -94,58 +81,67 @@ class ShippingServices implements ArgumentInterface
     }
 
     /**
-     * @param int $orderId
-     * @return string[]
+     * @return string[][]
+     *      [
+     *          'label' => (string) Display label of the selected service,
+     *          'value' => (string) Display value of the selected service,
+     *      ]
      */
-    public function getSelectedServicesByOrderId(int $orderId): array
+    public function getSelectedServices(): array
     {
-        $order = $this->orderRepository->get($orderId);
-        return $this->getSelectedServices($order);
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getSelectedServices(OrderInterface $order = null): array
-    {
-        if (!$order) {
-            $order = $this->getOrder();
-        }
-        $this->order = $order;
-        $shippingAddress = $order->getShippingAddress();
-
+        $shippingAddress = $this->getOrder()->getShippingAddress();
         if (!$shippingAddress || !$shippingAddress->getId()) {
             return [];
         }
-        $selections = $this->loadSelections($shippingAddress);
+
+        $selections = $this->getSelections($shippingAddress);
         $serviceOptions = $this->getServiceOptions();
         $result = [];
         foreach ($selections as $selection) {
             $shippingOptionCode = $selection->getShippingOptionCode();
-            $inputCode = $selection->getInputCode();
-            if (isset($serviceOptions[$shippingOptionCode])) {
-                $serviceOption = $serviceOptions[$shippingOptionCode];
-                $inputs = $serviceOption->getInputs();
-                if (!isset($inputs[$inputCode]) || $inputs[$inputCode]->getInputType() === 'hidden') {
-                    continue;
-                }
-                $displayValue = $this->formatDisplayValue(
-                    $serviceOption->getInputs()[$inputCode],
-                    $result[$shippingOptionCode]['value'] ?? false
-                );
-
-                $result[$shippingOptionCode] = [
-                    'label' => $serviceOption->getLabel(),
-                    'value' => $displayValue,
-                ];
+            $serviceOption = $serviceOptions[$shippingOptionCode];
+            if (!$serviceOption) {
+                continue;
             }
+
+            $input = $serviceOption->getInputs()[$selection->getInputCode()] ?? null;
+            if (!$input || $input->getInputType() === 'hidden') {
+                continue;
+            }
+
+            $displayValue = $this->renderDisplayValue(
+                $input,
+                $result[$shippingOptionCode]['value'] ?? ''
+            );
+
+            $result[$shippingOptionCode] = [
+                'label' => $serviceOption->getLabel(),
+                'value' => $displayValue,
+            ];
         }
 
         return $result;
     }
 
     /**
-     * @return string[]
+     * @param int $orderId
+     * @return string[][]
+     *      [
+     *          'label' => (string) Display label of the selected service,
+     *          'value' => (string) Display value of the selected service,
+     *      ]
+     */
+    public function getSelectedServicesByOrderId(int $orderId): array
+    {
+        /** @var Order $order */
+        $order = $this->orderRepository->get($orderId);
+        $this->order = $order;
+
+        return $this->getSelectedServices();
+    }
+
+    /**
+     * @return string[] The address of the selected pickup location split by lines, or an empty array.
      */
     public function getPickupLocationAddress(): array
     {
@@ -155,78 +151,67 @@ class ShippingServices implements ArgumentInterface
 
         $this->pickupLocationAddress = [];
 
-        $shippingAddress = $this->getOrder()->getShippingAddress();
-        if (!$shippingAddress || !$shippingAddress->getId()) {
-            return $this->pickupLocationAddress;
-        }
-        $serviceOptions = $this->getServiceOptions();
-        $selections = $this->loadSelections($shippingAddress);
+        $inputs = $this->findShopfinderInputs();
 
-        $dropoffInputs = false;
-        foreach ($selections as $selection) {
-            $serviceOption = $serviceOptions[$selection->getShippingOptionCode()];
-            if ($serviceOption) {
-                foreach ($serviceOption->getInputs() as $input) {
-                    if ($input->getInputType() === self::SHOPFINDER_INPUT_TYPE) {
-                        $dropoffInputs = $serviceOption->getInputs();
-                        break 2;
-                    }
-                }
-            }
+        if (isset($inputs[Codes::SHOPFINDER_INPUT_COMPANY])) {
+            $this->pickupLocationAddress[] = $inputs[Codes::SHOPFINDER_INPUT_COMPANY]->getDefaultValue();
         }
-
-        if (!$dropoffInputs) {
-            return $this->pickupLocationAddress;
+        if (isset($inputs[Codes::SHOPFINDER_INPUT_STREET])) {
+            $this->pickupLocationAddress[] = $inputs[Codes::SHOPFINDER_INPUT_STREET]->getDefaultValue();
         }
-
-        if (isset($dropoffInputs[self::SHOPFINDER_INPUT_COMPANY])) {
-            $this->pickupLocationAddress[] = $dropoffInputs[self::SHOPFINDER_INPUT_COMPANY]->getDefaultValue();
-        }
-        if (isset($dropoffInputs[self::SHOPFINDER_INPUT_STREET])) {
-            $this->pickupLocationAddress[] = $dropoffInputs[self::SHOPFINDER_INPUT_STREET]->getDefaultValue();
-        }
-        if (isset($dropoffInputs[self::SHOPFINDER_INPUT_POSTALCODE], $dropoffInputs[self::SHOPFINDER_INPUT_CITY])) {
+        if (isset($inputs[Codes::SHOPFINDER_INPUT_POSTAL_CODE], $inputs[Codes::SHOPFINDER_INPUT_CITY])) {
             $this->pickupLocationAddress[] = implode(' ', [
-                $dropoffInputs[self::SHOPFINDER_INPUT_POSTALCODE]->getDefaultValue(),
-                $dropoffInputs[self::SHOPFINDER_INPUT_CITY]->getDefaultValue()
+                $inputs[Codes::SHOPFINDER_INPUT_POSTAL_CODE]->getDefaultValue(),
+                $inputs[Codes::SHOPFINDER_INPUT_CITY]->getDefaultValue()
             ]);
         }
-        if (isset($dropoffInputs[self::SHOPFINDER_INPUT_COUNTRYCODE])) {
-            $this->pickupLocationAddress[] = $dropoffInputs[self::SHOPFINDER_INPUT_COUNTRYCODE]->getDefaultValue();
+        if (isset($inputs[Codes::SHOPFINDER_INPUT_COUNTRY_CODE])) {
+            $this->pickupLocationAddress[] = $inputs[Codes::SHOPFINDER_INPUT_COUNTRY_CODE]->getDefaultValue();
         }
 
-        return $this->getPickupLocationAddress();
+        return $this->pickupLocationAddress;
     }
 
     /**
      * @param Order\Address $shippingAddress
      * @return SelectionInterface[]
      */
-    private function loadSelections(Order\Address $shippingAddress): array
+    private function getSelections(Order\Address $shippingAddress): array
     {
-        $searchCriteria = $this->searchCriteriaBuilder
-            ->addFilter(
-                AssignedSelectionInterface::PARENT_ID,
-                $shippingAddress->getId()
-            )->create();
+        if ($this->selections === null) {
+            $searchCriteria = $this->searchCriteriaBuilder
+                ->addFilter(
+                    AssignedSelectionInterface::PARENT_ID,
+                    $shippingAddress->getId()
+                )->create();
+            $this->selections = $this->selectionRepository->getList($searchCriteria)->getItems();
+        }
 
-        return $this->selectionRepository->getList($searchCriteria)->getItems();
+        return $this->selections;
     }
 
     /**
+     * Render a selection value label from the available options and other information
+     *
      * @param InputInterface $input
-     * @param string|false $existingValue
+     * @param string $existingValue
      * @return string
      */
-    private function formatDisplayValue(
+    private function renderDisplayValue(
         InputInterface $input,
         $existingValue
     ): string {
-        $displayValue = $input->getInputType() === 'radio' ? $this->getRadioOptionLabel(
-            $input->getOptions()
-        ) : $input->getDefaultValue();
+        $displayValue = $input->getDefaultValue();
 
-        $displayValue = $displayValue === '1' ? __('Yes')->render() : $displayValue;
+        foreach ($input->getOptions() as $option) {
+            if ($option->getValue() === $input->getDefaultValue()) {
+                $displayValue = $option->getLabel();
+            }
+        }
+
+        if ($input->getDefaultValue() === '1') {
+            $displayValue = __('Yes')->render();
+        }
 
         /**
          * If a previous selection already added a value here, append the new value.
@@ -239,23 +224,36 @@ class ShippingServices implements ArgumentInterface
     }
 
     /**
-     * Gets the last option label from the available options
+     * The only way to find all inputs that belong to a Shopfinder is to search for a ShippingOption with an input of
+     * type Dhl\ShippingCore\Model\ShippingSettings\ShippingOption\Codes::INPUT_TYPE_SHOPFINDER and return all of it's
+     * inputs.
      *
-     * @param OptionInterface[] $getOptions
-     * @return string
+     * @return InputInterface[]
      */
-    private function getRadioOptionLabel(array $getOptions): string
+    private function findShopfinderInputs(): array
     {
-        /** @var string $label */
-        $label = array_reduce(
-            $getOptions,
-            function (string $carry, OptionInterface $option) {
-                return $option->getLabel();
-            },
-            ''
-        );
+        $shippingAddress = $this->getOrder()->getShippingAddress();
+        if (!$shippingAddress || !$shippingAddress->getId()) {
+            return [];
+        }
 
-        return $label;
+        $serviceOptions = $this->getServiceOptions();
+        $selections = $this->getSelections($shippingAddress);
+
+        foreach ($selections as $selection) {
+            $serviceOption = $serviceOptions[$selection->getShippingOptionCode()];
+            if ($serviceOption && array_filter(
+                $serviceOption->getInputs(),
+                static function (InputInterface $input) {
+                    return $input->getInputType() ===
+                        Codes::INPUT_TYPE_SHOPFINDER;
+                }
+            )) {
+                return $serviceOption->getInputs();
+            }
+        }
+
+        return [];
     }
 
     /**
@@ -263,22 +261,27 @@ class ShippingServices implements ArgumentInterface
      */
     private function getServiceOptions(): array
     {
+        if ($this->serviceOptions !== null) {
+            return $this->serviceOptions;
+        }
+
+        $this->serviceOptions = [];
+
         $shippingAddress = $this->getOrder()->getShippingAddress();
         if (!$shippingAddress || !$shippingAddress->getId()) {
-            return [];
+            return $this->serviceOptions;
         }
-        /** need to create a tmp shipment for packagingDataProvider */
+
         $carrierData = $this->orderDataProvider->getShippingOptions($this->getOrder());
         if ($carrierData === null) {
-            return [];
+            return $this->serviceOptions;
         }
 
-        return $carrierData->getServiceOptions() ?? [];
+        $this->serviceOptions = $carrierData->getServiceOptions() ?? [];
+
+        return $this->serviceOptions;
     }
 
-    /**
-     * @return Order
-     */
     private function getOrder(): Order
     {
         if (!$this->order) {
