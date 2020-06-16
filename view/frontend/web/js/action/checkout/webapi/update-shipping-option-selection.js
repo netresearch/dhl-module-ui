@@ -23,14 +23,15 @@ define([
             selections,
             carrier = currentCarrier.get();
 
+        if (quote.isVirtual()) {
+            return $.Deferred().resolve();
+        }
+
         if (!carrier) {
-            return $.Deferred(function (deferred) {
-                deferred.reject('No shipping option selected');
-            });
+            return $.Deferred.reject('No shipping option selected');
         }
 
         selections = selectionsModel.getByCarrier(carrier);
-
 
         if (customer.isLoggedIn()) {
             url = '/carts/mine/dhl/shipping-option/selection/update';
@@ -59,7 +60,6 @@ define([
                 });
             });
         }
-
 
         serviceUrl = urlBuilder.createUrl(url, urlParams);
 
