@@ -1,9 +1,24 @@
 define([
     'underscore',
     'Dhl_Ui/js/model/shipping-option/selections',
+    'Dhl_Ui/js/model/shipping-settings',
     'uiRegistry'
-], function (_, selections, registry) {
+], function (_, selections, shippingSettings, registry) {
     'use strict';
+
+    var getInputValueFromShippingSettings = function (optionCode, inputCode, itemId) {
+        try {
+            return shippingSettings.get()().carriers[0].item_options.find(function (optionSet) {
+                return optionSet.item_id === Number(itemId);
+            }).shipping_options.find(function (option) {
+                return option.code === optionCode;
+            }).inputs.find(function (input) {
+                return input.code === inputCode;
+            }).default_value;
+        } catch (e) {
+            return "";
+        }
+    };
 
     /**
      * Extract an array of string and/or number values
@@ -22,7 +37,8 @@ define([
         /**
          * Collect values from source item inputs.
          */
-        _.each(Object.values(itemSelections), function (item) {
+        _.each(Object.keys(itemSelections), function (itemId) {
+            var item = itemSelections[itemId];
             var value;
 
             /**
@@ -35,11 +51,16 @@ define([
             /**
              * Source items that are not selected are not considered
              */
-            if (!(sourceItemOptionCode in item) || !(sourceItemInputCode in item[sourceItemOptionCode])) {
-                return;
+            if (sourceItemOptionCode in item && sourceItemInputCode in item[sourceItemOptionCode]) {
+                value = item[sourceItemOptionCode][sourceItemInputCode];
+            } else {
+                /* Check if a value is set in shipping settings
+                   that the selections model doesn't know about yet. */
+                value = getInputValueFromShippingSettings(sourceItemOptionCode, sourceItemInputCode, itemId);
+                if (!value) {
+                    return;
+                }
             }
-
-            value = item[sourceItemOptionCode][sourceItemInputCode];
 
             /** Multiply with item qty if we have an "add" rule. */
             if (combinationRule.action === 'add') {

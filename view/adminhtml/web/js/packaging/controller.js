@@ -269,8 +269,7 @@ define([
                  * If opened, reinitialize rendering and create a new package with all available items
                  */
                 self.initShipmentItems();
-                packageState.newPackage();
-                self.reset();
+                this.newPackage();
             } else {
                 /**
                  * If closed, remove all previous data selections, as qtys of the items to ship can change

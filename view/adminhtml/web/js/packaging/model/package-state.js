@@ -19,6 +19,15 @@ define([
         return JSON.parse(JSON.stringify(object));
     };
 
+    var getInputValueFromDom = function (inputCode, itemId) {
+        var inputElement = registry.get({inputCode: inputCode, itemId: itemId});
+
+        if (inputElement) {
+            return inputElement.value();
+        }
+        return "";
+    };
+
     /**
      * Resets the whole package state, dismissing all existing data.
      */
@@ -52,10 +61,10 @@ define([
             });
 
             _.each(Object.keys(packageSelection['items']), function (itemId) {
-                var inputElement = registry.get({inputCode: 'qty', itemId: itemId});
+                var qtyValue = getInputValueFromDom('qty', itemId);
 
-                if (inputElement) {
-                    packageSelection['items'][itemId]['details']['qty'] = Number(inputElement.value());
+                if (qtyValue !== "") {
+                    packageSelection['items'][itemId]['details']['qty'] = Number(qtyValue);
                 }
             });
 
