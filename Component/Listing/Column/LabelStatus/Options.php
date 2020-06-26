@@ -11,9 +11,6 @@ use Magento\Framework\Data\OptionSourceInterface;
 
 /**
  * Label Status Filter Options Source
- *
- * @author Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @link https://www.netresearch.de/
  */
 class Options implements OptionSourceInterface
 {

@@ -14,12 +14,7 @@ use Magento\Sales\Block\Adminhtml\Order\Totals;
 use Magento\Sales\Model\Order;
 
 /**
- * Class Total
- *
  * Block for displaying the total in admin and customer view
- *
- * @author Paul Siedler <paul.siedler@netresearch.de>
- * @link https://www.netresearch.de/
  */
 class Total extends Template
 {

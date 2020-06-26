@@ -15,12 +15,9 @@ use Magento\Sales\Api\Data\ShipmentInterface;
 use Magento\Sales\Model\Order\Shipment;
 
 /**
- * Class Popup
+ * View model for the packaging popup. Draws its data from packaging data provider
  *
- * Viewmodel for the packaging popup. Draws its data from the Dhl\ShippingCore\Model\Packaging\PackagingDataProvider
- *
- * @author Paul Siedler <paul.siedler@netresearch.de>
- * @link https://www.netresearch.de/
+ * @see \Dhl\ShippingCore\Model\ShippingSettings\PackagingDataProvider
  */
 class Popup implements ArgumentInterface
 {

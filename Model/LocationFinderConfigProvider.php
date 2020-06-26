@@ -11,12 +11,6 @@ use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
 
-/**
- * Class LocationFinderConfigProvider
- *
- * @author  Andreas Müller <andreas.mueller@netresearch.de>
- * @link    https://www.netresearch.de
- */
 class LocationFinderConfigProvider implements ConfigProviderInterface
 {
     /**

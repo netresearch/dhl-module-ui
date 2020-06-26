@@ -8,12 +8,6 @@ namespace Dhl\Ui\Block\Adminhtml\RecipientStreet\Edit\Buttons;
 
 use Magento\Backend\Block\Widget\Context;
 
-/**
- * Generic
- *
- * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @link https://www.netresearch.de/
- */
 class Generic
 {
     /**

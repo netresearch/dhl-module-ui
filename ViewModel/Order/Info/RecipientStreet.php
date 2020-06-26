@@ -12,12 +12,6 @@ use Magento\Framework\Escaper;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 
-/**
- * RecipientStreet
- *
- * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @link    https://www.netresearch.de/
- */
 class RecipientStreet implements ArgumentInterface
 {
     /**

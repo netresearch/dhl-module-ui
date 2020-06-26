@@ -8,12 +8,6 @@ namespace Dhl\Ui\Block\Adminhtml\RecipientStreet\Edit\Buttons;
 
 use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface;
 
-/**
- * BackButton
- *
- * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @link https://www.netresearch.de/
- */
 class BackButton extends Generic implements ButtonProviderInterface
 {
     /**

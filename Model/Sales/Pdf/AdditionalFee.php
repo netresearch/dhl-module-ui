@@ -14,12 +14,7 @@ use Magento\Tax\Model\Calculation;
 use Magento\Tax\Model\ResourceModel\Sales\Order\Tax\CollectionFactory;
 
 /**
- * Class AdditionalFee
- *
- * Handles totals display for PDF prints of invoices/creditmemos
- *
- * @author Paul Siedler <paul.siedler@netresearch.de>
- * @link https://www.netresearch.de/
+ * Handles totals display for PDF prints of invoices/creditmemos.
  */
 class AdditionalFee extends DefaultTotal
 {

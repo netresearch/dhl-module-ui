@@ -13,12 +13,7 @@ use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Sales\Model\Order;
 
 /**
- * Class AdditionalFee
- *
- * Utility model class for displaying data for total rendering
- *
- * @author Paul Siedler <paul.siedler@netresearch.de>
- * @link https://www.netresearch.de/
+ * Utility model class for displaying data for total rendering.
  */
 class AdditionalFee implements ArgumentInterface
 {

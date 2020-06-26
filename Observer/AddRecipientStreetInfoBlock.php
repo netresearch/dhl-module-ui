@@ -15,12 +15,6 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Api\Data\OrderInterface;
 
-/**
- * AddRecipientStreetInfoBlock Observer
- *
- * @author  Sebastian Ertner <sebastian.ertner@netresearch.de>
- * @link https://www.netresearch.de/
- */
 class AddRecipientStreetInfoBlock implements ObserverInterface
 {
     /**
