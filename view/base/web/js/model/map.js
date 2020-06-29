@@ -67,8 +67,10 @@ define([
 
             tile = leaflet.tileLayer(mapUrl, {
                 attribution: attribution,
+                tileSize: 512,
                 maxZoom: 18,
-                id: 'mapbox.streets',
+                zoomOffset: -1,
+                id: 'mapbox/streets-v11',
                 accessToken: accessToken
             });
             tile.on('tileerror', function () {
