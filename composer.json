@@ -32,5 +32,10 @@
         "magento/module-tax": "^100.2.6",
         "magento/module-ui": "^101.0.6",
         "magento/module-customer": "^101.0.6 || ^102.0.0"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-develop": "1.1.1.x-dev"
+        }
     }
 }

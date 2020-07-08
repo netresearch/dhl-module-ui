@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminSubmitShipmentPackagingPopupActionGroup">
+        <click stepKey="savePackagingPopup" selector="{{AdminShipmentPackagingPopupSection.submitButton}}"/>
+        <waitForLoadingMaskToDisappear stepKey="waitForPackagingPopupSubmit"/>
+        <seeInCurrentUrl url="{{AdminOrderDetailsPage.url}}" stepKey="seeViewOrderPageShipping"/>
+        <see selector="{{AdminOrderDetailsMessagesSection.successMessage}}" userInput="The shipment has been created." stepKey="seeShipmentCreateSuccess"/>
+    </actionGroup>
+</actionGroups>

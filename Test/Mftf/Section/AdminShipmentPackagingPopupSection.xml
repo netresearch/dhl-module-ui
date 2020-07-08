@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="urn:magento:mftf:Page/etc/SectionObject.xsd">
+    <section name="AdminShipmentPackagingPopupSection">
+        <!-- Actions -->
+        <element name="submitButton" type="button" selector="#save"/>
+        <!-- Item level selectors -->
+        <element name="packageItems" type="text" selector=".dhl-fieldset.items"/>
+        <element name="itemQty" type="text" selector=".dhl-fieldset.items .item-options:nth-of-type({{item}}) .field.qty input.qty" parameterized="true"/>
+        <element name="itemHeading" type="text" selector=".dhl-fieldset.items .item-options:nth-of-type({{item}}) .fieldset-wrapper-title strong span" parameterized="true"/>
+        <element name="itemWeight" type="text" selector=".dhl-fieldset.items .item-options:nth-of-type({{item}}) .field.weight input.weight" parameterized="true"/>
+        <element name="itemCustomsValue" type="text" selector=".dhl-fieldset.items .item-options:nth-of-type({{item}}) .field.customsValue input.customsValue" parameterized="true"/>
+        <element name="itemHsCode" type="text" selector=".dhl-fieldset.items .item-options:nth-of-type({{item}}) .field.hsCode input.hsCode" parameterized="true"/>
+        <element name="itemCountryOfOrigin" type="select" selector=".dhl-fieldset.items .item-options:nth-of-type({{item}}) .field.countryOfOrigin select" parameterized="true"/>
+        <element name="itemExportDescription" type="textarea" selector=".dhl-fieldset.items .item-options:nth-of-type({{item}}) .field.exportDescription textarea" parameterized="true"/>
+        <!-- Package level selectors -->
+        <element name="packageOptions" type="text" selector=".dhl-fieldset.package"/>
+        <element name="shippingProductRadio" type="text" selector=".dhl-fieldset.package .field.productCode.radioset .dhl-radioset"/>
+        <element name="shippingProductSelect" type="text" selector=".dhl-fieldset.package .productCode .field.productCode select"/>
+        <element name="packageWeight" type="input" selector=".dhl-fieldset.package .field.weight input.weight"/>
+        <element name="packageTareWeight" type="input" selector=".dhl-fieldset.package .field.packagingWeight input.packagingWeight"/>
+        <element name="packageCustomsValue" type="input" selector=".dhl-fieldset.package .field.customsValue input.customsValue"/>
+        <element name="termsOfTrade" type="select" selector=".dhl-fieldset.package .field.termsOfTrade select"/>
+        <element name="exportContentType" type="select" selector=".dhl-fieldset.package .field.contentType select"/>
+        <element name="explanation" type="input" selector=".dhl-fieldset.package .field.explanation input.explanation"/>
+        <element name="packageDescription" type="textarea" selector=".dhl-fieldset.package .field.exportDescription textarea"/>
+        <element name="packageDetailShippingOptions" type="text" selector="Package Details"/>
+        <element name="packageCustomsShippingOptions" type="text" selector="Customs Data"/>
+        <!-- Service level selectors -->
+        <element name="serviceOptions" type="text" selector=".dhl-fieldset.service"/>
+
+        <element name="popupBottom" type="block" selector="aside.modal-slide._show div[data-role='focusable-end']"/>
+    </section>
+</sections>

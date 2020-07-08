@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionGroups xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="urn:magento:mftf:Test/etc/actionGroupSchema.xsd">
+    <actionGroup name="AdminOpenShipmentPackagingPopupActionGroup">
+        <click stepKey="openNewShipmentPage" selector="{{AdminOrderDetailsMainActionsSection.ship}}"/>
+        <waitForPageLoad stepKey="openNewShipmentPageLoad"/>
+        <checkOption stepKey="enableLabelSubmission" selector="{{AdminShipmentMainActionsSection.createLabelCheckbox}}"/>
+        <click stepKey="openPackagingPopup" selector="{{AdminShipmentMainActionsSection.submitShipment}}"/>
+        <waitForLoadingMaskToDisappear stepKey="packagingPopupLoaded"/>
+        <see stepKey="packagingPopupVisible" selector="Shipment Setup"/>
+    </actionGroup>
+</actionGroups>
