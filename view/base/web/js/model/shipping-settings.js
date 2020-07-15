@@ -1,7 +1,8 @@
 define([
     'ko',
-    'Dhl_Ui/js/action/util/hash'
-], function (ko, hash) {
+    'Dhl_Ui/js/action/util/hash',
+    'underscore'
+], function (ko, hash, _) {
     'use strict';
 
     /**
@@ -131,7 +132,7 @@ define([
                 return false;
             }
 
-            carrierData = settings().carriers.find(function (carrier) {
+            carrierData = _.find(settings().carriers, function (carrier) {
                 return carrier.code === carrierName;
             });
 

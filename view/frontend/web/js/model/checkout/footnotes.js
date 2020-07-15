@@ -55,9 +55,9 @@ define([
         getById: function (footnoteId) {
             var match = false;
             if (typeof getCarrierData() !== 'undefined' && typeof getCarrierData().metadata !== 'undefined') {
-                 match = getCarrierData().metadata.footnotes.find(function (footnote) {
+                match = _.find(getCarrierData().metadata.footnotes, function (footnote) {
                     return footnote.id === footnoteId;
-                 });
+                });
             }
 
             return match;
