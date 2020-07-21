@@ -210,7 +210,21 @@ define([
             }
 
             if (validateSelection() && validateCompatibility()) {
-                submit(self.submitUrl, data)
+                // add shipment comment and email notification values if available
+                var shipmentComment = document.querySelector("#shipment_comment_text"),
+                    sendEmail = document.querySelector("#send_email"),
+                    notifyCustomer = document.querySelector("#notify_customer");
+
+                var payload = {
+                    packages: data,
+                    shipment: {
+                        shipmentComment: shipmentComment ? shipmentComment.value : '',
+                        sendEmail: sendEmail ? sendEmail.checked : false,
+                        notifyCustomer: notifyCustomer ? notifyCustomer.checked : false
+                    }
+                };
+
+                submit(self.submitUrl, payload)
                     .done(function (response) {
                         if (response.error) {
                             self.setErrorMessage(response.message);
