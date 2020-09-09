@@ -1,6 +1,6 @@
 {
     "name": "dhl/module-ui",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "type": "magento2-module",
     "description": "Module providing the UI integration for the DHL global webservices components",
     "license": "OSL-3.0",
@@ -32,10 +32,5 @@
         "magento/module-tax": "^100.3.0",
         "magento/module-ui": "^101.1.0",
         "magento/module-customer": "^102.0.0 || ^103.0.0"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-DHLGW-951": "1.2.0.x-dev"
-        }
     }
 }
