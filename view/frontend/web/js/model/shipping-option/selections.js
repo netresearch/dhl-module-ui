@@ -178,7 +178,7 @@ define([
 
             if (workingCopy[carrier]) {
                 if (workingCopy[carrier][shippingOptionCode]) {
-                    if (workingCopy[carrier][shippingOptionCode][inputCode]) {
+                    if (workingCopy[carrier][shippingOptionCode].hasOwnProperty(inputCode)) {
                         delete workingCopy[carrier][shippingOptionCode][inputCode];
                     }
                     if (_.isEmpty(workingCopy[carrier][shippingOptionCode])) {
