@@ -1,6 +1,7 @@
 define([
     'jquery',
-    'Magento_Checkout/js/model/quote'
+    'Magento_Checkout/js/model/quote',
+    'jquery/jquery-storageapi'
 ], function ($, quote) {
     'use strict';
 

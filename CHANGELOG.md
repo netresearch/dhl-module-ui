@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+Bugfix release
+
+### Fixed
+
+- Require _jQuery Storage API_ to prevent uncaught type error, contributed by [@HenKun](https://github.com/HenKun) via [issue #4](https://github.com/netresearch/dhl-module-ui/issues/4)
+- Persist service selection updates, especially removal of previously selected delivery location
+
 ## 1.2.0
 
 Magento 2.4 compatibility release
