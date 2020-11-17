@@ -29,12 +29,11 @@ Features
 Requirements
 ------------
 
-* PHP >= 7.0.6
+* PHP >= 7.1.3
 
 Compatibility
 -------------
 
-* Magento >= 2.2.6+
 * Magento >= 2.3.0+
 
 License
