@@ -301,11 +301,13 @@
     /**
      * Restore "required" markings
      */
-    .shipping-option-wrapper .field._required label:after {
-        content: '*';
-        color: @error__color;
-        font-size: 1.2rem;
-        margin: 0 0 0 5px;
+    .shipping-option-wrapper .field._required {
+        > label:after {
+            content: '*';
+            color: @error__color;
+            font-size: 1.2rem;
+            margin: 0 0 0 5px;
+        }
     }
 
     .hidden,
