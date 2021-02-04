@@ -72,9 +72,9 @@ define([
         },
 
         updateSearchValues: function (address) {
-            this.searchCity(address.city);
+            this.searchCity(typeof address.city === 'undefined' ? '' : address.city);
             this.searchCountry(address.countryId);
-            this.searchStreet(address.street.join(' '));
+            this.searchStreet(typeof address.street === 'undefined' ? '' : address.street.join(' '));
             this.searchZip(address.postcode);
         },
 
