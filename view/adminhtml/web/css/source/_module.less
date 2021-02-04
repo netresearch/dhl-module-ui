@@ -152,10 +152,15 @@
             }
 
     }
-    /* sticky footer */
+
     .package-action-buttons {
         padding: @indent__m;
         z-index: 20;
+
+        img[src*="logo-dpdhl.svg"] {
+            background-color: #fc0;
+            padding: @indent__s;
+        }
 
         &.top-buttons {
             .sticky();
@@ -373,12 +378,22 @@
     .dhl-packaging-popup {
         .package-action-buttons {
             text-align: right;
+
             img {
                 position: absolute;
                 left: @indent__m;
                 top: 50%;
                 transform: translateY(-50%);
                 max-width: 25%;
+            }
+
+            button {
+                padding: @button__padding-vertical__l @button__padding-vertical__l*1.3;
+                font-size: @font-size__l;
+
+                &:first-child {
+                    margin: 0 @indent__m 0 0;
+                }
             }
         }
 
@@ -462,17 +477,6 @@
                             }
                         }
                     }
-                }
-            }
-        }
-
-        .package-action-buttons {
-            button {
-                padding: @button__padding-vertical__l @button__padding-vertical__l*1.3;
-                font-size: @font-size__l;
-
-                &:first-child {
-                    margin: 0 @indent__m 0 0;
                 }
             }
         }
