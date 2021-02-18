@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+### Changed
+
+- Work around [Dotdigitalgroup_Sms issue #1](https://github.com/dotmailer/dotmailer-magento2-extension-sms/issues/1)
+  by reading the input's error message instead of accessing the now unavailable validation result.
+
 ### Fixed
 
 - Show location finder in checkout when street or city are not yet entered

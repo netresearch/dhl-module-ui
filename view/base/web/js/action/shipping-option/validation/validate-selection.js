@@ -15,8 +15,12 @@ define([
 
         _.each(inputs, function (input) {
             var validationResult = input.validate();
-
-            if (!validationResult.valid) {
+            if (typeof validationResult === 'undefined') {
+                // fallback for https://github.com/dotmailer/dotmailer-magento2-extension-sms/issues/1
+                if (input.error()) {
+                    result = false;
+                }
+            } else if (!validationResult.valid) {
                 result = false;
             }
         });
