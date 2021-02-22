@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Show location finder in checkout when street or city are not yet entered
   (issues [#5](https://github.com/netresearch/dhl-module-ui/issues/5),
   [#6](https://github.com/netresearch/dhl-module-ui/issues/6)).
+- Load shipping address mixin only in checkout (issue [#7](https://github.com/netresearch/dhl-module-ui/issues/7)).
 
 ## 1.2.2
 
