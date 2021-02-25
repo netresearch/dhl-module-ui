@@ -84,6 +84,9 @@ define([
                 }
             });
 
+            // reload shipping settings on component initialization
+            storage.clear();
+
             return this;
         },
 

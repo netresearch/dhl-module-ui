@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Work around [Dotdigitalgroup_Sms issue #1](https://github.com/dotmailer/dotmailer-magento2-extension-sms/issues/1)
   by reading the input's error message instead of accessing the now unavailable validation result.
+- Refresh service box in checkout when configuration changes. Available services are no longer kept in local storage for the lifetime of the quote.
 
 ### Fixed
 
